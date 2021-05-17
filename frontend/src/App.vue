@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    {{ user }}
     <h1>Intake CTF</h1>
     <div class="accordion accordion-flush" id="challenge-accordion">
       <div class="accordion-item" v-for="challenge in challenges" :key="challenge.id">
@@ -11,6 +10,12 @@
         </h2>
         <div :id="`challenge-${challenge.id}`" class="accordion-collapse collapse" data-bs-parent="#challenge-accordion">
           <div class="accordion-body">
+            <div class="mb-2" v-if="challenge.tags">
+              <template v-for="tag in challenge.tags">
+                <span class="badge rounded-pill bg-primary">{{ tag }}</span
+                >&nbsp;
+              </template>
+            </div>
             <p>{{ challenge.description }}</p>
             <hr />
             <template v-if="!getCompletedEntry(challenge.id)">
@@ -34,19 +39,19 @@ import type { Challenge } from "./types/Challenge";
 import type { User } from "./types/User";
 import API from "./utils/api";
 
-const user = ref<User>();
+ref: user = undefined as User | undefined;
 
-const challenges = ref<Challenge[]>();
+ref: challenges = undefined as Challenge[] | undefined;
 const challengeFlags = reactive<Record<number, string>>({});
 
 onMounted(async () => {
-  user.value = await API.getUser();
+  user = await API.getUser();
 
-  challenges.value = await API.getChallenges();
+  challenges = await API.getChallenges();
 });
 
 const getCompletedEntry = (challengeId: number) => {
-  return user.value?.completed_challenges.find((challenge) => challenge.challenge_id === challengeId);
+  return user?.completed_challenges.find((challenge) => challenge.challenge_id === challengeId);
 };
 
 const getCompletedAt = (challengeId: number) => {

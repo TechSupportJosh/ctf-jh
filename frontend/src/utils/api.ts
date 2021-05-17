@@ -9,13 +9,13 @@ const client = axios.create({
 });
 
 const getUser = async () => {
-  const response = await client.get<User>(`/me`);
+  const response = await client.get<User>(`/me/`);
 
   if (response.status === 200) return response.data;
 };
 
 const getChallenges = async () => {
-  const response = await client.get<Challenge[]>(`/challenges`);
+  const response = await client.get<Challenge[]>(`/challenges/`);
 
   if (response.status === 200) return response.data;
 };

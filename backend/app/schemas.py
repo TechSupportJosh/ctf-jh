@@ -1,6 +1,6 @@
 from typing import Any, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from datetime import datetime, timezone
 
 
@@ -15,10 +15,16 @@ class ChallengeBase(BaseModel):
 
 class ChallengeCreate(ChallengeBase):
     flag: str
+    tags: str
 
 
 class Challenge(ChallengeBase):
     id: int
+    tags: List[str]
+
+    @validator("tags", pre=True)
+    def check_permissions(cls, value):
+        return value.split(",")
 
 
 class ChallengeAdmin(Challenge):
