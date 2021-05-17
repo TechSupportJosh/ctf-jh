@@ -1,27 +1,30 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+  <div class="container">
+    <div class="accordion accordion-flush" id="challenge-accordion">
+      <div class="accordion-item" v-for="challenge in challenges" :key="challenge.id">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="`#challenge-${challenge.id}`">
+            {{ challenge.title }} - {{ challenge.points }} points
+          </button>
+        </h2>
+        <div :id="`challenge-${challenge.id}`" class="accordion-collapse collapse" data-bs-parent="#challenge-accordion">
+          <div class="accordion-body">
+            {{ challenge.description }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
+import type { Challenge } from "./types/Challenge";
+import API from "./utils/api";
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-})
+const challenges = ref<Challenge[]>();
+
+onMounted(async () => {
+  challenges.value = await API.getChallenges();
+});
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
