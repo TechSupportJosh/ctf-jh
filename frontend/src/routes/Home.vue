@@ -34,6 +34,13 @@
                 </template>
               </div>
               <p>{{ challenge.description }}</p>
+              <p v-if="challenge.file_name">
+                <strong>Challenge File:</strong><br />File Name: <a :href="`/static/${challenge.file_name}`">{{ challenge.file_name }}</a
+                ><br />SHA256 Hash: {{ challenge.file_hash }}
+              </p>
+              <p v-if="challenge.challenge_url">
+                <strong>Challenge URL: </strong><a :href="challenge.challenge_url">{{ challenge.challenge_url }}</a>
+              </p>
               <hr />
               <template v-if="!getCompletedEntry(challenge.id)">
                 <label for="basic-url" class="form-label">Enter the flag from the challenge:</label>

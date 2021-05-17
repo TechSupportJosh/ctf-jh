@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 import Home from "../routes/Home.vue";
-import Admin from "../routes/Home.vue";
+import Admin from "../routes/Admin.vue";
 import Login from "../routes/Login.vue";
 import API from "../utils/api";
 
@@ -37,6 +37,8 @@ router.beforeEach(async (to, from) => {
 
   if (!user && to.path !== "/login") return "/login";
   if (user && to.path === "/login") return "/";
+
+  if (to.meta.requiresAdmin && !user?.is_admin) return "/";
 
   return true;
 });

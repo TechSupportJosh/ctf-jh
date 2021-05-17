@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     oauth_consumer_secret: str = None
     login_url: str = "http://localhost:3000/login"
     successful_login_url = "http://localhost:3000/"
+    admin_url = "http://localhost:3000/admin"
 
     class Config:
         env_file = ".env"

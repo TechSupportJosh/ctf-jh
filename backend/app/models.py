@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, DateTime, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.expression import true
+from sqlalchemy.sql.expression import null, true
 
 from .database import Base
 
@@ -23,13 +23,18 @@ class Challenge(Base):
     __tablename__ = "challenges"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String, index=True)
-    points = Column(Integer)
-    flag = Column(String)
-    tags = Column(String)
-    category = Column(String)
-    difficulty = Column(String)
+    title = Column(String, index=True, nullable=False)
+    description = Column(String, index=True, nullable=False)
+    points = Column(Integer, nullable=False)
+    flag = Column(String, nullable=False)
+    tags = Column(String, nullable=False)
+    category = Column(String, nullable=False)
+    difficulty = Column(String, nullable=False)
+
+    file_name = Column(String)
+    file_hash = Column(String)
+
+    challenge_url = Column(String)
 
 
 class CompletedChallenges(Base):

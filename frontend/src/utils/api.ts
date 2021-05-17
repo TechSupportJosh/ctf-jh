@@ -29,8 +29,15 @@ const submitFlag = async (challengeId: number, flag: string) => {
   return response.status === 200;
 };
 
+const getAdminChallenges = async () => {
+  const response = await client.get<AdminChallenge[]>(`/admin/challenges`);
+
+  if (response.status === 200) return response.data;
+};
+
 export default {
   getUser,
   getChallenges,
   submitFlag,
+  getAdminChallenges,
 };

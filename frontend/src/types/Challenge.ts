@@ -6,6 +6,9 @@ export interface Challenge {
   tags: string[];
   category: string;
   difficulty: string;
+  challenge_url?: string;
+  file_name?: string;
+  file_hash?: string;
 }
 
 export interface AdminChallenge extends Challenge {
