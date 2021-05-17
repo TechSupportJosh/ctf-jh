@@ -28,6 +28,7 @@ class Challenge(Base):
     points = Column(Integer)
     flag = Column(String)
     tags = Column(String)
+    category = Column(String)
 
 
 class CompletedChallenges(Base):

@@ -8,6 +8,7 @@ class ChallengeBase(BaseModel):
     title: str
     description: str
     points: int
+    category: str
 
     class Config:
         orm_mode = True

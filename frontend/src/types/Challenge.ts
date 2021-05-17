@@ -4,6 +4,7 @@ export interface Challenge {
   description: string;
   points: number;
   tags: string[];
+  category: string;
 }
 
 export interface AdminChallenge extends Challenge {
