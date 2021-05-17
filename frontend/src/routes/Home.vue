@@ -33,7 +33,7 @@
                   >&nbsp;
                 </template>
               </div>
-              <p>{{ challenge.description }}</p>
+              <p style="white-space: pre-line">{{ challenge.description }}</p>
               <p v-if="challenge.file_name">
                 <strong>Challenge File:</strong><br />File Name: <a :href="`/static/${challenge.file_name}`">{{ challenge.file_name }}</a
                 ><br />SHA256 Hash: {{ challenge.file_hash }}
