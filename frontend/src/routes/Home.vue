@@ -44,9 +44,16 @@
               <hr />
               <template v-if="!getCompletedEntry(challenge.id)">
                 <label for="basic-url" class="form-label">Enter the flag from the challenge:</label>
-                <div class="input-group mb-3">
-                  <input type="text" class="form-control" placeholder="WMG{AAAAAAAA}" v-model="challengeFlags[challenge.id]" />
+                <div class="input-group mb-3 has-validation">
+                  <input
+                    type="text"
+                    class="form-control"
+                    :class="{ 'is-invalid': challengeErrors[challenge.id] }"
+                    placeholder="WMG{AAAAAAAA}"
+                    v-model="challengeFlags[challenge.id]"
+                  />
                   <button class="btn btn-success" type="button" @click="submitFlag(challenge.id)">Submit</button>
+                  <div class="invalid-feedback">{{ challengeErrors[challenge.id] }}</div>
                 </div>
               </template>
               <template v-else> Completed at {{ getCompletedAt(challenge.id) }} </template>
@@ -68,8 +75,8 @@ const user = ref<User>();
 
 const challenges = ref<Challenge[]>();
 const categorisedChallenges = ref<Record<string, Challenge[]>>({});
-
 const challengeFlags = reactive<Record<number, string>>({});
+const challengeErrors = reactive<Record<number, string>>({});
 
 onMounted(async () => {
   user.value = await API.getUser();
@@ -97,9 +104,24 @@ const getCompletedAt = (challengeId: number) => {
 const submitFlag = async (challengeId: number) => {
   const response = await API.submitFlag(challengeId, challengeFlags[challengeId]);
 
-  // TODO: Proper error message and only getUser() if successful
-  if (!response) alert("wrong flag bro " + response.toString());
-  user.value = await API.getUser();
+  switch (response) {
+    case 200:
+      user.value = await API.getUser();
+      break;
+    case 429:
+      challengeErrors[challengeId] = "Slow down! Try again in a minute.";
+      break;
+    case 400:
+      challengeErrors[challengeId] = "Incorrect flag, try again!";
+      break;
+    default:
+      challengeErrors[challengeId] = "Something went wrong...";
+      break;
+  }
+
+  setTimeout(() => {
+    challengeErrors[challengeId] = "";
+  }, 4500);
 };
 
 const difficultyToClass = (difficulty: string) => {

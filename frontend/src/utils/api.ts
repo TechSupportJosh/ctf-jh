@@ -26,7 +26,7 @@ const submitFlag = async (challengeId: number, flag: string) => {
     flag: flag,
   });
 
-  return response.status === 200;
+  return response.status;
 };
 
 const getAdminChallenges = async () => {
