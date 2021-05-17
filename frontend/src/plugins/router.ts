@@ -4,6 +4,7 @@ import Home from "../routes/Home.vue";
 import Admin from "../routes/Admin.vue";
 import Login from "../routes/Login.vue";
 import API from "../utils/api";
+import config from "../config";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -24,7 +25,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(config.basePath),
   routes: routes,
 });
 

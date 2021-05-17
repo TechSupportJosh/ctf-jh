@@ -54,7 +54,7 @@
   <div class="modal" id="challengeModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <form action="/api/admin/challenges" method="POST" enctype="multipart/form-data">
+        <form :action="`${config.basePath}api/admin/challenges`" method="POST" enctype="multipart/form-data">
           <div class="modal-header">
             <h5 class="modal-title">Creating or Editing Challenge</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -121,6 +121,7 @@
 import { onMounted, reactive, ref } from "vue";
 import type { AdminChallenge } from "../types/Challenge";
 import API from "../utils/api";
+import config from "../config";
 
 const challenges = ref<AdminChallenge[]>();
 const challengeTemplate = {

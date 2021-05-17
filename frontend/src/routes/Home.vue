@@ -6,7 +6,7 @@
       </div>
       <div class="col-4 d-flex align-items-center justify-content-end">
         <div>
-          <a href="/api/auth/logout">Log Out</a>
+          <a :href="`${config.basePath}api/auth/logout`">Log Out</a>
         </div>
       </div>
     </div>
@@ -70,6 +70,7 @@ import { onMounted, ref, reactive } from "vue";
 import type { Challenge } from "../types/Challenge";
 import type { User } from "../types/User";
 import API from "../utils/api";
+import config from "../config";
 
 const user = ref<User>();
 

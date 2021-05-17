@@ -1,9 +1,10 @@
 import axios from "axios";
 import { Challenge, AdminChallenge } from "../types/Challenge";
 import { User } from "../types/User";
+import config from "../config";
 
 const client = axios.create({
-  baseURL: "/api",
+  baseURL: config.basePath + "api",
   validateStatus: undefined,
   withCredentials: true,
 });
