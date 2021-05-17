@@ -1,5 +1,6 @@
 from fastapi.exceptions import HTTPException
 from sqlalchemy.sql.expression import and_
+from fastapi import Request
 from starlette.requests import HTTPConnection
 from app.middleware import Authenticated, GetUser
 from typing import List
@@ -8,6 +9,7 @@ from fastapi.params import Depends
 from sqlalchemy.orm.session import Session
 from app.depends import get_db
 from app import schemas, models
+from app.main import limiter
 import datetime
 
 router = APIRouter(
@@ -23,12 +25,14 @@ def get_all_challenges(db: Session = Depends(get_db)):
 
 
 @router.post("/submit", response_model={})
+@limiter.limit("5/minute")
 def submit_challenge(
-    request: schemas.SubmitChallenge,
+    request: Request,
+    submission: schemas.SubmitChallenge,
     db: Session = Depends(get_db),
     user: models.User = Depends(GetUser()),
 ):
-    challenge = db.query(models.Challenge).get(request.challenge_id)
+    challenge = db.query(models.Challenge).get(submission.challenge_id)
 
     if challenge is None:
         raise HTTPException(404)
@@ -37,7 +41,7 @@ def submit_challenge(
         db.query(models.CompletedChallenges)
         .filter(
             and_(
-                models.CompletedChallenges.challenge_id == request.challenge_id,
+                models.CompletedChallenges.challenge_id == submission.challenge_id,
                 models.CompletedChallenges.user_id == user.user_id,
             )
         )
@@ -47,16 +51,13 @@ def submit_challenge(
     if completed_challenge_entry is not None:
         raise HTTPException(400, "Challenge has already been completed.")
 
-    print(challenge.flag)
-    print(request.flag)
-
-    if challenge.flag != request.flag:
+    if challenge.flag != submission.flag:
         raise HTTPException(400, "Incorrect flag.")
 
     db.add(
         models.CompletedChallenges(
             user_id=user.user_id,
-            challenge_id=request.challenge_id,
+            challenge_id=submission.challenge_id,
             time_completed=int(
                 datetime.datetime.now(tz=datetime.timezone.utc).timestamp()
             ),

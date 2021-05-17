@@ -2,6 +2,10 @@ from app.settings import get_settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
 from . import models
 from .database import engine
 from authlib.integrations.starlette_client import OAuth
@@ -21,6 +25,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(SessionMiddleware, secret_key="some-random-string")
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 from .routers import auth, challenges, admin, me
 
