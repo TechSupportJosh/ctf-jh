@@ -12,7 +12,8 @@
               data-bs-toggle="collapse"
               :data-bs-target="`#challenge-${challenge.id}`"
             >
-              {{ getCompletedEntry(challenge.id) ? "✅" : "" }} {{ challenge.title }} - {{ challenge.points }} points
+              {{ getCompletedEntry(challenge.id) ? "✅" : "" }} {{ challenge.title }} - {{ challenge.points }} points&nbsp;&nbsp;
+              <span class="badge rounded-pill" :class="difficultyToClass(challenge.difficulty)">{{ challenge.difficulty }}</span>
             </button>
           </h2>
           <div :id="`challenge-${challenge.id}`" class="accordion-collapse collapse" data-bs-parent="#challenge-accordion">
@@ -84,5 +85,17 @@ const submitFlag = async (challengeId: number) => {
   const response = await API.submitFlag(challengeId, challengeFlags[challengeId]);
 
   if (!response) alert("wrong flag bro " + response.toString());
+};
+
+const difficultyToClass = (difficulty: string) => {
+  return (
+    {
+      "Very Easy": "bg-info",
+      Easy: "bg-success",
+      Medium: "bg-warning",
+      Hard: "bg-danger",
+      "Very Hard": "bg-dark",
+    }[difficulty] ?? ""
+  );
 };
 </script>
