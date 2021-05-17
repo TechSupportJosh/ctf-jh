@@ -1,3 +1,3 @@
 export default {
-  basePath: import.meta.env.PROD ? "/intakectf/" : "/",
+  basePath: import.meta.env.BASE_URL,
 };

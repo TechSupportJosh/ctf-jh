@@ -6,7 +6,7 @@
       </div>
       <div class="col-4 d-flex align-items-center justify-content-end">
         <div>
-          <a href="/api/auth/logout">Log Out</a>
+          <a :href="`${config.basePath}api/auth/logout`">Log Out</a>
         </div>
       </div>
     </div>
