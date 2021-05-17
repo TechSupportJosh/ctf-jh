@@ -8,12 +8,15 @@ from .database import Base
 class User(Base):
     __tablename__ = "users"
 
-    warwick_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, primary_key=True)
     firstname = Column(String)
     surname = Column(String)
     session_token = Column(String)
-    sensor_units = relationship("CompletedChallenges", backref="user", cascade="all, delete")
     is_admin = Column(Boolean)
+
+    completed_challenges = relationship(
+        "CompletedChallenges", backref="user", cascade="all, delete"
+    )
 
 
 class Challenge(Base):
@@ -30,5 +33,5 @@ class CompletedChallenges(Base):
     __tablename__ = "completed_challenges"
 
     challenge_id = Column(Integer, ForeignKey("challenges.id"), primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.warwick_id"), primary_key=True)
-    time_completed = Column(DateTime)
+    user_id = Column(Integer, ForeignKey("users.user_id"), primary_key=True)
+    time_completed = Column(Integer)

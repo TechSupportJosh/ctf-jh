@@ -22,24 +22,26 @@ app.add_middleware(
 )
 app.add_middleware(SessionMiddleware, secret_key="some-random-string")
 
-from .routers import auth, challenges, admin
+from .routers import auth, challenges, admin, me
+
 app.include_router(auth.router)
 app.include_router(challenges.router)
 app.include_router(admin.router)
+app.include_router(me.router)
 
 settings = get_settings()
 
 oauth.register(
-    name="warwick", 
+    name="warwick",
     client_id=settings.oauth_consumer_key,
     client_secret=settings.oauth_consumer_secret,
-    request_token_url="https://websignon.warwick.ac.uk/oauth/requestToken?scope=" + urllib.parse.quote("urn:websignon.warwick.ac.uk:sso:service"),
+    request_token_url="https://websignon.warwick.ac.uk/oauth/requestToken?scope="
+    + urllib.parse.quote("urn:websignon.warwick.ac.uk:sso:service"),
     access_token_url="https://websignon.warwick.ac.uk/oauth/accessToken",
     authorize_url="https://websignon.warwick.ac.uk/oauth/authorise",
-    client_kwargs={
-        "signature_method": "HMAC-SHA1" 
-    }
+    client_kwargs={"signature_method": "HMAC-SHA1"},
 )
+
 
 @app.get("/")
 async def root():

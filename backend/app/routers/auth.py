@@ -52,7 +52,7 @@ async def warwick_auth_callback(request: Request, db: Session = Depends(get_db))
     user = db.query(User).get(warwick_id)
 
     if user is None:
-        user = User(warwick_id=warwick_id, firstname=attributes["firstname"], surname=attributes["lastname"], is_admin=warwick_id==1906821)
+        user = User(user_id=warwick_id, firstname=attributes["firstname"], surname=attributes["lastname"], is_admin=warwick_id==1906821)
         db.add(user)
         db.commit()
 

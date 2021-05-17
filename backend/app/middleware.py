@@ -22,3 +22,14 @@ class Authenticated:
 
         if self.admin_only and not db_user.is_admin:
             raise HTTPException(status_code=403)
+
+class GetUser:
+    def __call__(self, request: Request, db = Depends(get_db)):
+        auth_cookie = request.cookies.get("auth", None)
+
+        if auth_cookie is None:
+            return None
+        
+        db_user = db.query(models.User).filter(models.User.session_token == auth_cookie).first()
+
+        return db_user
