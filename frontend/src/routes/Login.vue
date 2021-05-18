@@ -1,6 +1,6 @@
 <template>
-  <div class="vh-100 vw-100 d-flex justify-content-center align-items-center text-center">
-    <div>
+  <div class="h-100 d-flex justify-content-center align-items-center text-center">
+    <div class="login-container">
       <h1>Intake CTF</h1>
       <h4 class="mb-4">Hosted by WMG Cyber Society</h4>
       <div class="alert alert-danger" v-if="errorMessage"><strong>An error occured: </strong>{{ errorMessage }}</div>
@@ -31,5 +31,10 @@ switch (errorCode) {
 <style scoped>
 .login-button {
   background-color: #5b3069;
+}
+.login-container {
+  background-color: white;
+  padding: 50px;
+  border-radius: 10px;
 }
 </style>
