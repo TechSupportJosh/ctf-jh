@@ -7,6 +7,7 @@ export interface Challenge {
   category: string;
   difficulty: string;
   education_links: string[];
+  hint: string;
   challenge_url?: string;
   file_name?: string;
   file_hash?: string;

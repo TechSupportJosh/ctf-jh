@@ -31,6 +31,7 @@ class Challenge(Base):
     category = Column(String, nullable=False)
     difficulty = Column(String, nullable=False)
     education_links = Column(String, nullable=False)
+    hint = Column(String, nullable=False)
 
     file_name = Column(String)
     file_hash = Column(String)

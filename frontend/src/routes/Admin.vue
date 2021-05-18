@@ -100,6 +100,10 @@
               </select>
             </div>
             <div class="mb-3">
+              <label class="form-label">Hint</label>
+              <input type="text" class="form-control" name="hint" v-model="editChallenge.hint" required />
+            </div>
+            <div class="mb-3">
               <label class="form-label">Tags (comma seperated)</label>
               <input type="text" class="form-control" name="tags" v-model="editChallenge.tags" required />
             </div>
@@ -142,6 +146,7 @@ const challengeTemplate = {
   points: 10,
   tags: [],
   category: "",
+  hint: "",
   education_links: [],
   difficulty: "Easy",
   challenge_url: "",

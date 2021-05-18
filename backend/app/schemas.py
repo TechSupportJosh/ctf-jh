@@ -10,6 +10,7 @@ class ChallengeBase(BaseModel):
     points: int
     category: str
     difficulty: str
+    hint: str
     challenge_url: Optional[str]
     file_name: Optional[str]
     file_hash: Optional[str]

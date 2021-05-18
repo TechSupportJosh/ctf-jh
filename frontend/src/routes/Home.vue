@@ -52,7 +52,10 @@
               </p>
               <hr />
               <template v-if="!getCompletedEntry(challenge.id)">
-                <label for="basic-url" class="form-label">Enter the flag from the challenge:</label>
+                <label for="basic-url" class="form-label">Enter the flag from the challenge (<a @click.prevent="showChallengeHint[challenge.id] = !showChallengeHint[challenge.id]" href="#">Need a hint?</a>):</label>
+                <div class="mb-2" v-if="showChallengeHint[challenge.id]">
+                  <strong>Hint: </strong>{{challenge.hint}}
+                </div>
                 <div class="input-group mb-3 has-validation">
                   <input
                     type="text"
@@ -88,6 +91,7 @@ const challenges = ref<Challenge[]>();
 const categorisedChallenges = ref<Record<string, Challenge[]>>({});
 const challengeFlags = reactive<Record<number, string>>({});
 const challengeErrors = reactive<Record<number, string>>({});
+const showChallengeHint = reactive<Record<number, boolean>>({});
 
 onMounted(async () => {
   user.value = await API.getUser();
