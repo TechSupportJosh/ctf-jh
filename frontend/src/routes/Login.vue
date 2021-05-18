@@ -1,5 +1,5 @@
 <template>
-  <div class="h-100 d-flex justify-content-center align-items-center text-center">
+  <div class="vh-100 d-flex justify-content-center align-items-center text-center">
     <div class="login-container">
       <h1>Intake CTF</h1>
       <h4 class="mb-4">Hosted by WMG Cyber Society</h4>
