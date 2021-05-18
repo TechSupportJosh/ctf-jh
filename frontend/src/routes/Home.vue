@@ -11,6 +11,25 @@
         </div>
       </div>
     </div>
+     <hr />
+    <div class="row">
+      <div class="col-sm-4 offset-2">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-text">{{ pointTotal }}</h5>
+            <p class="card-text text-muted">Total Points</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-text">{{ user?.completed_challenges.length ?? 0 }}</h5>
+            <p class="card-text text-muted">Flags Submitted</p>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-for="(challenges, category) in categorisedChallenges" :key="category" class="mb-4">
       <h3>{{ category }}</h3>
       <div class="accordion" id="challenge-accordion">
@@ -78,7 +97,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive, computed } from "vue";
 import type { Challenge } from "../types/Challenge";
 import type { User } from "../types/User";
 import API from "../utils/api";
@@ -103,6 +122,12 @@ onMounted(async () => {
 
     categorisedChallenges.value[challenge.category].push(challenge);
   });
+});
+
+const pointTotal = computed(() => {
+  return user.value?.completed_challenges.map((completedChallenge, total) => {
+    return challenges.value?.find((challenge) => challenge.id === completedChallenge.challenge_id)?.points ?? 0;
+  }).reduce((value, total) => total + value);
 });
 
 const getCompletedEntry = (challengeId: number) => {

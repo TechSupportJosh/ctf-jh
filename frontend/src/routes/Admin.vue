@@ -11,6 +11,7 @@
         </div>
       </div>
     </div>
+    <hr />
     <div class="row">
       <div class="col-sm-4 offset-2">
         <div class="card text-center">
@@ -29,7 +30,6 @@
         </div>
       </div>
     </div>
-    <hr />
     <h2>Challenges</h2>
     <table class="table align-middle">
       <thead>
