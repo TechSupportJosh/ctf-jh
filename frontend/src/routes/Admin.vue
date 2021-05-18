@@ -102,6 +102,10 @@
               <textarea class="form-control" name="description" v-model="editChallenge.description" required />
             </div>
             <div class="mb-3">
+              <label class="form-label">Challenge Author</label>
+              <input type="text" class="form-control" name="author" v-model="editChallenge.author" required />
+            </div>
+            <div class="mb-3">
               <label class="form-label">Challenge Description Preview:</label>
               <div v-html="descriptionText" style="white-space: pre-line"></div>
             </div>
@@ -173,6 +177,7 @@ const challengeTemplate: AdminChallenge = {
   id: -1,
   title: "",
   description: "",
+  author: "",
   flag: "",
   points: 10,
   tags: [],

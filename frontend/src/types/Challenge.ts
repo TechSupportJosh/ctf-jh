@@ -2,6 +2,7 @@ export interface Challenge {
   id: number;
   title: string;
   description: string;
+  author: string;
   points: number;
   tags: string[];
   category: string;

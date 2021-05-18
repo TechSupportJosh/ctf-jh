@@ -95,7 +95,8 @@
                   <div class="invalid-feedback">{{ challengeErrors[challenge.id] }}</div>
                 </div>
               </template>
-              <template v-else> Completed at {{ getCompletedAt(challenge.id) }} </template>
+              <div class="text-muted"><strong>Challenge Author: </strong>{{ challenge.author }}</div>
+              <template v-if="getCompletedEntry(challenge.id)"> Completed at {{ getCompletedAt(challenge.id) }} </template>
             </div>
           </div>
         </div>
@@ -133,15 +134,13 @@ const pointTotal = computed(() => {
     .map((completedChallenge) => {
       return challenges.value?.find((challenge) => challenge.id === completedChallenge.challenge_id)?.points ?? 0;
     })
-    .reduce((value, total) => total + value);
+    .reduce((value, total) => total + value, 0);
 });
 
 const filteredChallenges = computed(() => {
   if (!hideCompletedChallenges.value) return challenges.value;
 
-  return challenges.value.filter(
-    (challenge) => !user.value?.completed_challenges.find((completedChallenge) => completedChallenge.challenge_id === challenge.id)
-  );
+  return challenges.value.filter((challenge) => !getCompletedEntry(challenge.id));
 });
 
 const categorisedChallenges = computed(() => {

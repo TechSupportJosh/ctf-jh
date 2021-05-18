@@ -27,6 +27,7 @@ class Challenge(Base):
 
     title = Column(String, index=True, nullable=False)
     description = Column(String, index=True, nullable=False)
+    author = Column(String, index=True, nullable=False)
     points = Column(Integer, nullable=False)
     flag = Column(String, nullable=False)
     tags = Column(String, nullable=False)

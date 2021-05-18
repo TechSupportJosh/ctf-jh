@@ -54,6 +54,7 @@ async def create_challenge(
     id: int = Form(-1),
     title: str = Form(...),
     description: str = Form(...),
+    author: str = Form(...),
     flag: str = Form(...),
     category: str = Form(...),
     tags: str = Form(...),
@@ -70,6 +71,7 @@ async def create_challenge(
         challenge = models.Challenge(
             title=title,
             description=description,
+            author=author,
             category=category,
             flag=flag,
             tags=tags,
@@ -89,6 +91,7 @@ async def create_challenge(
         # Lord forgive me for I have sinned
         challenge.title = title
         challenge.description = description
+        challenge.author = author
         challenge.category = category
         challenge.flag = flag
         challenge.tags = tags

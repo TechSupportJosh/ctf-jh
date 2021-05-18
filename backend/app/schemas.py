@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 class ChallengeBase(BaseModel):
     title: str
     description: str
+    author: str
     points: int
     category: str
     difficulty: str
