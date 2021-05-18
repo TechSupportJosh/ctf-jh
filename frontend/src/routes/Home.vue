@@ -4,8 +4,9 @@
       <div class="col-8">
         <h1>Intake CTF</h1>
       </div>
-      <div class="col-4 d-flex align-items-center justify-content-end">
+      <div class="col-4 d-flex align-items-center justify-content-end" style="flex-">
         <div>
+          <template v-if="user?.is_admin"> <router-link to="/admin">Admin Panel</router-link>&nbsp;&nbsp;</template>
           <a :href="`${config.basePath}api/auth/logout`">Log Out</a>
         </div>
       </div>
