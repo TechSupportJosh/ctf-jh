@@ -34,6 +34,7 @@
       <input class="form-check-input" type="checkbox" v-model="hideCompletedChallenges" />
       <label class="form-check-label">Hide completed challenges</label>
     </div>
+    <hr />
     <div v-for="(challenges, category) in categorisedChallenges" :key="category" class="mb-4">
       <h3>{{ category }}</h3>
       <div class="accordion" id="challenge-accordion">
@@ -103,6 +104,7 @@
         </div>
       </div>
     </div>
+    <div v-if="!filteredChallenges.length" class="text-center text-muted">No challenges available...</div>
   </div>
 </template>
 
