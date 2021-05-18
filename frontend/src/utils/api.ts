@@ -36,9 +36,16 @@ const getAdminChallenges = async () => {
   if (response.status === 200) return response.data;
 };
 
+const deleteChallenge = async (challengeId: number) => {
+  const response = await client.delete(`/admin/challenges/${challengeId}`);
+
+  return response.status === 200;
+};
+
 export default {
   getUser,
   getChallenges,
   submitFlag,
   getAdminChallenges,
+  deleteChallenge,
 };

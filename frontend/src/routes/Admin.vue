@@ -46,7 +46,7 @@
             </button>
           </td>
           <td>
-            <button class="btn btn-danger w-100">Delete</button>
+            <button class="btn btn-danger w-100" @click="deleteChallenge(challenge)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -136,12 +136,12 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from "vue";
-import type { AdminChallenge } from "../types/Challenge";
+import type { AdminChallenge, Challenge } from "../types/Challenge";
 import API from "../utils/api";
 import config from "../config";
 import marked from "marked";
 
-const challenges = ref<AdminChallenge[]>();
+const challenges = ref<AdminChallenge[]>([]);
 const challengeTemplate = {
   id: -1,
   title: "",
@@ -160,8 +160,18 @@ const challengeTemplate = {
 const editChallenge = ref<AdminChallenge>(challengeTemplate);
 
 onMounted(async () => {
-  challenges.value = await API.getAdminChallenges();
+  const response = await API.getAdminChallenges();
+
+  if (response) challenges.value = response;
 });
+
+const deleteChallenge = async ({ id, title }: Challenge) => {
+  if (confirm(`Are you sure you want to delete ${title}?`)) {
+    const response = await API.deleteChallenge(id);
+
+    if (response) challenges.value = challenges.value.filter((challenge) => challenge.id !== id);
+  }
+};
 
 const descriptionText = computed(() => {
   return marked.parseInline(editChallenge.value.description);

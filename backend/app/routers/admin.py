@@ -1,3 +1,4 @@
+from fastapi.exceptions import HTTPException
 from app.settings import get_settings
 from fastapi.datastructures import UploadFile
 from starlette.responses import RedirectResponse
@@ -108,3 +109,19 @@ async def create_challenge(
     db.commit()
 
     return RedirectResponse(settings.admin_url, status_code=303)
+
+
+@router.delete("/challenges/{challenge_id}", response_model={})
+async def delete_challenge(
+    challenge_id: int,
+    db: Session = Depends(get_db),
+):
+    challenge = db.query(models.Challenge).get(challenge_id)
+
+    if challenge is None:
+        raise HTTPException(404)
+
+    db.delete(challenge)
+    db.commit()
+
+    return {}
