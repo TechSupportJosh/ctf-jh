@@ -41,6 +41,7 @@ class Challenge(ChallengeBase):
 
 class ChallengeAdmin(Challenge):
     flag: str
+    disabled: bool
 
 
 class SubmitChallenge(BaseModel):

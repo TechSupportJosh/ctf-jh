@@ -65,6 +65,10 @@
               <label class="form-label">Challenge ID</label>
               <input type="text" readonly class="form-control" name="id" v-model="editChallenge.id" />
             </div>
+            <div class="mb-3 form-check">
+              <input class="form-check-input" type="checkbox" name="disabled" v-model="editChallenge.disabled" />
+              <label class="form-check-label"> Disabled </label>
+            </div>
             <div class="mb-3">
               <label class="form-label">Challenge Title</label>
               <input type="text" class="form-control" name="title" v-model="editChallenge.title" required />
@@ -147,6 +151,7 @@ const challengeTemplate = {
   tags: [],
   category: "",
   hint: "",
+  disabled: false,
   education_links: [],
   difficulty: "Easy",
   challenge_url: "",

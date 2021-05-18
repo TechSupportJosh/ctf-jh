@@ -49,6 +49,7 @@ async def create_challenge(
     points: int = Form(...),
     difficulty: str = Form(...),
     hint: str = Form(...),
+    disabled: bool = Form(False),
     education_links: str = Form(...),
     challenge_url: str = Form(""),
     challenge_file: UploadFile = File(None),
@@ -64,6 +65,7 @@ async def create_challenge(
             points=points,
             difficulty=difficulty,
             hint=hint,
+            disabled=disabled,
             education_links=education_links,
             challenge_url=challenge_url,
         )
@@ -82,6 +84,7 @@ async def create_challenge(
         challenge.points = points
         challenge.difficulty = difficulty
         challenge.hint = hint
+        challenge.disabled = disabled
         challenge.education_links = education_links
         challenge.challenge_url = challenge_url
 

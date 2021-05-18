@@ -15,6 +15,7 @@ export interface Challenge {
 
 export interface AdminChallenge extends Challenge {
   flag: string;
+  disabled: boolean;
 }
 
 export interface CompletedChallenge {

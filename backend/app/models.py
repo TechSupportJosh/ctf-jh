@@ -23,6 +23,8 @@ class Challenge(Base):
     __tablename__ = "challenges"
 
     id = Column(Integer, primary_key=True, index=True)
+    disabled = Column(Boolean, nullable=False)
+
     title = Column(String, index=True, nullable=False)
     description = Column(String, index=True, nullable=False)
     points = Column(Integer, nullable=False)

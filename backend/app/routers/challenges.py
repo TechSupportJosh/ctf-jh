@@ -21,7 +21,7 @@ router = APIRouter(
 
 @router.get("/", response_model=List[schemas.Challenge])
 def get_all_challenges(db: Session = Depends(get_db)):
-    return db.query(models.Challenge).all()
+    return db.query(models.Challenge).filter(models.Challenge.disabled == False).all()
 
 
 @router.post("/submit", response_model={})
@@ -32,7 +32,11 @@ def submit_challenge(
     db: Session = Depends(get_db),
     user: models.User = Depends(GetUser()),
 ):
-    challenge = db.query(models.Challenge).get(submission.challenge_id)
+    challenge = (
+        db.query(models.Challenge)
+        .filter(models.Challenge.disabled == False)
+        .get(submission.challenge_id)
+    )
 
     if challenge is None:
         raise HTTPException(404)
