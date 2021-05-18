@@ -69,8 +69,12 @@
               <input type="text" class="form-control" name="title" v-model="editChallenge.title" required />
             </div>
             <div class="mb-3">
-              <label class="form-label">Challenge Description</label>
+              <label class="form-label">Challenge Description (supports Markdown)</label>
               <textarea class="form-control" name="description" v-model="editChallenge.description" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Challenge Description Preview:</label>
+              <div v-html="descriptionText" style="white-space: pre-line"></div>
             </div>
             <div class="mb-3">
               <label class="form-label">Flag (include WMG{})</label>
@@ -104,7 +108,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Challenge File (Current File: {{ editChallenge.file_name || "N/A" }})</label>
-              <input class="form-control" type="file" name="challenge_file" :value="editChallenge.file_name" />
+              <input class="form-control" type="file" name="challenge_file" />
             </div>
           </div>
           <div class="modal-footer">
@@ -118,10 +122,11 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import type { AdminChallenge } from "../types/Challenge";
 import API from "../utils/api";
 import config from "../config";
+import marked from "marked";
 
 const challenges = ref<AdminChallenge[]>();
 const challengeTemplate = {
@@ -140,5 +145,9 @@ const editChallenge = ref<AdminChallenge>(challengeTemplate);
 
 onMounted(async () => {
   challenges.value = await API.getAdminChallenges();
+});
+
+const descriptionText = computed(() => {
+  return marked.parseInline(editChallenge.value.description);
 });
 </script>

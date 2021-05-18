@@ -34,7 +34,7 @@
                   >&nbsp;
                 </template>
               </div>
-              <p style="white-space: pre-line">{{ challenge.description }}</p>
+              <div class="mb-3 challenge-description" v-html="marked.parseInline(challenge.description)"></div>
               <p v-if="challenge.file_name">
                 <strong>Challenge File:</strong><br />File Name: <a :href="`/static/${challenge.file_name}`">{{ challenge.file_name }}</a
                 ><br />SHA256 Hash: {{ challenge.file_hash }}
@@ -72,6 +72,7 @@ import type { Challenge } from "../types/Challenge";
 import type { User } from "../types/User";
 import API from "../utils/api";
 import config from "../config";
+import marked from "marked";
 
 const user = ref<User>();
 
@@ -138,3 +139,9 @@ const difficultyToClass = (difficulty: string) => {
   );
 };
 </script>
+
+<style scoped>
+.challenge-description {
+  white-space: pre-line;
+}
+</style>
