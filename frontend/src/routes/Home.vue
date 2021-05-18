@@ -107,7 +107,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, reactive, computed } from "vue";
+import { onMounted, ref, reactive, computed, watch } from "vue";
 import type { Challenge } from "../types/Challenge";
 import type { User } from "../types/User";
 import API from "../utils/api";
@@ -120,7 +120,7 @@ const challenges = ref<Challenge[]>([]);
 const challengeFlags = reactive<Record<number, string>>({});
 const challengeErrors = reactive<Record<number, string>>({});
 const showChallengeHint = reactive<Record<number, boolean>>({});
-const hideCompletedChallenges = ref(false);
+const hideCompletedChallenges = ref(localStorage.getItem("hideCompletedChallenges") === "1");
 
 onMounted(async () => {
   user.value = await API.getUser();
@@ -128,6 +128,10 @@ onMounted(async () => {
   const response = await API.getChallenges();
 
   if (response) challenges.value = response;
+});
+
+watch(hideCompletedChallenges, (newValue) => {
+  localStorage.setItem("hideCompletedChallenges", newValue ? "1" : "0");
 });
 
 const pointTotal = computed(() => {
