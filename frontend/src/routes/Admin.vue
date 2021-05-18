@@ -28,6 +28,7 @@
           <th>Category</th>
           <th></th>
           <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -44,6 +45,9 @@
             >
               Edit
             </button>
+          </td>
+          <td>
+            <button class="btn btn-warning w-100" @click="deleteChallengeSubmissions(challenge)">Clear Submissions</button>
           </td>
           <td>
             <button class="btn btn-danger w-100" @click="deleteChallenge(challenge)">Delete</button>
@@ -164,6 +168,12 @@ onMounted(async () => {
 
   if (response) challenges.value = response;
 });
+
+const deleteChallengeSubmissions = async ({ id, title }: Challenge) => {
+  if (confirm(`Are you sure you want to delete ${title}'s submissions?`)) {
+    const response = await API.deleteChallengeSubmissions(id);
+  }
+};
 
 const deleteChallenge = async ({ id, title }: Challenge) => {
   if (confirm(`Are you sure you want to delete ${title}?`)) {

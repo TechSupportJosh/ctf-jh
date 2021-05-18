@@ -125,3 +125,25 @@ async def delete_challenge(
     db.commit()
 
     return {}
+
+
+@router.delete("/challenges/{challenge_id}/submissions", response_model={})
+async def delete_challenge_submissions(
+    challenge_id: int,
+    db: Session = Depends(get_db),
+):
+    challenge = db.query(models.Challenge).get(challenge_id)
+
+    if challenge is None:
+        raise HTTPException(404)
+
+    for submission in (
+        db.query(models.CompletedChallenges)
+        .filter(models.CompletedChallenges.challenge_id == challenge_id)
+        .all()
+    ):
+        db.delete(submission)
+
+    db.commit()
+
+    return {}

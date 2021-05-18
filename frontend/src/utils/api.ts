@@ -42,10 +42,17 @@ const deleteChallenge = async (challengeId: number) => {
   return response.status === 200;
 };
 
+const deleteChallengeSubmissions = async (challengeId: number) => {
+  const response = await client.delete(`/admin/challenges/${challengeId}/submissions`);
+
+  return response.status === 200;
+};
+
 export default {
   getUser,
   getChallenges,
   submitFlag,
   getAdminChallenges,
   deleteChallenge,
+  deleteChallengeSubmissions,
 };
