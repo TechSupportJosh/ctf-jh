@@ -11,8 +11,8 @@
         </div>
       </div>
     </div>
-     <hr />
-    <div class="row">
+    <hr />
+    <div class="row mb-4">
       <div class="col-sm-4 offset-2">
         <div class="card text-center">
           <div class="card-body">
@@ -29,6 +29,10 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="form-check form-switch mb-1">
+      <input class="form-check-input" type="checkbox" v-model="hideCompletedChallenges" />
+      <label class="form-check-label">Hide completed challenges</label>
     </div>
     <div v-for="(challenges, category) in categorisedChallenges" :key="category" class="mb-4">
       <h3>{{ category }}</h3>
@@ -54,14 +58,14 @@
                 </template>
               </div>
               <div class="mb-3 challenge-description" v-html="marked.parseInline(challenge.description)"></div>
-              <p v-if="challenge.education_links">
+              <div v-if="challenge.education_links">
                 <strong>Learning Resources: </strong>
                 <ul>
                   <li v-for="link in challenge.education_links">
-                    <a :href="link">{{link}}</a>
+                    <a :href="link">{{ link }}</a>
                   </li>
                 </ul>
-              </p>
+              </div>
               <p v-if="challenge.file_name">
                 <strong>Challenge File:</strong><br />File Name: <a :href="`/static/${challenge.file_name}`">{{ challenge.file_name }}</a
                 ><br />SHA256 Hash: {{ challenge.file_hash }}
@@ -71,10 +75,14 @@
               </p>
               <hr />
               <template v-if="!getCompletedEntry(challenge.id)">
-                <label for="basic-url" class="form-label">Enter the flag from the challenge (<a @click.prevent="showChallengeHint[challenge.id] = !showChallengeHint[challenge.id]" href="#">Need a hint?</a>):</label>
-                <div class="mb-2" v-if="showChallengeHint[challenge.id]">
-                  <strong>Hint: </strong>{{challenge.hint}}
-                </div>
+                <label for="basic-url" class="form-label"
+                  >Enter the flag from the challenge (<a
+                    @click.prevent="showChallengeHint[challenge.id] = !showChallengeHint[challenge.id]"
+                    href="#"
+                    >Need a hint?</a
+                  >):</label
+                >
+                <div class="mb-2" v-if="showChallengeHint[challenge.id]"><strong>Hint: </strong>{{ challenge.hint }}</div>
                 <div class="input-group mb-3 has-validation">
                   <input
                     type="text"
@@ -106,28 +114,46 @@ import marked from "marked";
 
 const user = ref<User>();
 
-const challenges = ref<Challenge[]>();
-const categorisedChallenges = ref<Record<string, Challenge[]>>({});
+const challenges = ref<Challenge[]>([]);
 const challengeFlags = reactive<Record<number, string>>({});
 const challengeErrors = reactive<Record<number, string>>({});
 const showChallengeHint = reactive<Record<number, boolean>>({});
+const hideCompletedChallenges = ref(false);
 
 onMounted(async () => {
   user.value = await API.getUser();
 
-  challenges.value = await API.getChallenges();
+  const response = await API.getChallenges();
 
-  challenges.value?.forEach((challenge) => {
-    if (!(challenge.category in categorisedChallenges.value)) categorisedChallenges.value[challenge.category] = [];
-
-    categorisedChallenges.value[challenge.category].push(challenge);
-  });
+  if (response) challenges.value = response;
 });
 
 const pointTotal = computed(() => {
-  return user.value?.completed_challenges.map((completedChallenge, total) => {
-    return challenges.value?.find((challenge) => challenge.id === completedChallenge.challenge_id)?.points ?? 0;
-  }).reduce((value, total) => total + value);
+  return user.value?.completed_challenges
+    .map((completedChallenge) => {
+      return challenges.value?.find((challenge) => challenge.id === completedChallenge.challenge_id)?.points ?? 0;
+    })
+    .reduce((value, total) => total + value);
+});
+
+const filteredChallenges = computed(() => {
+  if (!hideCompletedChallenges.value) return challenges.value;
+
+  return challenges.value.filter(
+    (challenge) => !user.value?.completed_challenges.find((completedChallenge) => completedChallenge.challenge_id === challenge.id)
+  );
+});
+
+const categorisedChallenges = computed(() => {
+  const filteredCategories: Record<string, Challenge[]> = {};
+
+  filteredChallenges.value.forEach((challenge) => {
+    if (!(challenge.category in filteredCategories)) filteredCategories[challenge.category] = [];
+
+    filteredCategories[challenge.category].push(challenge);
+  });
+
+  return filteredCategories;
 });
 
 const getCompletedEntry = (challengeId: number) => {
