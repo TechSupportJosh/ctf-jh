@@ -3,7 +3,7 @@ from app.settings import get_settings
 from fastapi.datastructures import UploadFile
 from starlette.responses import RedirectResponse
 from app.middleware import Authenticated
-from typing import List, Optional
+from typing import Any, List, Optional
 from fastapi import APIRouter
 from fastapi.params import Depends, File, Form
 from sqlalchemy.orm.session import Session
@@ -20,6 +20,16 @@ router = APIRouter(
 )
 
 settings = get_settings()
+
+
+@router.get("/stats", response_model=schemas.Stats)
+def get_stats(db: Session = Depends(get_db)):
+    stats = {
+        "user_count": db.query(models.User).count(),
+        "total_completions": db.query(models.CompletedChallenges).count(),
+    }
+
+    return stats
 
 
 @router.get("/challenges", response_model=List[schemas.ChallengeAdmin])

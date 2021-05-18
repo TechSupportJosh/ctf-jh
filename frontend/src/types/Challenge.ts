@@ -13,12 +13,17 @@ export interface Challenge {
   file_hash?: string;
 }
 
-export interface AdminChallenge extends Challenge {
-  flag: string;
-  disabled: boolean;
-}
-
 export interface CompletedChallenge {
   challenge_id: number;
   time_completed: number;
+}
+
+export interface AdminCompletedChallenge extends CompletedChallenge {
+  user_id: number;
+}
+
+export interface AdminChallenge extends Challenge {
+  flag: string;
+  disabled: boolean;
+  completions: AdminCompletedChallenge[];
 }

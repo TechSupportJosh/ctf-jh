@@ -2,6 +2,7 @@ import axios from "axios";
 import { Challenge, AdminChallenge } from "../types/Challenge";
 import { User } from "../types/User";
 import config from "../config";
+import { Stats } from "../types/Stats";
 
 const client = axios.create({
   baseURL: config.basePath + "api",
@@ -48,6 +49,12 @@ const deleteChallengeSubmissions = async (challengeId: number) => {
   return response.status === 200;
 };
 
+const getAdminStats = async () => {
+  const response = await client.get<Stats>(`/admin/stats`);
+
+  if (response.status === 200) return response.data;
+};
+
 export default {
   getUser,
   getChallenges,
@@ -55,4 +62,5 @@ export default {
   getAdminChallenges,
   deleteChallenge,
   deleteChallengeSubmissions,
+  getAdminStats,
 };

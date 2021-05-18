@@ -11,24 +11,43 @@
         </div>
       </div>
     </div>
-
-    <button
-      class="btn btn-success"
-      @click="editChallenge = { ...challengeTemplate }"
-      data-bs-toggle="modal"
-      data-bs-target="#challengeModal"
-    >
-      Create Challenge
-    </button>
+    <div class="row">
+      <div class="col-sm-4 offset-2">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-text">{{ stats?.user_count }}</h5>
+            <p class="card-text text-muted">Users Signed Up</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-text">{{ stats?.total_completions }}</h5>
+            <p class="card-text text-muted">Flags Submitted</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <h2>Challenges</h2>
     <table class="table align-middle">
       <thead>
         <tr>
           <th>ID</th>
           <th>Name</th>
           <th>Category</th>
-          <th></th>
-          <th></th>
-          <th></th>
+          <th>Completions</th>
+          <th :colspan="3">
+            <button
+              class="btn btn-success w-100"
+              @click="editChallenge = { ...challengeTemplate }"
+              data-bs-toggle="modal"
+              data-bs-target="#challengeModal"
+            >
+              Create Challenge
+            </button>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -36,6 +55,7 @@
           <td>{{ challenge.id }}</td>
           <td>{{ challenge.title }}</td>
           <td>{{ challenge.category }}</td>
+          <td>{{ challenge.completions.length }}</td>
           <td>
             <button
               class="btn btn-primary w-100"
@@ -144,9 +164,12 @@ import type { AdminChallenge, Challenge } from "../types/Challenge";
 import API from "../utils/api";
 import config from "../config";
 import marked from "marked";
+import type { Stats } from "../types/Stats";
+
+const stats = ref<Stats>();
 
 const challenges = ref<AdminChallenge[]>([]);
-const challengeTemplate = {
+const challengeTemplate: AdminChallenge = {
   id: -1,
   title: "",
   description: "",
@@ -159,6 +182,7 @@ const challengeTemplate = {
   education_links: [],
   difficulty: "Easy",
   challenge_url: "",
+  completions: [],
 };
 
 const editChallenge = ref<AdminChallenge>(challengeTemplate);
@@ -167,6 +191,10 @@ onMounted(async () => {
   const response = await API.getAdminChallenges();
 
   if (response) challenges.value = response;
+
+  const statsResponse = await API.getAdminStats();
+
+  if (statsResponse) stats.value = statsResponse;
 });
 
 const deleteChallengeSubmissions = async ({ id, title }: Challenge) => {

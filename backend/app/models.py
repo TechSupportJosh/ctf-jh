@@ -40,6 +40,10 @@ class Challenge(Base):
 
     challenge_url = Column(String)
 
+    completions = relationship(
+        "CompletedChallenges", backref="challenge", cascade="all, delete"
+    )
+
 
 class CompletedChallenges(Base):
     __tablename__ = "completed_challenges"

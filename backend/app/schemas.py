@@ -39,22 +39,27 @@ class Challenge(ChallengeBase):
         return value.split(",")
 
 
-class ChallengeAdmin(Challenge):
-    flag: str
-    disabled: bool
-
-
-class SubmitChallenge(BaseModel):
-    challenge_id: int
-    flag: str
-
-
 class CompletedChallenge(BaseModel):
     time_completed: int
     challenge_id: int
 
     class Config:
         orm_mode = True
+
+
+class CompletedChallengeAdmin(CompletedChallenge):
+    user_id: int
+
+
+class ChallengeAdmin(Challenge):
+    flag: str
+    disabled: bool
+    completions: List[CompletedChallengeAdmin]
+
+
+class SubmitChallenge(BaseModel):
+    challenge_id: int
+    flag: str
 
 
 class User(BaseModel):
@@ -66,3 +71,8 @@ class User(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class Stats(BaseModel):
+    user_count: int
+    total_completions: int
