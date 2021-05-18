@@ -6,6 +6,7 @@
       </div>
       <div class="col-4 d-flex align-items-center justify-content-end">
         <div>
+          <router-link to="/">Home</router-link>&nbsp;&nbsp;
           <a :href="`${config.basePath}api/auth/logout`">Log Out</a>
         </div>
       </div>
@@ -103,6 +104,10 @@
               <input type="text" class="form-control" name="tags" v-model="editChallenge.tags" required />
             </div>
             <div class="mb-3">
+              <label class="form-label">Education Links (comma seperated)</label>
+              <input type="text" class="form-control" name="education_links" v-model="editChallenge.education_links" required />
+            </div>
+            <div class="mb-3">
               <label class="form-label">Challenge URL</label>
               <input type="text" class="form-control" name="challenge_url" v-model="editChallenge.challenge_url" />
             </div>
@@ -135,8 +140,9 @@ const challengeTemplate = {
   description: "",
   flag: "",
   points: 10,
-  tags: ["Test", "Meme"],
+  tags: [],
   category: "",
+  education_links: [],
   difficulty: "Easy",
   challenge_url: "",
 };

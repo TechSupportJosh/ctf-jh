@@ -48,6 +48,7 @@ async def create_challenge(
     tags: str = Form(...),
     points: int = Form(...),
     difficulty: str = Form(...),
+    education_links: str = Form(...),
     challenge_url: str = Form(""),
     challenge_file: UploadFile = File(None),
     db: Session = Depends(get_db),
@@ -61,6 +62,7 @@ async def create_challenge(
             tags=tags,
             points=points,
             difficulty=difficulty,
+            education_links=education_links,
             challenge_url=challenge_url,
         )
 
@@ -77,6 +79,7 @@ async def create_challenge(
         challenge.tags = tags
         challenge.points = points
         challenge.difficulty = difficulty
+        challenge.education_links = education_links
         challenge.challenge_url = challenge_url
 
         # TODO: Delete old file question mark

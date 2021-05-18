@@ -21,14 +21,20 @@ class ChallengeBase(BaseModel):
 class ChallengeCreate(ChallengeBase):
     flag: str
     tags: str
+    education_links: str
 
 
 class Challenge(ChallengeBase):
     id: int
     tags: List[str]
+    education_links: List[str]
 
     @validator("tags", pre=True)
-    def check_permissions(cls, value):
+    def split_tags(cls, value):
+        return value.split(",")
+
+    @validator("education_links", pre=True)
+    def split_links(cls, value):
         return value.split(",")
 
 

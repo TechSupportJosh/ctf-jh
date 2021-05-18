@@ -35,6 +35,14 @@
                 </template>
               </div>
               <div class="mb-3 challenge-description" v-html="marked.parseInline(challenge.description)"></div>
+              <p v-if="challenge.education_links">
+                <strong>Learning Resources: </strong>
+                <ul>
+                  <li v-for="link in challenge.education_links">
+                    <a :href="link">{{link}}</a>
+                  </li>
+                </ul>
+              </p>
               <p v-if="challenge.file_name">
                 <strong>Challenge File:</strong><br />File Name: <a :href="`/static/${challenge.file_name}`">{{ challenge.file_name }}</a
                 ><br />SHA256 Hash: {{ challenge.file_hash }}
