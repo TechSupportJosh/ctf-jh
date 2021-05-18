@@ -1,6 +1,7 @@
 from fastapi.exceptions import HTTPException
 from sqlalchemy.sql.expression import and_
 from fastapi import Request
+from sqlalchemy.sql.functions import char_length
 from starlette.requests import HTTPConnection
 from app.middleware import Authenticated, GetUser
 from typing import List
@@ -32,13 +33,9 @@ def submit_challenge(
     db: Session = Depends(get_db),
     user: models.User = Depends(GetUser()),
 ):
-    challenge = (
-        db.query(models.Challenge)
-        .filter(models.Challenge.disabled == False)
-        .get(submission.challenge_id)
-    )
+    challenge = db.query(models.Challenge).get(submission.challenge_id)
 
-    if challenge is None:
+    if challenge is None or challenge.disabled:
         raise HTTPException(404)
 
     completed_challenge_entry = (
