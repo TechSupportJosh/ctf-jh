@@ -111,7 +111,7 @@ async def create_challenge(
         )
 
         async with aiofiles.open(
-            os.path.join(os.getcwd(), "static", file_name), "wb"
+            os.path.join(settings.challenge_file_directory, file_name), "wb"
         ) as out_file:
             content = await challenge_file.read()
             challenge.file_hash = hashlib.sha256(content).hexdigest()

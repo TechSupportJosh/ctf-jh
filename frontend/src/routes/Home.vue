@@ -67,7 +67,8 @@
                 </ul>
               </div>
               <p v-if="challenge.file_name">
-                <strong>Challenge File:</strong><br />File Name: <a :href="`/static/${challenge.file_name}`">{{ challenge.file_name }}</a
+                <strong>Challenge File:</strong><br />File Name:
+                <a :href="`${config.basePath}api/static/${challenge.file_name}`" download>{{ challenge.file_name }}</a
                 ><br />SHA256 Hash: {{ challenge.file_hash }}
               </p>
               <p v-if="challenge.challenge_url">
