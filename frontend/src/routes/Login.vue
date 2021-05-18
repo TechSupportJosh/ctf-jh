@@ -1,8 +1,11 @@
 <template>
-  <div class="container">
-    <h1>Intake CTF</h1>
-    <div class="alert alert-danger" v-if="errorMessage"><strong>An error occured: </strong>{{ errorMessage }}</div>
-    <a :href="`${config.basePath}api/auth`" class="btn btn-primary">Login With Warwick</a>
+  <div class="vh-100 vw-100 d-flex justify-content-center align-items-center text-center">
+    <div>
+      <h1>Intake CTF</h1>
+      <h4 class="mb-4">Hosted by WMG Cyber Society</h4>
+      <div class="alert alert-danger" v-if="errorMessage"><strong>An error occured: </strong>{{ errorMessage }}</div>
+      <a :href="`${config.basePath}api/auth`" class="btn login-button text-white px-4">Login With Warwick ID</a>
+    </div>
   </div>
 </template>
 
@@ -13,7 +16,6 @@ import config from "../config";
 
 const route = useRoute();
 const errorCode = route.query.error;
-console.log(errorCode);
 const errorMessage = ref("");
 
 switch (errorCode) {
@@ -25,3 +27,9 @@ switch (errorCode) {
     break;
 }
 </script>
+
+<style scoped>
+.login-button {
+  background-color: #5b3069;
+}
+</style>
