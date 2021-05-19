@@ -12,6 +12,7 @@ from .database import engine
 from authlib.integrations.starlette_client import OAuth
 import urllib
 import os
+import secrets
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -31,7 +32,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(SessionMiddleware, secret_key="some-random-string")
+app.add_middleware(SessionMiddleware, secret_key=secrets.token_bytes(16))
 
 app.mount(
     "/static",
