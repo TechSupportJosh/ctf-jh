@@ -132,8 +132,12 @@
               </select>
             </div>
             <div class="mb-3">
-              <label class="form-label">Hint</label>
+              <label class="form-label">Hint (supports Markdown)</label>
               <input type="text" class="form-control" name="hint" v-model="editChallenge.hint" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Challenge Description Preview:</label>
+              <div v-html="hintText" style="white-space: pre-line"></div>
             </div>
             <div class="mb-3">
               <label class="form-label">Tags (comma seperated)</label>
@@ -218,5 +222,9 @@ const deleteChallenge = async ({ id, title }: Challenge) => {
 
 const descriptionText = computed(() => {
   return marked.parseInline(editChallenge.value.description);
+});
+
+const hintText = computed(() => {
+  return marked.parseInline(editChallenge.value.hint);
 });
 </script>

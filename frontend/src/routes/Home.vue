@@ -84,7 +84,11 @@
                     >Need a hint?</a
                   >):</label
                 >
-                <div class="mb-2" v-if="showChallengeHint[challenge.id]"><strong>Hint: </strong>{{ challenge.hint }}</div>
+                <div
+                  class="mb-2"
+                  v-if="showChallengeHint[challenge.id]"
+                  v-html="'<strong>Hint: </strong>' + marked.parseInline(challenge.hint)"
+                ></div>
                 <div class="input-group mb-3 has-validation">
                   <input
                     type="text"
