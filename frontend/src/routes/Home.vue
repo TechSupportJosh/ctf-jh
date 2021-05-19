@@ -159,6 +159,9 @@ const categorisedChallenges = computed(() => {
     filteredCategories[challenge.category].push(challenge);
   });
 
+  Object.values(filteredCategories).forEach((challenges) => {
+    challenges.sort((a, b) => a.title.localeCompare(b.title) || a.difficulty.localeCompare(b.difficulty));
+  });
   return filteredCategories;
 });
 
