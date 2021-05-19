@@ -4,20 +4,32 @@ from pydantic import BaseModel, validator
 from datetime import datetime, timezone
 
 
-class ChallengeBase(BaseModel):
+class ChallengeLocked(BaseModel):
+    locked: bool = True
     title: str
-    description: str
     author: str
-    points: int
+    points: str
     category: str
     difficulty: str
+    unlock_requirement: int
+
+    @validator("unlock_requirement", pre=True)
+    def convert_none_to_int(cls, value):
+        if value is None:
+            return -1
+        else:
+            return value
+
+    class Config:
+        orm_mode = True
+
+class ChallengeBase(ChallengeLocked):
+    locked: bool = False
+    description: str
     hint: str
     challenge_url: Optional[str]
     file_name: Optional[str]
     file_hash: Optional[str]
-
-    class Config:
-        orm_mode = True
 
 
 class ChallengeCreate(ChallengeBase):

@@ -63,10 +63,16 @@ async def create_challenge(
     hint: str = Form(...),
     disabled: bool = Form(False),
     education_links: str = Form(...),
+    unlock_requirement: int = Form(-1),
     challenge_url: str = Form(""),
     challenge_file: UploadFile = File(None),
     db: Session = Depends(get_db),
 ):
+    if unlock_requirement != -1:
+        unlock_challenge = db.query(models.Challenge).get(unlock_requirement)
+        if unlock_challenge is None:
+            raise HTTPException(404, "unlock_requirement challenge cannot be found")
+
     if id == -1:
         challenge = models.Challenge(
             title=title,
@@ -118,6 +124,11 @@ async def create_challenge(
             await out_file.write(content)
 
         challenge.file_name = file_name
+
+    if unlock_requirement != -1:
+        challenge.unlock_requirement = unlock_requirement
+    else:
+        challenge.unlock_requirement = None
 
     db.commit()
 

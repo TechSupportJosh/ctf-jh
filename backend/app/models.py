@@ -35,6 +35,7 @@ class Challenge(Base):
     difficulty = Column(String, nullable=False)
     education_links = Column(String, nullable=False)
     hint = Column(String, nullable=False)
+    unlock_requirement = Column(Integer, ForeignKey("challenges.id"))
 
     file_name = Column(String)
     file_hash = Column(String)

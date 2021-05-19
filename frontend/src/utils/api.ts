@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Challenge, AdminChallenge } from "../types/Challenge";
+import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
 import { User } from "../types/User";
 import config from "../config";
 import { Stats } from "../types/Stats";
@@ -17,7 +17,7 @@ const getUser = async () => {
 };
 
 const getChallenges = async () => {
-  const response = await client.get<Challenge[]>(`/challenges/`);
+  const response = await client.get<(Challenge | LockedChallenge)[]>(`/challenges/`);
 
   if (response.status === 200) return response.data;
 };

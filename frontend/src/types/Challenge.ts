@@ -1,12 +1,21 @@
-export interface Challenge {
+export interface BaseChallenge {
   id: number;
   title: string;
-  description: string;
   author: string;
   points: number;
   tags: string[];
   category: string;
   difficulty: string;
+  unlock_requirement: number;
+}
+
+export interface LockedChallenge extends BaseChallenge {
+  locked: true;
+}
+
+export interface Challenge extends BaseChallenge {
+  locked: false;
+  description: string;
   education_links: string[];
   hint: string;
   challenge_url?: string;

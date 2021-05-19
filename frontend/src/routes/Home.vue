@@ -39,18 +39,18 @@
       <h3>{{ category }}</h3>
       <div class="accordion" id="challenge-accordion">
         <div class="accordion-item" v-for="challenge in challenges" :key="challenge.id">
-          <h2 class="accordion-header">
+          <h2 class="accordion-header" :id="`challenge-${challenge.id}`">
             <button
               class="accordion-button collapsed"
               type="button"
               data-bs-toggle="collapse"
-              :data-bs-target="`#challenge-${challenge.id}`"
+              :data-bs-target="`#challenge-body-${challenge.id}`"
             >
-              {{ getCompletedEntry(challenge.id) ? "✅" : "" }} {{ challenge.title }} - {{ challenge.points }} points&nbsp;&nbsp;
+              {{ getChallengeIcon(challenge) }} {{ challenge.title }} - {{ challenge.points }} points&nbsp;&nbsp;
               <span class="badge rounded-pill" :class="difficultyToClass(challenge.difficulty)">{{ challenge.difficulty }}</span>
             </button>
           </h2>
-          <div :id="`challenge-${challenge.id}`" class="accordion-collapse collapse" data-bs-parent="#challenge-accordion">
+          <div :id="`challenge-body-${challenge.id}`" class="accordion-collapse collapse" data-bs-parent="#challenge-accordion">
             <div class="accordion-body">
               <div class="mb-2" v-if="challenge.tags">
                 <template v-for="tag in challenge.tags">
@@ -58,25 +58,32 @@
                   >&nbsp;
                 </template>
               </div>
-              <div class="mb-3 challenge-description" v-html="marked.parseInline(challenge.description)"></div>
-              <div v-if="challenge.education_links">
-                <strong>Learning Resources: </strong>
-                <ul>
-                  <li v-for="link in challenge.education_links">
-                    <a :href="link">{{ link }}</a>
-                  </li>
-                </ul>
+
+              <template v-if="!challenge.locked">
+                <div class="mb-3 challenge-description" v-html="marked.parseInline(challenge.description)"></div>
+                <div v-if="challenge.education_links">
+                  <strong>Learning Resources: </strong>
+                  <ul>
+                    <li v-for="link in challenge.education_links">
+                      <a :href="link">{{ link }}</a>
+                    </li>
+                  </ul>
+                </div>
+                <p v-if="challenge.file_name">
+                  <strong>Challenge File:</strong><br />File Name:
+                  <a :href="`${config.basePath}api/static/${challenge.file_name}`" download>{{ challenge.file_name }}</a
+                  ><br />SHA256 Hash: {{ challenge.file_hash }}
+                </p>
+                <p v-if="challenge.challenge_url">
+                  <strong>Challenge URL: </strong><a :href="challenge.challenge_url">{{ challenge.challenge_url }}</a>
+                </p>
+              </template>
+              <div class="text-muted" v-if="challenge.locked">
+                <strong>Requires: </strong
+                ><a :href="`#challenge-${challenge.unlock_requirement}`">{{ getRequiredChallenge(challenge)?.title }}</a>
               </div>
-              <p v-if="challenge.file_name">
-                <strong>Challenge File:</strong><br />File Name:
-                <a :href="`${config.basePath}api/static/${challenge.file_name}`" download>{{ challenge.file_name }}</a
-                ><br />SHA256 Hash: {{ challenge.file_hash }}
-              </p>
-              <p v-if="challenge.challenge_url">
-                <strong>Challenge URL: </strong><a :href="challenge.challenge_url">{{ challenge.challenge_url }}</a>
-              </p>
               <hr />
-              <template v-if="!getCompletedEntry(challenge.id)">
+              <template v-if="!getCompletedEntry(challenge.id) && !challenge.locked">
                 <label for="basic-url" class="form-label"
                   >Enter the flag from the challenge (<a
                     @click.prevent="showChallengeHint[challenge.id] = !showChallengeHint[challenge.id]"
@@ -114,7 +121,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, reactive, computed, watch } from "vue";
-import type { Challenge } from "../types/Challenge";
+import type { Challenge, LockedChallenge } from "../types/Challenge";
 import type { User } from "../types/User";
 import API from "../utils/api";
 import config from "../config";
@@ -122,7 +129,7 @@ import marked from "marked";
 
 const user = ref<User>();
 
-const challenges = ref<Challenge[]>([]);
+const challenges = ref<(Challenge | LockedChallenge)[]>([]);
 const challengeFlags = reactive<Record<number, string>>({});
 const challengeErrors = reactive<Record<number, string>>({});
 const showChallengeHint = reactive<Record<number, boolean>>({});
@@ -155,7 +162,7 @@ const filteredChallenges = computed(() => {
 });
 
 const categorisedChallenges = computed(() => {
-  const filteredCategories: Record<string, Challenge[]> = {};
+  const filteredCategories: Record<string, (Challenge | LockedChallenge)[]> = {};
 
   filteredChallenges.value.forEach((challenge) => {
     if (!(challenge.category in filteredCategories)) filteredCategories[challenge.category] = [];
@@ -169,8 +176,18 @@ const categorisedChallenges = computed(() => {
   return filteredCategories;
 });
 
+const getChallengeIcon = (challenge: Challenge | LockedChallenge) => {
+  if (challenge.locked) return "🔒";
+
+  return getCompletedEntry(challenge.id) ? "✅" : "";
+};
+
 const getCompletedEntry = (challengeId: number) => {
   return user.value?.completed_challenges.find((challenge) => challenge.challenge_id === challengeId);
+};
+
+const getRequiredChallenge = (lockedChallenge: LockedChallenge) => {
+  return challenges.value.find((challenge) => challenge.id === lockedChallenge.unlock_requirement);
 };
 
 const getCompletedAt = (challengeId: number) => {

@@ -4,7 +4,7 @@ from fastapi import Request
 from sqlalchemy.sql.functions import char_length
 from starlette.requests import HTTPConnection
 from app.middleware import Authenticated, GetUser
-from typing import List
+from typing import List, Union
 from fastapi import APIRouter
 from fastapi.params import Depends
 from sqlalchemy.orm.session import Session
@@ -20,9 +20,35 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[schemas.Challenge])
-def get_all_challenges(db: Session = Depends(get_db)):
-    return db.query(models.Challenge).filter(models.Challenge.disabled == False).all()
+@router.get("/", response_model=List[Union[schemas.Challenge, schemas.ChallengeLocked]])
+def get_all_challenges(
+    db: Session = Depends(get_db), user: models.User = Depends(GetUser())
+):
+    challenges = []
+
+    for challenge in (
+        db.query(models.Challenge).filter(models.Challenge.disabled == False).all()
+    ):
+        if challenge.unlock_requirement is None:
+            challenges.append(challenge)
+        else:
+            print("hmm")
+            completed_entry = list(
+                filter(
+                    lambda entry: entry.challenge_id == challenge.unlock_requirement,
+                    user.completed_challenges,
+                )
+            )
+            print(completed_entry)
+            # Check whether they've completed the unlock requirement
+            if len(completed_entry):
+                # If they have, add the full challenge
+                challenges.append(challenge)
+            else:
+                # Otherwise, append a "censored version"
+                challenges.append(schemas.ChallengeLocked(**challenge.__dict__))
+
+    return challenges
 
 
 @router.post("/submit", response_model={})

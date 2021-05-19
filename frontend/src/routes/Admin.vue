@@ -148,6 +148,13 @@
               <input type="text" class="form-control" name="education_links" v-model="editChallenge.education_links" required />
             </div>
             <div class="mb-3">
+              <label class="form-label">Unlock Requirement</label>
+              <select class="form-control" name="unlock_requirement" v-model="editChallenge.unlock_requirement">
+                <option :value="-1" selected>None</option>
+                <option v-for="challenge in challenges" :value="challenge.id">{{ challenge.category }} - {{ challenge.title }}</option>
+              </select>
+            </div>
+            <div class="mb-3">
               <label class="form-label">Challenge URL</label>
               <input type="text" class="form-control" name="challenge_url" v-model="editChallenge.challenge_url" />
             </div>
@@ -190,6 +197,7 @@ const challengeTemplate: AdminChallenge = {
   disabled: false,
   education_links: [],
   difficulty: "Easy",
+  unlock_requirement: -1,
   challenge_url: "",
   completions: [],
 };
