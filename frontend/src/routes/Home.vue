@@ -45,6 +45,7 @@
           :challenge-completion="getCompletedEntry(challenge)"
           :requirement-challenge="getRequiredChallenge(challenge)"
           :requirement-challenge-completion="getRequiredCompletedEntry(challenge)"
+          @challenge-completed="fetchData"
         ></challenge-component>
       </div>
     </div>
@@ -68,12 +69,15 @@ const challenges = ref<Challenge[]>([]);
 const hideCompletedChallenges = ref(localStorage.getItem("hideCompletedChallenges") === "1");
 
 onMounted(async () => {
-  user.value = await API.getUser();
+  fetchData();
+});
 
+const fetchData = async () => {
+  user.value = await API.getUser();
   const response = await API.getChallenges();
 
   if (response) challenges.value = response;
-});
+};
 
 watch(hideCompletedChallenges, (newValue) => {
   localStorage.setItem("hideCompletedChallenges", newValue ? "1" : "0");

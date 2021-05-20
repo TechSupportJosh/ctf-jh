@@ -17,8 +17,8 @@ defineProps({
     required: true,
   },
   requirementChallenge: {
-    type: Object as () => Challenge | undefined,
-    required: true,
+    type: Object as () => Challenge,
+    required: false,
   },
 });
 </script>

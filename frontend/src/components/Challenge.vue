@@ -23,6 +23,7 @@
           v-else
           :challenge="challenge"
           :challenge-completion="challengeCompletion"
+          @flag-submitted="emit('challengeCompleted')"
         ></unlocked-challenge-component>
       </div>
     </div>
@@ -30,12 +31,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps } from "vue";
+import { computed, defineProps, defineEmit } from "vue";
 
 import type { Challenge, UserChallengeCompletion } from "../types/Challenge";
 
 import LockedChallengeComponent from "./LockedChallenge.vue";
 import UnlockedChallengeComponent from "./UnlockedChallenge.vue";
+
+const emit = defineEmit(["challengeCompleted"]);
 
 const props = defineProps({
   challenge: {
@@ -43,16 +46,16 @@ const props = defineProps({
     required: true,
   },
   challengeCompletion: {
-    type: Object as () => UserChallengeCompletion | undefined,
-    required: true,
+    type: Object as () => UserChallengeCompletion,
+    required: false,
   },
   requirementChallenge: {
-    type: Object as () => Challenge | undefined,
-    required: true,
+    type: Object as () => Challenge,
+    required: false,
   },
   requirementChallengeCompletion: {
-    type: Object as () => UserChallengeCompletion | undefined,
-    required: true,
+    type: Object as () => UserChallengeCompletion,
+    required: false,
   },
 });
 

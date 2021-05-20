@@ -48,7 +48,7 @@
 
 <script lang="ts" setup>
 import marked from "marked";
-import { computed, defineProps, ref } from "vue";
+import { computed, defineProps, ref, defineEmit } from "vue";
 
 import type { UnlockedChallenge, UserChallengeCompletion } from "../types/Challenge";
 
@@ -59,8 +59,14 @@ const showHint = ref(false);
 const flag = ref("");
 const flagSubmissionError = ref("");
 
+const emit = defineEmit(["flagSubmitted"]);
+
 const submitFlag = async (challengeId: number) => {
   const response = await API.submitFlag(challengeId, flag.value);
+
+  if (response === 200) {
+    emit("flagSubmitted");
+  }
 
   switch (response) {
     case 200:
@@ -93,8 +99,8 @@ const props = defineProps({
     required: true,
   },
   challengeCompletion: {
-    type: Object as () => UserChallengeCompletion | undefined,
-    required: true,
+    type: Object as () => UserChallengeCompletion,
+    required: false,
   },
 });
 </script>
