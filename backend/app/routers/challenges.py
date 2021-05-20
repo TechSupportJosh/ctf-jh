@@ -20,7 +20,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[Union[schemas.Challenge, schemas.ChallengeLocked]])
+@router.get("/", response_model=List[schemas.Challenge])
 def get_all_challenges(
     db: Session = Depends(get_db), user: models.User = Depends(GetUser())
 ):
@@ -32,21 +32,19 @@ def get_all_challenges(
         if challenge.unlock_requirement is None:
             challenges.append(challenge)
         else:
-            print("hmm")
             completed_entry = list(
                 filter(
                     lambda entry: entry.challenge_id == challenge.unlock_requirement,
                     user.completed_challenges,
                 )
             )
-            print(completed_entry)
             # Check whether they've completed the unlock requirement
             if len(completed_entry):
                 # If they have, add the full challenge
                 challenges.append(challenge)
             else:
                 # Otherwise, append a "censored version"
-                challenges.append(schemas.ChallengeLocked(**challenge.__dict__))
+                challenges.append(schemas.LockedChallenge(**challenge.__dict__))
 
     return challenges
 

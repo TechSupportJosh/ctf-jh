@@ -145,7 +145,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Education Links (comma seperated)</label>
-              <input type="text" class="form-control" name="education_links" v-model="editChallenge.education_links" required />
+              <input type="text" class="form-control" name="education_resources" v-model="editChallenge.education_resources" required />
             </div>
             <div class="mb-3">
               <label class="form-label">Unlock Requirement</label>
@@ -156,11 +156,11 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Challenge URL</label>
-              <input type="text" class="form-control" name="challenge_url" v-model="editChallenge.challenge_url" />
+              <input type="text" class="form-control" name="url" v-model="editChallenge.url" />
             </div>
             <div class="mb-3">
               <label class="form-label">Challenge File (Current File: {{ editChallenge.file_name || "N/A" }})</label>
-              <input class="form-control" type="file" name="challenge_file" />
+              <input class="form-control" type="file" name="file" />
             </div>
           </div>
           <div class="modal-footer">
@@ -175,7 +175,7 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from "vue";
-import type { AdminChallenge, Challenge } from "../types/Challenge";
+import type { AdminChallenge } from "../types/Challenge";
 import API from "../utils/api";
 import config from "../config";
 import marked from "marked";
@@ -185,6 +185,7 @@ const stats = ref<Stats>();
 
 const challenges = ref<AdminChallenge[]>([]);
 const challengeTemplate: AdminChallenge = {
+  locked: false,
   id: -1,
   title: "",
   description: "",
@@ -195,10 +196,10 @@ const challengeTemplate: AdminChallenge = {
   category: "",
   hint: "",
   disabled: false,
-  education_links: [],
+  education_resources: [],
   difficulty: "Easy",
   unlock_requirement: -1,
-  challenge_url: "",
+  url: "",
   completions: [],
 };
 
@@ -214,13 +215,13 @@ onMounted(async () => {
   if (statsResponse) stats.value = statsResponse;
 });
 
-const deleteChallengeSubmissions = async ({ id, title }: Challenge) => {
+const deleteChallengeSubmissions = async ({ id, title }: AdminChallenge) => {
   if (confirm(`Are you sure you want to delete ${title}'s submissions?`)) {
     const response = await API.deleteChallengeSubmissions(id);
   }
 };
 
-const deleteChallenge = async ({ id, title }: Challenge) => {
+const deleteChallenge = async ({ id, title }: AdminChallenge) => {
   if (confirm(`Are you sure you want to delete ${title}?`)) {
     const response = await API.deleteChallenge(id);
 

@@ -1,11 +1,11 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 from pydantic import BaseModel, validator
 from datetime import datetime, timezone
 
 
-class ChallengeLocked(BaseModel):
-    locked: bool = True
+class ChallengeBase(BaseModel):
+    id: int
     title: str
     author: str
     points: str
@@ -23,36 +23,34 @@ class ChallengeLocked(BaseModel):
     class Config:
         orm_mode = True
 
-class ChallengeBase(ChallengeLocked):
+
+class LockedChallenge(ChallengeBase):
+    locked: bool = True
+
+
+class UnlockedChallenge(ChallengeBase):
     locked: bool = False
     description: str
     hint: str
-    challenge_url: Optional[str]
+    tags: List[str]
+    education_resources: List[str]
+    url: Optional[str]
     file_name: Optional[str]
     file_hash: Optional[str]
-
-
-class ChallengeCreate(ChallengeBase):
-    flag: str
-    tags: str
-    education_links: str
-
-
-class Challenge(ChallengeBase):
-    id: int
-    tags: List[str]
-    education_links: List[str]
 
     @validator("tags", pre=True)
     def split_tags(cls, value):
         return value.split(",")
 
-    @validator("education_links", pre=True)
+    @validator("education_resources", pre=True)
     def split_links(cls, value):
         return value.split(",")
 
 
-class CompletedChallenge(BaseModel):
+Challenge = Union[UnlockedChallenge, LockedChallenge]
+
+
+class UserChallengeCompletion(BaseModel):
     time_completed: int
     challenge_id: int
 
@@ -60,14 +58,14 @@ class CompletedChallenge(BaseModel):
         orm_mode = True
 
 
-class CompletedChallengeAdmin(CompletedChallenge):
+class AdminChallengeCompletion(UserChallengeCompletion):
     user_id: int
 
 
-class ChallengeAdmin(Challenge):
+class AdminChallenge(UnlockedChallenge):
     flag: str
     disabled: bool
-    completions: List[CompletedChallengeAdmin]
+    completions: List[AdminChallengeCompletion]
 
 
 class SubmitChallenge(BaseModel):
@@ -80,7 +78,7 @@ class User(BaseModel):
     surname: str
     is_admin: bool
 
-    completed_challenges: List[CompletedChallenge]
+    completed_challenges: List[UserChallengeCompletion]
 
     class Config:
         orm_mode = True

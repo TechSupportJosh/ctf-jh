@@ -32,24 +32,12 @@ def get_stats(db: Session = Depends(get_db)):
     return stats
 
 
-@router.get("/challenges", response_model=List[schemas.ChallengeAdmin])
+@router.get("/challenges", response_model=List[schemas.AdminChallenge])
 def get_all_challenges(db: Session = Depends(get_db)):
     return db.query(models.Challenge).all()
 
 
-@router.post("/challenges_json", response_model=schemas.ChallengeAdmin)
-def create_challenge_via_json(
-    request: schemas.ChallengeCreate, db: Session = Depends(get_db)
-):
-    challenge = models.Challenge(**request.dict())
-    db.add(challenge)
-    db.commit()
-    db.refresh(challenge)
-
-    return challenge
-
-
-@router.post("/challenges", response_model=schemas.ChallengeAdmin)
+@router.post("/challenges", response_model=schemas.AdminChallenge)
 async def create_challenge(
     id: int = Form(-1),
     title: str = Form(...),
@@ -62,10 +50,10 @@ async def create_challenge(
     difficulty: str = Form(...),
     hint: str = Form(...),
     disabled: bool = Form(False),
-    education_links: str = Form(...),
+    education_resources: str = Form(...),
     unlock_requirement: int = Form(-1),
-    challenge_url: str = Form(""),
-    challenge_file: UploadFile = File(None),
+    url: str = Form(""),
+    file: UploadFile = File(None),
     db: Session = Depends(get_db),
 ):
     if unlock_requirement != -1:
@@ -85,8 +73,8 @@ async def create_challenge(
             difficulty=difficulty,
             hint=hint,
             disabled=disabled,
-            education_links=education_links,
-            challenge_url=challenge_url,
+            education_resources=education_resources,
+            url=url,
         )
 
         db.add(challenge)
@@ -105,21 +93,21 @@ async def create_challenge(
         challenge.difficulty = difficulty
         challenge.hint = hint
         challenge.disabled = disabled
-        challenge.education_links = education_links
-        challenge.challenge_url = challenge_url
+        challenge.education_resources = education_resources
+        challenge.url = url
 
         # TODO: Delete old file question mark
         db.commit()
 
-    if challenge_file is not None and challenge_file.filename:
+    if file is not None and file.filename:
         file_name = "IntakeCTF_{}.{}".format(
-            challenge.id, challenge_file.filename.split(".")[-1]
+            challenge.id, ".".join(file.filename.split(".")[1:])
         )
 
         async with aiofiles.open(
             os.path.join(settings.challenge_file_directory, file_name), "wb"
         ) as out_file:
-            content = await challenge_file.read()
+            content = await file.read()
             challenge.file_hash = hashlib.sha256(content).hexdigest()
             await out_file.write(content)
 

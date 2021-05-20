@@ -33,14 +33,14 @@ class Challenge(Base):
     tags = Column(String, nullable=False)
     category = Column(String, nullable=False)
     difficulty = Column(String, nullable=False)
-    education_links = Column(String, nullable=False)
+    education_resources = Column(String, nullable=False)
     hint = Column(String, nullable=False)
     unlock_requirement = Column(Integer, ForeignKey("challenges.id"))
 
     file_name = Column(String)
     file_hash = Column(String)
 
-    challenge_url = Column(String)
+    url = Column(String)
 
     completions = relationship(
         "CompletedChallenges", backref="challenge", cascade="all, delete"
