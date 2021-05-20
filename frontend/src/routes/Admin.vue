@@ -38,7 +38,7 @@
           <th>Name</th>
           <th>Category</th>
           <th>Completions</th>
-          <th :colspan="3">
+          <th>
             <button
               class="btn btn-success w-100"
               @click="editChallenge = { ...challengeTemplate }"
@@ -57,20 +57,18 @@
           <td>{{ challenge.category }}</td>
           <td>{{ challenge.completions.length }}</td>
           <td>
-            <button
-              class="btn btn-primary w-100"
-              @click="editChallenge = { ...challenge }"
-              data-bs-toggle="modal"
-              data-bs-target="#challengeModal"
-            >
-              Edit
-            </button>
-          </td>
-          <td>
-            <button class="btn btn-warning w-100" @click="deleteChallengeSubmissions(challenge)">Clear Submissions</button>
-          </td>
-          <td>
-            <button class="btn btn-danger w-100" @click="deleteChallenge(challenge)">Delete</button>
+            <div class="d-flex justify-content-between">
+              <button
+                class="btn btn-light"
+                @click="editChallenge = { ...challenge }"
+                data-bs-toggle="modal"
+                data-bs-target="#challengeModal"
+              >
+                ✏️
+              </button>
+              <button class="btn btn-light" @click="deleteChallengeSubmissions(challenge)">🗑️</button>
+              <button class="btn btn-light" @click="deleteChallenge(challenge)">❌</button>
+            </div>
           </td>
         </tr>
       </tbody>
