@@ -8,7 +8,7 @@ class ChallengeBase(BaseModel):
     id: int
     title: str
     author: str
-    points: str
+    points: int
     category: str
     difficulty: str
     unlock_requirement: int
