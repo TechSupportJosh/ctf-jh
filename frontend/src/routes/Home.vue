@@ -3,6 +3,7 @@
     <div class="row">
       <div class="col-8">
         <h1>Intake CTF</h1>
+        <label class="text-muted">{{ user?.firstname }} {{ user?.surname }}</label>
       </div>
       <div class="col-4 d-flex align-items-center justify-content-end" style="flex-">
         <div>
