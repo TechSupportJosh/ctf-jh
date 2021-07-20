@@ -10,7 +10,13 @@
 // $danger: #f94144;
 // $warning: #f3722c;
 
+@import "./superhero_variables.scss";
+
+// $body-bg: #0f2537;
+
 // 3. Include remainder of required Bootstrap stylesheets
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
 
 // 5. Add additional custom code here
+
+@import "./superhero_bootswatch.scss";
