@@ -5,7 +5,7 @@ export interface ChallengeBase {
   points: number;
   category: string;
   difficulty: string;
-  unlock_requirement: number;
+  unlockRequirement?: number;
 }
 
 export interface LockedChallenge extends ChallengeBase {
@@ -17,19 +17,19 @@ export interface UnlockedChallenge extends ChallengeBase {
   description: string;
   hint: string;
   tags: string[];
-  education_resources: string[];
+  educationResources: string[];
   url?: string;
-  file_name?: string;
-  file_hash?: string;
+  fileName?: string;
+  fileHash?: string;
 }
 
 export interface UserChallengeCompletion {
-  challenge_id: number;
-  time_completed: number;
+  challengeId: number;
+  completionDate: number;
 }
 
 export interface AdminChallengeCompletion extends UserChallengeCompletion {
-  user_id: number;
+  userId: number;
 }
 
 export interface AdminChallenge extends UnlockedChallenge {

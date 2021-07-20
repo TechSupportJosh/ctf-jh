@@ -16,7 +16,7 @@
       <div class="col-sm-4 offset-2">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-text">{{ stats?.user_count }}</h5>
+            <h5 class="card-text">{{ stats?.userCount }}</h5>
             <p class="card-text text-muted">Users Signed Up</p>
           </div>
         </div>
@@ -24,7 +24,7 @@
       <div class="col-sm-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-text">{{ stats?.total_completions }}</h5>
+            <h5 class="card-text">{{ stats?.totalCompletions }}</h5>
             <p class="card-text text-muted">Flags Submitted</p>
           </div>
         </div>
@@ -143,11 +143,11 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Education Links (comma seperated)</label>
-              <input type="text" class="form-control" name="education_resources" v-model="editChallenge.education_resources" required />
+              <input type="text" class="form-control" name="education_resources" v-model="editChallenge.educationResources" required />
             </div>
             <div class="mb-3">
               <label class="form-label">Unlock Requirement</label>
-              <select class="form-control" name="unlock_requirement" v-model="editChallenge.unlock_requirement">
+              <select class="form-control" name="unlock_requirement" v-model="editChallenge.unlockRequirement">
                 <option :value="-1" selected>None</option>
                 <option v-for="challenge in challenges" :value="challenge.id">{{ challenge.category }} - {{ challenge.title }}</option>
               </select>
@@ -157,7 +157,7 @@
               <input type="text" class="form-control" name="url" v-model="editChallenge.url" />
             </div>
             <div class="mb-3">
-              <label class="form-label">Challenge File (Current File: {{ editChallenge.file_name || "N/A" }})</label>
+              <label class="form-label">Challenge File (Current File: {{ editChallenge.fileName || "N/A" }})</label>
               <input class="form-control" type="file" name="file" />
             </div>
           </div>
@@ -194,9 +194,8 @@ const challengeTemplate: AdminChallenge = {
   category: "",
   hint: "",
   disabled: false,
-  education_resources: [],
+  educationResources: [],
   difficulty: "Easy",
-  unlock_requirement: -1,
   url: "",
   completions: [],
 };

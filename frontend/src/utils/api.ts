@@ -11,20 +11,19 @@ const client = axios.create({
 });
 
 const getUser = async () => {
-  const response = await client.get<User>(`/me/`);
+  const response = await client.get<User>(`/me`);
 
   if (response.status === 200) return response.data;
 };
 
 const getChallenges = async () => {
-  const response = await client.get<(Challenge | LockedChallenge)[]>(`/challenges/`);
+  const response = await client.get<(Challenge | LockedChallenge)[]>(`/challenges`);
 
   if (response.status === 200) return response.data;
 };
 
 const submitFlag = async (challengeId: number, flag: string) => {
-  const response = await client.post(`/challenges/submit`, {
-    challenge_id: challengeId,
+  const response = await client.post(`/challenges/${challengeId}/submit`, {
     flag: flag,
   });
 

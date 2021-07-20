@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "../entity/User";
 
-const getUserFromCookie = async (authCookie: string) => {
+export const getUserFromCookie = async (authCookie: string) => {
   if (!authCookie) return null;
 
   const user = await User.findOne({ authValue: authCookie });
   if (!user) return null;
+  if (user.authExpiry < new Date()) return null;
 
   return user;
 };

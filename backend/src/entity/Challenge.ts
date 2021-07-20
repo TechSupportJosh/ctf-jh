@@ -1,4 +1,5 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinTable } from "typeorm";
+import { UserCompletedChallenge } from "./User";
 
 @Entity()
 export class Challenge extends BaseEntity {
@@ -54,6 +55,9 @@ export class Challenge extends BaseEntity {
 
   @Column({ nullable: true })
   url?: string;
+
+  @OneToMany(() => UserCompletedChallenge, (completedChallenge) => completedChallenge.challenge)
+  completions!: UserCompletedChallenge[];
 
   toJSON() {
     return {

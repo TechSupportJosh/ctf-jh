@@ -8,19 +8,19 @@
 
   <div class="mb-3 challenge-description" v-html="marked.parseInline(challenge.description)"></div>
 
-  <div v-if="challenge.education_resources">
+  <div v-if="challenge.educationResources">
     <strong>Learning Resources: </strong>
     <ul>
-      <li v-for="link in challenge.education_resources">
+      <li v-for="link in challenge.educationResources">
         <a :href="link">{{ link }}</a>
       </li>
     </ul>
   </div>
 
-  <p v-if="challenge.file_name">
+  <p v-if="challenge.fileName">
     <strong>Challenge File:</strong><br />File Name:
-    <a :href="`${config.basePath}api/static/${challenge.file_name}`" download>{{ challenge.file_name }}</a
-    ><br />SHA256 Hash: {{ challenge.file_hash }}
+    <a :href="`${config.basePath}api/static/${challenge.fileName}`" download>{{ challenge.fileName }}</a
+    ><br />SHA256 Hash: {{ challenge.fileHash }}
   </p>
 
   <p v-if="challenge.url">
@@ -90,7 +90,7 @@ const submitFlag = async (challengeId: number) => {
 };
 
 const completedAt = computed(() => {
-  return props.challengeCompletion ? new Date(props.challengeCompletion.time_completed * 1000).toLocaleString() : "";
+  return props.challengeCompletion ? new Date(props.challengeCompletion.completionDate).toLocaleString() : "";
 });
 
 const props = defineProps({

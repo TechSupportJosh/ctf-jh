@@ -2,6 +2,7 @@ import express from "express";
 import { User } from "../entity/User";
 import { getAccessToken, getAuthorizationURI, getUserAttributes } from "../utils/warwickapi";
 import { randomBytes } from "crypto";
+import { getUserFromCookie } from "../middlewares/auth";
 
 const router = express.Router();
 
@@ -55,9 +56,17 @@ router.get("/callback", async (req, res) => {
   res.redirect("/");
 });
 
-// Do a generic catch all incase they ever land on auth
-router.get("*", (req, res) => {
-  res.redirect(`${req.baseUrl}/login`);
+router.get("/logout", async (req, res) => {
+  const user = await getUserFromCookie(req.cookies.auth);
+
+  if (!user) return res.redirect("/");
+
+  user.authValue = randomBytes(48).toString("base64");
+  user.authExpiry = new Date(0);
+
+  await user.save();
+
+  res.redirect("/");
 });
 
 export const authRouter = router;

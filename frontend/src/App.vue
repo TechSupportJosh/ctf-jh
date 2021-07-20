@@ -12,7 +12,7 @@ export default defineComponent({
   },
 });
 </script>
-
+<!-- 
 <style>
 body {
   background: #9d50bb; /* fallback for old browsers */
@@ -27,4 +27,4 @@ body {
   background-color: white;
   padding: 3rem 6rem;
 }
-</style>
+</style> -->

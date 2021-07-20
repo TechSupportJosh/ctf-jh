@@ -19,10 +19,10 @@ export class User extends BaseEntity {
   isAdmin!: boolean;
 
   @Column({ select: false, nullable: true })
-  authValue?: string;
+  authValue!: string;
 
   @Column({ select: false, nullable: true })
-  authExpiry?: Date;
+  authExpiry!: Date;
 
   @OneToMany(() => UserCompletedChallenge, (completedChallenge) => completedChallenge.user, { eager: true })
   completedChallenges!: UserCompletedChallenge[];

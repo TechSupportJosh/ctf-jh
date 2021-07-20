@@ -39,7 +39,7 @@ router.beforeEach(async (to, from) => {
   if (!user && to.path !== "/login") return "/login";
   if (user && to.path === "/login") return "/";
 
-  if (to.meta.requiresAdmin && !user?.is_admin) return "/";
+  if (to.meta.requiresAdmin && !user?.isAdmin) return "/";
 
   return true;
 });

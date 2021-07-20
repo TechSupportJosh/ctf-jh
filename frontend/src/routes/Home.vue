@@ -3,11 +3,11 @@
     <div class="row">
       <div class="col-8">
         <h1>Intake CTF</h1>
-        <label class="text-muted">{{ user?.firstname }} {{ user?.surname }}</label>
+        <label class="text-muted">{{ user?.firstName }} {{ user?.lastName }}</label>
       </div>
       <div class="col-4 d-flex align-items-center justify-content-end" style="flex-">
         <div>
-          <template v-if="user?.is_admin"> <router-link to="/admin">Admin Panel</router-link>&nbsp;&nbsp;</template>
+          <template v-if="user?.isAdmin"> <router-link to="/admin">Admin Panel</router-link>&nbsp;&nbsp;</template>
           <a :href="`${config.basePath}api/auth/logout`">Log Out</a>
         </div>
       </div>
@@ -25,7 +25,7 @@
       <div class="col-sm-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-text">{{ user?.completed_challenges.length ?? 0 }}</h5>
+            <h5 class="card-text">{{ user?.completedChallenges.length ?? 0 }}</h5>
             <p class="card-text text-muted">Flags Submitted</p>
           </div>
         </div>
@@ -85,9 +85,9 @@ watch(hideCompletedChallenges, (newValue) => {
 });
 
 const pointTotal = computed(() => {
-  return user.value?.completed_challenges
+  return user.value?.completedChallenges
     .map((completedChallenge) => {
-      return challenges.value?.find((challenge) => challenge.id === completedChallenge.challenge_id)?.points ?? 0;
+      return challenges.value?.find((challenge) => challenge.id === completedChallenge.challengeId)?.points ?? 0;
     })
     .reduce((value, total) => total + value, 0);
 });
@@ -114,15 +114,15 @@ const categorisedChallenges = computed(() => {
 });
 
 const getCompletedEntry = ({ id }: Challenge) => {
-  return user.value?.completed_challenges.find((challenge) => challenge.challenge_id === id);
+  return user.value?.completedChallenges.find((challenge) => challenge.challengeId === id);
 };
 
-const getRequiredCompletedEntry = ({ unlock_requirement }: Challenge) => {
-  return user.value?.completed_challenges.find((challenge) => challenge.challenge_id === unlock_requirement);
+const getRequiredCompletedEntry = ({ unlockRequirement }: Challenge) => {
+  return user.value?.completedChallenges.find((challenge) => challenge.challengeId === unlockRequirement);
 };
 
-const getRequiredChallenge = ({ unlock_requirement }: Challenge) => {
-  return challenges.value.find((challenge) => challenge.id === unlock_requirement);
+const getRequiredChallenge = ({ unlockRequirement }: Challenge) => {
+  return challenges.value.find((challenge) => challenge.id === unlockRequirement);
 };
 </script>
 
