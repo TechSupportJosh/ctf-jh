@@ -18,6 +18,9 @@ export class Challenge extends BaseEntity {
   author!: string;
 
   @Column()
+  category!: string;
+
+  @Column()
   points!: number;
 
   @Column()
