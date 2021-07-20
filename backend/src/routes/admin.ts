@@ -89,4 +89,24 @@ router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), asy
   res.redirect(303, "/admin");
 });
 
+router.delete("/challenges/:challengeId", async (req, res) => {
+  const challenge = await Challenge.findOne({ relations: ["completions"], where: { id: req.params.challengeId } });
+  if (!challenge) return res.status(404);
+
+  await Promise.all(challenge.completions.map((completion) => completion.remove()));
+
+  await challenge.remove();
+
+  return res.status(200);
+});
+
+router.delete("/challenges/:challengeId/submissions", async (req, res) => {
+  const challenge = await Challenge.findOne({ relations: ["completions"], where: { id: req.params.challengeId } });
+  if (!challenge) return res.status(404);
+
+  await Promise.all(challenge.completions.map((completion) => completion.remove()));
+
+  return res.status(200);
+});
+
 export const adminRouter = router;

@@ -40,7 +40,7 @@ export class Challenge extends BaseEntity {
   })
   educationResources!: EducationResource[];
 
-  @ManyToOne(() => Challenge, { nullable: true })
+  @ManyToOne(() => Challenge, { nullable: true, onDelete: "SET NULL" })
   @JoinTable()
   unlockRequirement?: Challenge;
 
@@ -101,7 +101,9 @@ export class EducationResource extends BaseEntity {
   @Column()
   resource!: string;
 
-  @ManyToOne(() => Challenge, (challenge) => challenge.educationResources)
+  @ManyToOne(() => Challenge, (challenge) => challenge.educationResources, {
+    onDelete: "CASCADE",
+  })
   challenge!: Challenge;
 }
 
@@ -113,6 +115,8 @@ export class ChallengeTag extends BaseEntity {
   @Column()
   tag!: string;
 
-  @ManyToOne(() => Challenge, (challenge) => challenge.tags)
+  @ManyToOne(() => Challenge, (challenge) => challenge.tags, {
+    onDelete: "CASCADE",
+  })
   challenge!: Challenge;
 }
