@@ -46,7 +46,6 @@ export const getRequestToken = async () => {
   // qs is used to convert the JS object into a querystring (i.e. url encoded form)
   const response = await client.post("/requestToken", qs.stringify(formData));
 
-  console.log(response);
   if (response.status !== 200) return null;
 
   const tokens = new URLSearchParams(response.data);
