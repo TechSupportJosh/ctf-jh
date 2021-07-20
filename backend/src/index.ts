@@ -11,10 +11,12 @@ import { Challenge, ChallengeTag, EducationResource } from "./entity/Challenge";
 import { authRouter } from "./routes/auth";
 import { challengeRouter } from "./routes/challenges";
 import { adminRouter } from "./routes/admin";
+import bodyParser from "body-parser";
 
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const router = express.Router();
 router.use("/auth", authRouter);
@@ -28,6 +30,8 @@ router.get("/me", isAuthenticated(), (req, res) => {
 app.get("/", isAuthenticated(), (req, res) => {
   res.send("You are authenticated! " + JSON.stringify(req.user));
 });
+
+router.use("/static", express.static("uploads"));
 
 // Mount all routes under /api
 app.use("/api", router);

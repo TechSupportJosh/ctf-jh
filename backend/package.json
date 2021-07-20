@@ -1,5 +1,5 @@
 {
-  "name": "warwick-oauth-ts",
+  "name": "flag-submission",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -17,6 +17,8 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "joiful": "^3.0.2",
+    "md5-file": "^5.0.0",
+    "multer": "^1.4.2",
     "oauth-1.0a": "^2.2.6",
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^5.0.2",
@@ -25,6 +27,7 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.13",
+    "@types/multer": "^1.4.7",
     "@types/node": "^16.3.2",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
