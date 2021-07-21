@@ -3,6 +3,7 @@ import { FlagSubmissionDTO } from "../dto/FlagSubmission";
 import { Challenge, ChallengeTag } from "../entity/Challenge";
 import { UserCompletedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
+import { sendWebhook } from "../utils/webhook";
 
 const router = express.Router();
 
@@ -40,6 +41,8 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), async (req, re
   completedChallenge.user = req.user!;
   completedChallenge.completionDate = new Date();
   await completedChallenge.save();
+
+  await sendWebhook(req.user!, parseInt(req.params.challengeId));
 
   return res.status(200).json({ message: "Great job!" });
 });
