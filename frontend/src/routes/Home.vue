@@ -113,7 +113,9 @@ const pointTotal = computed(() => {
 });
 
 const filteredChallenges = computed(() => {
-  const selectedChallenges = challenges.value.filter((challenge) => challenge.category === selectedCategory.value);
+  const selectedChallenges = challenges.value
+    .filter((challenge) => challenge.category === selectedCategory.value)
+    .sort((a, b) => a.title.localeCompare(b.title) || a.difficulty.localeCompare(b.difficulty));
 
   if (!hideCompletedChallenges.value) return selectedChallenges;
 
