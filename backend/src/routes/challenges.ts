@@ -1,4 +1,5 @@
 import express from "express";
+import rateLimit from "express-rate-limit";
 import { FlagSubmissionDTO } from "../dto/FlagSubmission";
 import { Challenge, ChallengeTag } from "../entity/Challenge";
 import { UserCompletedChallenge } from "../entity/User";
@@ -23,7 +24,15 @@ router.get("/", async (req, res) => {
   );
 });
 
-router.post("/:challengeId/submit", validator(FlagSubmissionDTO), async (req, res) => {
+const flagSubmissionLimiter = rateLimit({
+  max: 5,
+  windowMs: 60 * 1000,
+  keyGenerator: (req, res) => {
+    return req.user!.id.toString();
+  },
+  skipSuccessfulRequests: true,
+});
+router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmissionLimiter, async (req, res) => {
   const { flag } = res.locals.dto as FlagSubmissionDTO;
 
   const challenge = await Challenge.findOne({ select: ["id", "flag", "unlockRequirement"], where: { id: req.params.challengeId } });
