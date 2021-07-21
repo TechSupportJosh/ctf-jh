@@ -108,7 +108,7 @@ router.delete("/challenges/:challengeId", async (req, res) => {
 
   await challenge.remove();
 
-  return res.status(200);
+  return res.sendStatus(200);
 });
 
 router.delete("/challenges/:challengeId/submissions", async (req, res) => {
@@ -117,7 +117,7 @@ router.delete("/challenges/:challengeId/submissions", async (req, res) => {
 
   await Promise.all(challenge.completions.map((completion) => completion.remove()));
 
-  return res.status(200);
+  return res.sendStatus(200);
 });
 
 export const adminRouter = router;
