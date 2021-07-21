@@ -3,7 +3,9 @@
     <div class="card" :class="`border-${difficultyToClass(challenge.difficulty)}`">
       <div class="card-header">
         <div class="row">
-          <div class="col-10">{{ challenge.title }} ({{ challenge.points }} points{{ challenge.locked ? " - Locked" : "" }})</div>
+          <div class="col-10">
+            <strong>{{ challenge.title }} ({{ challenge.points }} points{{ challenge.locked ? " - Locked" : "" }})</strong>
+          </div>
           <div class="col-2 d-flex justify-content-end">
             <strong :class="`text-${difficultyToClass(challenge.difficulty)}`">{{ challenge.difficulty }}</strong>
           </div>
@@ -27,22 +29,6 @@
       </div>
     </div>
   </div>
-  <!--
-  <div class="accordion-item">
-    <h2 class="accordion-header" :id="`challenge-${challenge.id}`">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        :data-bs-target="`#challenge-body-${challenge.id}`"
-      >
-
-      </button>
-    </h2>
-    <div :id="`challenge-body-${challenge.id}`" class="accordion-collapse collapse" data-bs-parent="#challenge-accordion">
-
-    </div>
-  </div>-->
 </template>
 
 <script lang="ts" setup>
