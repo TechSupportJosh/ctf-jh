@@ -1,9 +1,6 @@
 <template>
   <div class="text-muted" v-if="challenge.locked">
-    <strong>Requires: </strong
-    ><a :href="`#challenge-${challenge.unlockRequirement}`" @click="openRequirementChallenge(challenge)">{{
-      requirementChallenge?.title
-    }}</a>
+    <strong>Requires: </strong><span class="text-white">{{ requirementChallenge?.title }}</span>
   </div>
   <hr />
   <div class="text-muted"><strong>Challenge Author: </strong>{{ challenge.author }}</div>
@@ -13,14 +10,6 @@
 import { defineProps } from "vue";
 
 import type { LockedChallenge, Challenge } from "../types/Challenge";
-
-const openRequirementChallenge = ({ unlockRequirement }: Challenge) => {
-  const accordion = document.getElementById(`challenge-${unlockRequirement}`);
-  if (!accordion) return;
-
-  const button = accordion.children[0] as HTMLElement | null;
-  if (button?.classList.contains("collapsed")) button.click();
-};
 
 defineProps({
   challenge: {
