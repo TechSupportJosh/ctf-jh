@@ -25,13 +25,13 @@ export class ChallengeDTO {
   @(jf.string().required())
   flag!: string;
 
-  @(jf.string().required())
+  @(jf.string().allow("").required())
   tags!: string;
 
   @(jf.string().required())
   difficulty!: string;
 
-  @(jf.string().required())
+  @(jf.string().allow("").required())
   educationResources!: string;
 
   @(jf.number().integer().optional())

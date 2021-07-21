@@ -55,6 +55,15 @@ router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), asy
   challenge.hint = dto.hint;
   challenge.url = dto.url;
 
+  if (dto.unlockRequirement === -1) {
+    challenge.unlockRequirement = undefined;
+  } else {
+    const unlockChallenge = await Challenge.findOne({ where: { id: dto.unlockRequirement } });
+    if (!unlockChallenge) return res.status(400).send("Invalid unlock requirement");
+
+    challenge.unlockRequirement = unlockChallenge;
+  }
+
   if (req.files?.length) {
     const file = (req.files as Express.Multer.File[])[0];
     challenge.fileName = file.filename;
@@ -64,27 +73,29 @@ router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), asy
   await challenge.save();
 
   // Delete previous tags & education resources
-  await Promise.all(challenge.tags.map((tag) => tag.remove()));
-  await Promise.all(challenge.educationResources.map((resource) => resource.remove()));
+  await Promise.all((challenge.tags ?? []).map((tag) => tag.remove()));
+  await Promise.all((challenge.educationResources ?? []).map((resource) => resource.remove()));
 
-  // Then create all of tags and resources
-  await Promise.all(
-    dto.tags.split(",").map((tagValue) => {
-      const tag = new ChallengeTag();
-      tag.challenge = challenge!;
-      tag.tag = tagValue.trim();
-      return tag.save();
-    })
-  );
+  if (dto.tags !== "")
+    // Then create all of tags and resources
+    await Promise.all(
+      dto.tags.split(",").map((tagValue) => {
+        const tag = new ChallengeTag();
+        tag.challenge = challenge!;
+        tag.tag = tagValue.trim();
+        return tag.save();
+      })
+    );
 
-  await Promise.all(
-    dto.educationResources.split(",").map((resourceValue) => {
-      const resource = new EducationResource();
-      resource.challenge = challenge!;
-      resource.resource = resourceValue.trim();
-      return resource.save();
-    })
-  );
+  if (dto.educationResources !== "")
+    await Promise.all(
+      dto.educationResources.split(",").map((resourceValue) => {
+        const resource = new EducationResource();
+        resource.challenge = challenge!;
+        resource.resource = resourceValue.trim();
+        return resource.save();
+      })
+    );
 
   res.redirect(303, "/admin");
 });
