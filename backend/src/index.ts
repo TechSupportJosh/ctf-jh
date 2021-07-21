@@ -12,11 +12,19 @@ import { authRouter } from "./routes/auth";
 import { challengeRouter } from "./routes/challenges";
 import { adminRouter } from "./routes/admin";
 import bodyParser from "body-parser";
+import helmet from "helmet";
 
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+    },
+  })
+);
 
 const router = express.Router();
 router.use("/auth", authRouter);
