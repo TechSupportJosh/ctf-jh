@@ -139,16 +139,16 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Tags (comma seperated)</label>
-              <input type="text" class="form-control" name="tags" v-model="editChallenge.tags" required />
+              <input type="text" class="form-control" name="tags" v-model="editChallenge.tags" />
             </div>
             <div class="mb-3">
               <label class="form-label">Education Links (comma seperated)</label>
-              <input type="text" class="form-control" name="educationResources" v-model="editChallenge.educationResources" required />
+              <input type="text" class="form-control" name="educationResources" v-model="editChallenge.educationResources" />
             </div>
             <div class="mb-3">
               <label class="form-label">Unlock Requirement</label>
               <select class="form-control" name="unlockRequirement" v-model="editChallenge.unlockRequirement">
-                <option :value="-1" selected>None</option>
+                <option :value="undefined" selected>None</option>
                 <option v-for="challenge in challenges" :value="challenge.id">{{ challenge.category }} - {{ challenge.title }}</option>
               </select>
             </div>

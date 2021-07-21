@@ -34,7 +34,7 @@ export class ChallengeDTO {
   @(jf.string().allow("").required())
   educationResources!: string;
 
-  @(jf.number().integer().optional())
+  @(jf.number().integer().empty("").optional().default(-1))
   unlockRequirement?: number;
 
   @(jf.string().required())
