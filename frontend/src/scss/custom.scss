@@ -29,3 +29,11 @@ body,
 html {
   height: -webkit-fill-available;
 }
+
+.card {
+  background: none;
+  border-width: 3px;
+}
+.card-header {
+  background-color: $dark;
+}
