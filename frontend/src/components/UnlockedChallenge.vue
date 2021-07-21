@@ -68,6 +68,8 @@ const flagSubmissionError = ref("");
 
 const emit = defineEmit(["flagSubmitted"]);
 
+let errorTimer: number | null = null;
+
 const submitFlag = async (challengeId: number) => {
   const response = await API.submitFlag(challengeId, flag.value);
 
@@ -91,7 +93,12 @@ const submitFlag = async (challengeId: number) => {
       break;
   }
 
-  setTimeout(() => {
+  if (errorTimer !== null) {
+    clearTimeout(errorTimer);
+    errorTimer = null;
+  }
+
+  errorTimer = setTimeout(() => {
     flagSubmissionError.value = "";
   }, 4500);
 };
