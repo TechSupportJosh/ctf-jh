@@ -3,6 +3,7 @@
     <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" id="sidebar">
       <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white">
         <span class="fs-4">Intake CTF</span>
+        <router-link v-if="user?.isAdmin" to="/admin">Admin Panel</router-link>
       </div>
       <hr />
       <ul class="nav nav-pills flex-column mb-auto">
@@ -133,9 +134,6 @@ const getRequiredChallenge = ({ unlockRequirement }: Challenge) => {
 </script>
 
 <style scoped>
-.challenge-description {
-  white-space: pre-line;
-}
 #app {
   height: 100vh;
 }

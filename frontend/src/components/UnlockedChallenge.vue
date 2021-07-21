@@ -12,7 +12,7 @@
     <strong>Learning Resources: </strong>
     <ul>
       <li v-for="link in challenge.educationResources">
-        <a :href="link">{{ link }}</a>
+        <a :href="link" target="blank">{{ link }}</a>
       </li>
     </ul>
   </div>
@@ -108,3 +108,9 @@ const props = defineProps({
   },
 });
 </script>
+
+<style scoped>
+.challenge-description {
+  white-space: pre-line;
+}
+</style>
