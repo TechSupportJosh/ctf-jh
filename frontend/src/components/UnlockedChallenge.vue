@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-2" v-if="challenge.tags">
+  <div class="mb-2" v-if="challenge.tags.length">
     <template v-for="tag in challenge.tags">
       <span class="badge rounded-pill bg-primary">{{ tag }}</span
       >&nbsp;
@@ -8,7 +8,7 @@
 
   <div class="mb-3 challenge-description" v-html="marked.parseInline(challenge.description)"></div>
 
-  <div v-if="challenge.educationResources">
+  <div v-if="challenge.educationResources.length">
     <strong>Learning Resources: </strong>
     <ul>
       <li v-for="link in challenge.educationResources">
@@ -36,7 +36,9 @@
     <div class="mb-2" v-if="showHint" v-html="'<strong>Hint: </strong>' + marked.parseInline(challenge.hint)"></div>
     <div class="input-group mb-3 has-validation">
       <input type="text" class="form-control" :class="{ 'is-invalid': flagSubmissionError }" placeholder="WMG{AAAAAAAA}" v-model="flag" />
-      <button class="btn btn-success" type="button" @click="submitFlag(challenge.id)">Submit</button>
+      <button class="btn" :class="`btn-${difficultyToClass(challenge.difficulty)}`" type="button" @click="submitFlag(challenge.id)">
+        Submit
+      </button>
       <div class="invalid-feedback">{{ flagSubmissionError }}</div>
     </div>
   </template>
@@ -51,6 +53,8 @@ import marked from "marked";
 import { computed, defineProps, ref, defineEmit } from "vue";
 
 import type { UnlockedChallenge, UserChallengeCompletion } from "../types/Challenge";
+
+import { difficultyToClass } from "../utils/styling";
 
 import config from "../config";
 import API from "../utils/api";

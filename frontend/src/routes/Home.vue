@@ -1,57 +1,61 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-8">
-        <h1>Intake CTF</h1>
-        <label class="text-muted">{{ user?.firstName }} {{ user?.lastName }}</label>
+  <main>
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" id="sidebar">
+      <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white">
+        <span class="fs-4">Intake CTF</span>
       </div>
-      <div class="col-4 d-flex align-items-center justify-content-end" style="flex-">
-        <div>
-          <template v-if="user?.isAdmin"> <router-link to="/admin">Admin Panel</router-link>&nbsp;&nbsp;</template>
-          <a :href="`${config.basePath}api/auth/logout`">Log Out</a>
-        </div>
+      <hr />
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item text-center">{{ pointTotal }} Points<br />{{ user?.completedChallenges.length ?? 0 }} Challenges Completed</li>
+        <hr />
+        <li class="nav-item mb-2"><strong>Categories:</strong></li>
+        <li class="nav-item" v-for="category in challengeCategories">
+          <a
+            href="#"
+            class="nav-link"
+            :class="category == selectedCategory ? 'active' : ''"
+            aria-current="page"
+            @click="selectedCategory = category"
+          >
+            {{ category }}
+          </a>
+        </li>
+      </ul>
+      <hr />
+      <div>
+        <strong>{{ user?.firstName }} {{ user?.lastName }}</strong
+        ><br />
+        <a :href="`${config.basePath}api/auth/logout`" class="text-white">Log Out</a>
       </div>
     </div>
-    <hr />
-    <div class="row mb-4">
-      <div class="col-sm-4 offset-2">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-text">{{ pointTotal }}</h5>
-            <p class="card-text text-muted">Total Points</p>
+    <div class="container mt-4" id="main-container">
+      <div class="row">
+        <div class="col-6">
+          <h3>Viewing {{ selectedCategory }} challenges</h3>
+        </div>
+        <div class="col-6 d-flex align-items-center justify-content-end">
+          <div class="form-check form-switch mb-1">
+            <input class="form-check-input" type="checkbox" v-model="hideCompletedChallenges" />
+            <label class="form-check-label">Hide completed challenges</label>
           </div>
         </div>
       </div>
-      <div class="col-sm-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-text">{{ user?.completedChallenges.length ?? 0 }}</h5>
-            <p class="card-text text-muted">Flags Submitted</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="form-check form-switch mb-1">
-      <input class="form-check-input" type="checkbox" v-model="hideCompletedChallenges" />
-      <label class="form-check-label">Hide completed challenges</label>
-    </div>
-    <hr />
-    <div v-for="(challenges, category) in categorisedChallenges" :key="category" class="mb-4">
-      <h3>{{ category }}</h3>
-      <div class="accordion" id="challenge-accordion">
+      <hr />
+      <div id="challenge-container">
         <challenge-component
-          v-for="challenge in challenges"
+          v-for="challenge in filteredChallenges"
           :key="challenge.id"
           :challenge="challenge"
           :challenge-completion="getCompletedEntry(challenge)"
           :requirement-challenge="getRequiredChallenge(challenge)"
           :requirement-challenge-completion="getRequiredCompletedEntry(challenge)"
           @challenge-completed="fetchData"
+          class="challenge mb-4"
         ></challenge-component>
       </div>
+      <div v-if="!filteredChallenges.length" class="text-center text-muted">No challenges available...</div>
     </div>
-    <div v-if="!filteredChallenges.length" class="text-center text-muted">No challenges available...</div>
-  </div>
+  </main>
 </template>
 
 <script lang="ts" setup>
@@ -68,6 +72,8 @@ const user = ref<User>();
 
 const challenges = ref<Challenge[]>([]);
 const hideCompletedChallenges = ref(localStorage.getItem("hideCompletedChallenges") === "1");
+const selectedCategory = ref(localStorage.getItem("selectedCategory"));
+const challengeCategories = ref<string[]>([]);
 
 onMounted(async () => {
   fetchData();
@@ -77,11 +83,24 @@ const fetchData = async () => {
   user.value = await API.getUser();
   const response = await API.getChallenges();
 
-  if (response) challenges.value = response;
+  if (response) {
+    challenges.value = response;
+
+    const categories = new Set<string>();
+    challenges.value.forEach((challenge) => {
+      categories.add(challenge.category);
+    });
+
+    challengeCategories.value = [...categories];
+  }
 };
 
 watch(hideCompletedChallenges, (newValue) => {
   localStorage.setItem("hideCompletedChallenges", newValue ? "1" : "0");
+});
+
+watch(selectedCategory, (newValue) => {
+  localStorage.setItem("selectedCategory", newValue ?? "");
 });
 
 const pointTotal = computed(() => {
@@ -93,24 +112,11 @@ const pointTotal = computed(() => {
 });
 
 const filteredChallenges = computed(() => {
-  if (!hideCompletedChallenges.value) return challenges.value;
+  const selectedChallenges = challenges.value.filter((challenge) => challenge.category === selectedCategory.value);
 
-  return challenges.value.filter((challenge) => !getCompletedEntry(challenge));
-});
+  if (!hideCompletedChallenges.value) return selectedChallenges;
 
-const categorisedChallenges = computed(() => {
-  const filteredCategories: Record<string, Challenge[]> = {};
-
-  filteredChallenges.value.forEach((challenge) => {
-    if (!(challenge.category in filteredCategories)) filteredCategories[challenge.category] = [];
-
-    filteredCategories[challenge.category].push(challenge);
-  });
-
-  Object.values(filteredCategories).forEach((challenges) => {
-    challenges.sort((a, b) => a.title.localeCompare(b.title) || a.difficulty.localeCompare(b.difficulty));
-  });
-  return filteredCategories;
+  return selectedChallenges.filter((challenge) => !getCompletedEntry(challenge));
 });
 
 const getCompletedEntry = ({ id }: Challenge) => {
@@ -129,5 +135,23 @@ const getRequiredChallenge = ({ unlockRequirement }: Challenge) => {
 <style scoped>
 .challenge-description {
   white-space: pre-line;
+}
+#app {
+  height: 100vh;
+}
+main {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+#sidebar {
+  width: 280px;
+  position: fixed;
+  height: 100vh;
+}
+
+#main-container {
+  padding-left: 280px;
 }
 </style>

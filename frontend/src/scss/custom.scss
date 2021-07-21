@@ -20,3 +20,12 @@
 // 5. Add additional custom code here
 
 @import "./superhero_bootswatch.scss";
+
+body,
+#app {
+  min-height: 100vh;
+}
+
+html {
+  height: -webkit-fill-available;
+}
