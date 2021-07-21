@@ -6,6 +6,7 @@ export interface ChallengeBase {
   category: string;
   difficulty: string;
   unlockRequirement?: number;
+  completionCount?: number;
 }
 
 export interface LockedChallenge extends ChallengeBase {

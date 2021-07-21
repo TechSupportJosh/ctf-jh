@@ -8,7 +8,7 @@ import { sendWebhook } from "../utils/webhook";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const challenges = await Challenge.find({ relations: ["unlockRequirement"], where: { disabled: false } });
+  const challenges = await Challenge.find({ relations: ["unlockRequirement", "completions"], where: { disabled: false } });
 
   res.json(
     challenges.map((challenge) => {

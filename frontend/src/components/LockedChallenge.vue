@@ -3,7 +3,10 @@
     <strong>Requires: </strong><span class="text-white">{{ requirementChallenge?.title }}</span>
   </div>
   <hr />
-  <div class="text-muted"><strong>Challenge Author: </strong>{{ challenge.author }}</div>
+  <div class="d-flex d-flex justify-content-between">
+    <div><strong class="text-muted">Challenge Author: </strong>{{ challenge.author }}</div>
+    <div><strong class="text-muted">Owns: </strong>{{ challenge.completionCount }}</div>
+  </div>
 </template>
 
 <script lang="ts" setup>

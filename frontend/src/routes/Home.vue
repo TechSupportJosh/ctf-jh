@@ -1,13 +1,13 @@
 <template>
   <main>
     <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" id="sidebar">
-      <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white">
+      <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white flex-column">
         <span class="fs-4">Intake CTF</span>
         <router-link v-if="user?.isAdmin" to="/admin">Admin Panel</router-link>
       </div>
       <hr />
       <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item text-center">{{ pointTotal }} Points<br />{{ user?.completedChallenges.length ?? 0 }} Challenges Completed</li>
+        <li class="nav-item text-center">{{ pointTotal }} Points<br />{{ user?.completedChallenges.length ?? 0 }} Challenges Owned</li>
         <hr />
         <li class="nav-item mb-2"><strong>Categories:</strong></li>
         <li class="nav-item" v-for="category in challengeCategories">

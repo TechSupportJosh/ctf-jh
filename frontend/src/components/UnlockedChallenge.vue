@@ -43,9 +43,12 @@
     </div>
   </template>
 
-  <div class="text-muted"><strong>Challenge Author: </strong>{{ challenge.author }}</div>
+  <div class="d-flex d-flex justify-content-between">
+    <div><strong class="text-muted">Challenge Author: </strong>{{ challenge.author }}</div>
+    <div><strong class="text-muted">Owns: </strong>{{ challenge.completionCount }}</div>
+  </div>
 
-  <template v-if="challengeCompletion"> Completed at {{ completedAt }} </template>
+  <template v-if="challengeCompletion"><strong class="text-muted">Completed at: </strong>{{ completedAt }}</template>
 </template>
 
 <script lang="ts" setup>

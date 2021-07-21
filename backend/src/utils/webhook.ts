@@ -16,7 +16,7 @@ export const sendWebhook = async (user: User, challengeId: number) => {
 
   client.post(process.env.DISCORD_WEBHOOK_URL, {
     content: `${completionCount === 1 ? ":drop_of_blood:" : ""} ${user.firstName} ${user.lastName[0]} ${
-      completionCount === 1 ? "blooded" : "completed"
+      completionCount === 1 ? "blooded" : "owned"
     } **${challenge.title}**!`,
   });
 };
