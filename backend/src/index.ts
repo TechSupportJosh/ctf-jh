@@ -13,6 +13,7 @@ import { challengeRouter } from "./routes/challenges";
 import { adminRouter } from "./routes/admin";
 import bodyParser from "body-parser";
 import helmet from "helmet";
+import morgan from "morgan";
 
 const app = express();
 app.use(cookieParser());
@@ -25,6 +26,7 @@ app.use(
     },
   })
 );
+app.use(morgan(process.env.NODE_ENV === "production" ? "common" : "dev"));
 
 const router = express.Router();
 router.use("/auth", authRouter);
