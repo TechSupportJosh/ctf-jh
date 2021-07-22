@@ -14,6 +14,7 @@ import { adminRouter } from "./routes/admin";
 import bodyParser from "body-parser";
 import helmet from "helmet";
 import morgan from "morgan";
+import path from "path";
 
 const app = express();
 app.use(cookieParser());
@@ -51,7 +52,7 @@ app.use("/api", router);
     type: "sqlite",
     database: "database.db",
     synchronize: true,
-    entities: ["src/entity/*.ts"],
+    entities: [path.join(__dirname, "entity", "*.js"), path.join(__dirname, "entity", "*.ts")],
   });
 
   app.listen(8080, () => {

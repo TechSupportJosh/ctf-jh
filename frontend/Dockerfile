@@ -1,7 +1,7 @@
 # Based off https://cli.vuejs.org/guide/deployment.html#docker-nginx
 
 # Build application
-FROM node:15 as build-stage
+FROM node:16 as build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
