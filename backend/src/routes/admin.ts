@@ -1,13 +1,14 @@
 import express from "express";
 import md5File from "md5-file";
-import multer, { Multer } from "multer";
+import multer from "multer";
 import { ChallengeDTO } from "../dto/Challenge";
 import { Challenge, ChallengeTag, EducationResource } from "../entity/Challenge";
 import { User, UserCompletedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import path from "path";
 import { UserDTO } from "../dto/User";
-import { UsingJoinTableIsNotAllowedError } from "typeorm";
+import { Not } from "typeorm";
+import { hashPassword } from "../utils/password";
 
 const router = express.Router();
 
@@ -99,7 +100,7 @@ router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), asy
       })
     );
 
-  res.redirect(303, "/admin");
+  res.redirect(303, "/admin?success=challenge-updated");
 });
 
 router.delete("/challenges/:challengeId", async (req, res) => {
@@ -131,15 +132,39 @@ router.get("/users", async (req, res) => {
 router.post("/users", validator(UserDTO), async (req, res) => {
   const dto = res.locals.dto as UserDTO;
 
-  let user = await User.findOne({ where: { id: dto.id } });
+  let user = await User.createQueryBuilder("user").addSelect("user.password").where({ id: dto.id }).getOne();
   if (!user) user = new User();
 
+  console.log(user);
+
+  if (dto.username !== undefined) {
+    // Ensure that a user with a username cannot be created without a password
+    if (user.password === undefined && dto.password === undefined) return res.redirect("/admin?error=no-password");
+
+    // Ensure this username does not already exist
+    const userSearch = await User.count({ where: { username: dto.username, id: Not(dto.id) } });
+    if (userSearch > 0) return res.redirect("/admin?error=username-exists");
+
+    // If we've specified a username, only re-hash the password if it's specified
+    if (dto.password !== undefined) {
+      const passwordHash = await hashPassword(dto.password);
+      if (passwordHash === null) return res.redirect("/admin?error=hash-error");
+      user.password = passwordHash;
+    }
+  } else {
+    // If no username is specified, remove the password
+    user.password = undefined;
+  }
+
+  user.username = dto.username;
   user.warwickId = dto.warwickId;
   user.firstName = dto.firstName;
   user.lastName = dto.lastName;
   user.isAdmin = dto.isAdmin === "on" || false;
 
-  res.redirect(303, "/admin");
+  await user.save();
+
+  res.redirect(303, "/admin?success=user-updated");
 });
 
 router.delete("/users/:userId", async (req, res) => {

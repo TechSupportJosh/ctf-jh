@@ -36,7 +36,7 @@ export const useRouter = () => {
 router.beforeEach(async (to, from) => {
   const user = await API.getUser();
 
-  if (!user && to.path !== "/login") return "/login";
+  if (!user && to.path !== "/login") return "/login?error=requires-auth";
   if (user && to.path === "/login") return "/";
 
   if (to.meta.requiresAdmin && !user?.isAdmin) return "/";

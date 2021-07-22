@@ -30,6 +30,10 @@
         </div>
       </div>
     </div>
+    <hr />
+    <div class="alert alert-danger" v-if="errorMessage"><strong>An error occured: </strong>{{ errorMessage }}</div>
+    <div class="alert alert-success" v-if="successMessage"><strong>Success: </strong>{{ successMessage }}</div>
+
     <h2>Challenges</h2>
     <challenge-editor></challenge-editor>
     <h2>Users</h2>
@@ -44,8 +48,36 @@ import UserEditor from "../components/UserEditor.vue";
 import config from "../config";
 import API from "../utils/api";
 import type { Stats } from "../types/Stats";
+import { useRoute } from "vue-router";
 
 const stats = ref<Stats>();
+
+const route = useRoute();
+const errorCode = route.query.error;
+const errorMessage = ref("");
+const successCode = route.query.success;
+const successMessage = ref("");
+
+switch (errorCode) {
+  case "no-password":
+    errorMessage.value = "A password must be specified for this user.";
+    break;
+  case "username-exists":
+    errorMessage.value = "This username already exists.";
+    break;
+  case "hash-error":
+    errorMessage.value = "Failed to hash password, please consult the console.";
+    break;
+}
+
+switch (successCode) {
+  case "challenge-updated":
+    successMessage.value = "The challenge has been successfully updated.";
+    break;
+  case "user-updated":
+    successMessage.value = "The user has been successfully updated.";
+    break;
+}
 
 onMounted(async () => {
   const statsResponse = await API.getAdminStats();

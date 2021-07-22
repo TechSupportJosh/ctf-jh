@@ -5,7 +5,28 @@
         <h1>Intake CTF</h1>
         <h4 class="mb-4">Hosted by WMG Cyber Society</h4>
         <div class="alert alert-danger" v-if="errorMessage"><strong>An error occured: </strong>{{ errorMessage }}</div>
-        <a :href="`${config.basePath}api/auth/login`" class="btn text-white px-4" id="login-button">Login With Warwick ID</a>
+        <div v-show="!showUsernameLogin">
+          <div class="mb-2">
+            <a :href="`${config.basePath}api/auth/warwick`" class="btn text-white w-100" id="login-button">Login With Warwick ID</a>
+          </div>
+          <div>
+            <button class="btn btn-secondary text-white w-100" @click="showUsernameLogin = true">Login With Username</button>
+          </div>
+        </div>
+        <div v-show="showUsernameLogin" class="text-left">
+          <form :action="`${config.basePath}api/auth/login`" method="POST">
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <input type="text" class="form-control" name="username" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-control" name="password" />
+            </div>
+            <button type="submit" class="btn btn-success text-white w-100 mb-1">Login</button>
+            <a href="#" @click.prevent="showUsernameLogin = false">Go Back</a>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -22,12 +43,20 @@ const route = useRoute();
 const errorCode = route.query.error;
 const errorMessage = ref("");
 
+const showUsernameLogin = ref(false);
+
 switch (errorCode) {
   case "oauth":
     errorMessage.value = "Failed to fetch OAuth status, please try again";
     break;
   case "course-id":
     errorMessage.value = "You do not have access to this site, please contact an administrator";
+    break;
+  case "requires-auth":
+    errorMessage.value = "This page requires authentication.";
+    break;
+  case "invalid-creds":
+    errorMessage.value = "An invalid username or password was entered.";
     break;
 }
 
@@ -59,5 +88,6 @@ onMounted(() => {
   padding: 40px;
   border-radius: 10px;
   background-color: var(--bs-dark);
+  width: 500px;
 }
 </style>

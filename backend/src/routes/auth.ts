@@ -1,12 +1,14 @@
 import express from "express";
 import { User } from "../entity/User";
 import { getAccessToken, getAuthorizationURI, getUserAttributes } from "../utils/warwickapi";
-import { randomBytes } from "crypto";
 import { getUserFromCookie } from "../middlewares/auth";
+import { validator } from "../middlewares/validator";
+import { LoginDTO } from "../dto/Login";
+import { verifyPassword } from "../utils/password";
 
 const router = express.Router();
 
-router.get("/login", async (req, res) => {
+router.get("/warwick", async (req, res) => {
   const authorizationUri = await getAuthorizationURI();
 
   if (!authorizationUri) return res.redirect("/?error=oauth");
@@ -35,23 +37,37 @@ router.get("/callback", async (req, res) => {
     user.isAdmin = attributes.id === "1906821";
   }
 
-  // Create new auth string + expiry time in 3 days
-  const daysBeforeExpires = 3;
-  const authValue = randomBytes(48).toString("base64");
-  const authExpiry = new Date();
-  authExpiry.setDate(new Date().getDate() + daysBeforeExpires);
+  user.createAuth();
 
-  user.authValue = authValue;
-  user.authExpiry = authExpiry;
-
-  res.cookie("auth", authValue, {
-    maxAge: daysBeforeExpires * 24 * 60 * 60 * 1000,
+  res.cookie("auth", user.authValue, {
+    expires: user.authExpiry,
     httpOnly: true,
     sameSite: "strict",
   });
 
-  const resp = await user.save();
-  console.log("User saved: ", resp);
+  await user.save();
+
+  res.redirect("/");
+});
+
+router.post("/login", validator(LoginDTO), async (req, res) => {
+  const login = res.locals.dto as LoginDTO;
+
+  const user = await User.createQueryBuilder("user").addSelect("user.password").where({ username: login.username }).getOne();
+
+  if (!user) return res.send("/?error=invalid-creds");
+  if (!user.password) return res.send("/?error=invalid-creds");
+  if (!verifyPassword(login.password, user.password)) return res.send("/?error=invalid-creds");
+
+  user.createAuth();
+
+  res.cookie("auth", user.authValue, {
+    expires: user.authExpiry,
+    httpOnly: true,
+    sameSite: "strict",
+  });
+
+  await user.save();
 
   res.redirect("/");
 });
@@ -61,8 +77,7 @@ router.get("/logout", async (req, res) => {
 
   if (!user) return res.redirect("/");
 
-  user.authValue = randomBytes(48).toString("base64");
-  user.authExpiry = new Date(0);
+  user.clearAuth();
 
   await user.save();
 
