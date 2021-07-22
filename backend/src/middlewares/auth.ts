@@ -15,7 +15,7 @@ export const isAuthenticated = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const user = await getUserFromCookie(req.cookies.auth);
 
-    if (!user) return res.redirect("/login?error=requires-auth");
+    if (!user) return res.status(401).send({ message: "Requires authentication" });
 
     req.user = user;
     return next();
@@ -26,8 +26,8 @@ export const isAdmin = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const user = await getUserFromCookie(req.cookies.auth);
 
-    if (!user) return res.redirect("/login?error=requires-auth");
-    if (!user.isAdmin) return res.redirect("/");
+    if (!user) return res.status(401).send({ message: "Requires authentication" });
+    if (!user.isAdmin) return res.status(401).send({ message: "Requires authentication" });
 
     req.user = user;
     return next();
