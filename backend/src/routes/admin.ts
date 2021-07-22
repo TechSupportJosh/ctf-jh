@@ -6,6 +6,8 @@ import { Challenge, ChallengeTag, EducationResource } from "../entity/Challenge"
 import { User, UserCompletedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import path from "path";
+import { UserDTO } from "../dto/User";
+import { UsingJoinTableIsNotAllowedError } from "typeorm";
 
 const router = express.Router();
 
@@ -116,6 +118,46 @@ router.delete("/challenges/:challengeId/submissions", async (req, res) => {
   if (!challenge) return res.status(404);
 
   await Promise.all(challenge.completions.map((completion) => completion.remove()));
+
+  return res.sendStatus(200);
+});
+
+router.get("/users", async (req, res) => {
+  const users = await User.find();
+
+  res.json(users);
+});
+
+router.post("/users", validator(UserDTO), async (req, res) => {
+  const dto = res.locals.dto as UserDTO;
+
+  let user = await User.findOne({ where: { id: dto.id } });
+  if (!user) user = new User();
+
+  user.warwickId = dto.warwickId;
+  user.firstName = dto.firstName;
+  user.lastName = dto.lastName;
+  user.isAdmin = dto.isAdmin === "on" || false;
+
+  res.redirect(303, "/admin");
+});
+
+router.delete("/users/:userId", async (req, res) => {
+  const user = await User.findOne({ relations: ["completedChallenges"], where: { id: req.params.userId } });
+  if (!user) return res.status(404);
+
+  await Promise.all(user.completedChallenges.map((completion) => completion.remove()));
+
+  await user.remove();
+
+  return res.sendStatus(200);
+});
+
+router.delete("/users/:userId/submissions", async (req, res) => {
+  const user = await User.findOne({ relations: ["completedChallenges"], where: { id: req.params.userId } });
+  if (!user) return res.status(404);
+
+  await Promise.all(user.completedChallenges.map((completion) => completion.remove()));
 
   return res.sendStatus(200);
 });

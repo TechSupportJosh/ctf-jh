@@ -32,12 +32,15 @@
     </div>
     <h2>Challenges</h2>
     <challenge-editor></challenge-editor>
+    <h2>Users</h2>
+    <user-editor></user-editor>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import ChallengeEditor from "../components/ChallengeEditor.vue";
+import UserEditor from "../components/UserEditor.vue";
 import config from "../config";
 import API from "../utils/api";
 import type { Stats } from "../types/Stats";

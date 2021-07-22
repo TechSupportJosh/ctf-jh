@@ -54,6 +54,24 @@ const getAdminStats = async () => {
   if (response.status === 200) return response.data;
 };
 
+const getAdminUsers = async () => {
+  const response = await client.get<User[]>(`/admin/users`);
+
+  if (response.status === 200) return response.data;
+};
+
+const deleteUser = async (userId: number) => {
+  const response = await client.delete(`/admin/users/${userId}`);
+
+  return response.status === 200;
+};
+
+const deleteUserSubmissions = async (userId: number) => {
+  const response = await client.delete(`/admin/users/${userId}/submissions`);
+
+  return response.status === 200;
+};
+
 export default {
   getUser,
   getChallenges,
@@ -62,4 +80,7 @@ export default {
   deleteChallenge,
   deleteChallengeSubmissions,
   getAdminStats,
+  getAdminUsers,
+  deleteUser,
+  deleteUserSubmissions,
 };
