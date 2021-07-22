@@ -55,9 +55,9 @@ router.post("/login", validator(LoginDTO), async (req, res) => {
 
   const user = await User.createQueryBuilder("user").addSelect("user.password").where({ username: login.username }).getOne();
 
-  if (!user) return res.send("/?error=invalid-creds");
-  if (!user.password) return res.send("/?error=invalid-creds");
-  if (!verifyPassword(login.password, user.password)) return res.send("/?error=invalid-creds");
+  if (!user) return res.redirect("/?error=invalid-creds");
+  if (!user.password) return res.redirect("/?error=invalid-creds");
+  if (!verifyPassword(login.password, user.password)) return res.redirect("/?error=invalid-creds");
 
   user.createAuth();
 
