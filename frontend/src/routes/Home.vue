@@ -93,6 +93,10 @@ const fetchData = async () => {
     });
 
     challengeCategories.value = [...categories];
+
+    if (!categories.has(selectedCategory.value ?? "")) {
+      selectedCategory.value = [...categories][0];
+    }
   }
 };
 
