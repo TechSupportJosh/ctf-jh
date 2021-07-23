@@ -7,16 +7,16 @@ import morgan from "morgan";
 import path from "path";
 import "reflect-metadata";
 import { Connection, createConnection } from "typeorm";
-import { isAdmin, isAuthenticated } from "./middlewares/auth";
-import { adminRouter } from "./routes/admin";
-import { authRouter } from "./routes/auth";
-import { challengeRouter } from "./routes/challenges";
 import { promisify } from "util";
+import { isAdmin, isAuthenticated } from "./middlewares/auth";
+dotenv.config();
 
 const mkdirAsync = promisify(mkdir);
 const statAsync = promisify(stat);
 
-dotenv.config();
+import { adminRouter } from "./routes/admin";
+import { authRouter } from "./routes/auth";
+import { challengeRouter } from "./routes/challenges";
 
 const app = express();
 app.use(cookieParser());
