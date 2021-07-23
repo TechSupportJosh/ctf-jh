@@ -35,7 +35,17 @@
     >
     <div class="mb-2" v-if="showHint" v-html="'<strong>Hint: </strong>' + marked.parseInline(challenge.hint)"></div>
     <div class="input-group mb-3 has-validation">
-      <input type="text" class="form-control" :class="{ 'is-invalid': flagSubmissionError }" placeholder="WMG{AAAAAAAA}" v-model="flag" />
+      <input
+        type="text"
+        class="form-control"
+        :class="{
+          'is-invalid': flagSubmissionError,
+          'is-valid': flagCorrect,
+        }"
+        :readonly="flagCorrect"
+        placeholder="WMG{AAAAAAAA}"
+        v-model="flag"
+      />
       <button class="btn" :class="`btn-${difficultyToClass(challenge.difficulty)}`" type="button" @click="submitFlag(challenge.id)">
         Submit
       </button>
@@ -65,6 +75,7 @@ import API from "../utils/api";
 const showHint = ref(false);
 const flag = ref("");
 const flagSubmissionError = ref("");
+const flagCorrect = ref(false);
 
 const emit = defineEmit(["flagSubmitted"]);
 
@@ -73,14 +84,10 @@ let errorTimer: number | null = null;
 const submitFlag = async (challengeId: number) => {
   const response = await API.submitFlag(challengeId, flag.value);
 
-  if (response === 200) {
-    emit("flagSubmitted");
-  }
-
   switch (response) {
     case 200:
-      // TODO: Sikari?? pls
-      //user.value = await API.getUser();
+      flagCorrect.value = true;
+      emit("flagSubmitted");
       break;
     case 429:
       flagSubmissionError.value = "Slow down! Try again in a minute.";
