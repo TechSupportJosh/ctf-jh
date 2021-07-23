@@ -1,7 +1,7 @@
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
-import { mkdir, stat } from "fs";
+import { mkdir, access } from "fs";
 import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
@@ -9,10 +9,12 @@ import "reflect-metadata";
 import { Connection, createConnection } from "typeorm";
 import { promisify } from "util";
 import { isAdmin, isAuthenticated } from "./middlewares/auth";
+import { uploadDirectory } from "./constants";
+
 dotenv.config();
 
 const mkdirAsync = promisify(mkdir);
-const statAsync = promisify(stat);
+const accessAsync = promisify(access);
 
 import { adminRouter } from "./routes/admin";
 import { authRouter } from "./routes/auth";
@@ -58,8 +60,11 @@ app.use("/api", router);
   });
 
   // Create upload directory
-  const uploadDirectory = path.join(__dirname, "..", "..", "uploads");
-  if (!(await statAsync(uploadDirectory))) await mkdirAsync(uploadDirectory);
+  try {
+    await accessAsync(uploadDirectory);
+  } catch (err) {
+    await mkdirAsync(uploadDirectory);
+  }
 
   app.listen(8080, () => {
     console.log("Listening on port 8080...");

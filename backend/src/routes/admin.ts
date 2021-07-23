@@ -9,12 +9,13 @@ import path from "path";
 import { UserDTO } from "../dto/User";
 import { Not } from "typeorm";
 import { hashPassword } from "../utils/password";
+import { uploadDirectory } from "../constants";
 
 const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "..", "..", "uploads"));
+    cb(null, uploadDirectory);
   },
   filename: (req, file, cb) => {
     cb(null, "IntakeCTF_" + file.originalname);
