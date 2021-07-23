@@ -1,20 +1,22 @@
-import express from "express";
-import dotenv from "dotenv";
-import "reflect-metadata";
-import { createConnection, Connection } from "typeorm";
 import cookieParser from "cookie-parser";
-
-dotenv.config();
-
-import { isAdmin, isAuthenticated } from "./middlewares/auth";
-import { Challenge, ChallengeTag, EducationResource } from "./entity/Challenge";
-import { authRouter } from "./routes/auth";
-import { challengeRouter } from "./routes/challenges";
-import { adminRouter } from "./routes/admin";
-import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import express from "express";
+import { mkdir, stat } from "fs";
 import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
+import "reflect-metadata";
+import { Connection, createConnection } from "typeorm";
+import { isAdmin, isAuthenticated } from "./middlewares/auth";
+import { adminRouter } from "./routes/admin";
+import { authRouter } from "./routes/auth";
+import { challengeRouter } from "./routes/challenges";
+import { promisify } from "util";
+
+const mkdirAsync = promisify(mkdir);
+const statAsync = promisify(stat);
+
+dotenv.config();
 
 const app = express();
 app.use(cookieParser());
@@ -54,6 +56,10 @@ app.use("/api", router);
     synchronize: true,
     entities: [path.join(__dirname, "entity", "*.js"), path.join(__dirname, "entity", "*.ts")],
   });
+
+  // Create upload directory
+  const uploadDirectory = path.join(__dirname, "..", "..", "uploads");
+  if (!(await statAsync(uploadDirectory))) await mkdirAsync(uploadDirectory);
 
   app.listen(8080, () => {
     console.log("Listening on port 8080...");
