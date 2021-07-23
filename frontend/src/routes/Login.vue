@@ -17,13 +17,33 @@
           <form :action="`${config.basePath}api/auth/login`" method="POST">
             <div class="mb-3">
               <label class="form-label">Username</label>
-              <input type="text" class="form-control" name="username" />
+              <input
+                type="text"
+                class="form-control"
+                :class="{ 'is-valid': isUsernameValid, 'is-invalid': !isUsernameValid }"
+                name="username"
+                v-model="username"
+              />
+              <div class="invalid-feedback" v-if="!isUsernameValid">Usernames must be between 1 and 64 characters.</div>
             </div>
             <div class="mb-3">
               <label class="form-label">Password</label>
-              <input type="password" class="form-control" name="password" />
+              <input
+                type="password"
+                class="form-control"
+                name="password"
+                :class="{ 'is-valid': isPasswordValid, 'is-invalid': !isPasswordValid }"
+                v-model="password"
+              />
+              <div class="invalid-feedback" v-if="!isPasswordValid">Passwords must be between 8 and 256 characters.</div>
             </div>
-            <button type="submit" class="btn btn-success text-white w-100 mb-1">Login</button>
+            <button
+              type="submit"
+              class="btn btn-success text-white w-100 mb-1"
+              :class="{ disabled: !(isUsernameValid && isPasswordValid) }"
+            >
+              Login
+            </button>
             <a href="#" @click.prevent="showUsernameLogin = false">Go Back</a>
           </form>
         </div>
@@ -33,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import config from "../config";
 import { tsParticles } from "tsparticles";
@@ -44,6 +64,17 @@ const errorCode = route.query.error;
 const errorMessage = ref("");
 
 const showUsernameLogin = ref(false);
+
+const username = ref("");
+const password = ref("");
+
+const isUsernameValid = computed(() => {
+  return username.value.length > 0 && username.value.length <= 64;
+});
+
+const isPasswordValid = computed(() => {
+  return password.value.length >= 8 && password.value.length <= 256;
+});
 
 switch (errorCode) {
   case "oauth":
