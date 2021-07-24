@@ -14,14 +14,19 @@
           <a
             href="#"
             class="nav-link"
-            :class="category == selectedCategory ? 'active' : ''"
+            :class="category == selectedCategory && viewState === 'challenges' ? 'active' : ''"
             aria-current="page"
-            @click="selectedCategory = category"
+            @click="
+              selectedCategory = category;
+              viewState = 'challenges';
+            "
           >
             {{ category }}
           </a>
         </li>
       </ul>
+      <a href="" @click.prevent="viewState = 'help'">Help</a>
+      <a href="" @click.prevent="viewState = 'recentFeed'">Recent Solves</a>
       <hr />
       <div>
         <strong>{{ user?.firstName }} {{ user?.lastName }}</strong
@@ -30,37 +35,61 @@
       </div>
     </div>
     <div class="container mt-4" id="main-container">
-      <div class="row">
-        <div class="col-6">
-          <h3>Viewing {{ selectedCategory }} challenges</h3>
-        </div>
-        <div class="col-6 d-flex align-items-center justify-content-end">
-          <div class="form-check form-switch mb-1">
-            <input class="form-check-input" type="checkbox" v-model="hideCompletedChallenges" />
-            <label class="form-check-label">Hide completed challenges</label>
+      <div v-if="viewState === 'challenges'">
+        <div class="row">
+          <div class="col-6">
+            <h3>Viewing {{ selectedCategory }} challenges</h3>
+          </div>
+          <div class="col-6 d-flex align-items-center justify-content-end">
+            <div class="form-check form-switch mb-1">
+              <input class="form-check-input" type="checkbox" v-model="hideCompletedChallenges" />
+              <label class="form-check-label">Hide completed challenges</label>
+            </div>
           </div>
         </div>
+        <hr />
+        <div id="challenge-container">
+          <challenge-component
+            v-for="challenge in filteredChallenges"
+            :key="challenge.id"
+            :challenge="challenge"
+            :challenge-completion="getCompletedEntry(challenge)"
+            :requirement-challenge="getRequiredChallenge(challenge)"
+            :requirement-challenge-completion="getRequiredCompletedEntry(challenge)"
+            @challenge-completed="fetchData"
+            class="challenge mb-4"
+          ></challenge-component>
+        </div>
+        <div v-if="!filteredChallenges.length" class="text-center text-muted">No challenges available...</div>
       </div>
-      <hr />
-      <div id="challenge-container">
-        <challenge-component
-          v-for="challenge in filteredChallenges"
-          :key="challenge.id"
-          :challenge="challenge"
-          :challenge-completion="getCompletedEntry(challenge)"
-          :requirement-challenge="getRequiredChallenge(challenge)"
-          :requirement-challenge-completion="getRequiredCompletedEntry(challenge)"
-          @challenge-completed="fetchData"
-          class="challenge mb-4"
-        ></challenge-component>
+      <div v-if="viewState === 'help'">
+        <c-t-f-help></c-t-f-help>
       </div>
-      <div v-if="!filteredChallenges.length" class="text-center text-muted">No challenges available...</div>
+      <div v-if="viewState === 'recentFeed'">
+        <div class="row">
+          <div class="col-12">
+            <h3>Recent Solves</h3>
+          </div>
+        </div>
+        <hr />
+        <div
+          v-for="completion in recentCompletions"
+          :class="`border-${difficultyToClass(completion.challenge.difficulty)}`"
+          class="recent-completion"
+        >
+          <strong>{{ completion.user }}</strong> <strong class="text-danger" v-if="completion.isBlood">BLOODED</strong
+          ><span v-else>solved</span> <strong>{{ completion.challenge.title }}</strong>
+          <div class="text-muted">{{ timeAgo.format(new Date(completion.completionDate)) }}</div>
+        </div>
+      </div>
     </div>
   </main>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en";
 
 import type { Challenge } from "../types/Challenge";
 import type { User } from "../types/User";
@@ -68,6 +97,12 @@ import type { User } from "../types/User";
 import ChallengeComponent from "../components/Challenge.vue";
 import config from "../config";
 import API from "../utils/api";
+import CTFHelp from "../components/CTFHelp.vue";
+import type { RecentCompletion } from "../types/RecentCompletion";
+import { difficultyToClass } from "../utils/styling";
+
+TimeAgo.addDefaultLocale(en);
+const timeAgo = new TimeAgo("en-US");
 
 const user = ref<User>();
 
@@ -76,8 +111,20 @@ const hideCompletedChallenges = ref(localStorage.getItem("hideCompletedChallenge
 const selectedCategory = ref(localStorage.getItem("selectedCategory"));
 const challengeCategories = ref<string[]>([]);
 
+const viewState = ref<"challenges" | "help" | "recentFeed">("challenges");
+const recentCompletions = ref<RecentCompletion[]>([]);
+
+let fetchTimer: number | null = null;
+
 onMounted(async () => {
   fetchData();
+
+  await fetchRecentCompletions();
+  fetchTimer = setInterval(fetchRecentCompletions, 60 * 1000);
+});
+
+onBeforeUnmount(() => {
+  if (fetchTimer !== null) clearInterval(fetchTimer);
 });
 
 const fetchData = async () => {
@@ -98,6 +145,12 @@ const fetchData = async () => {
       selectedCategory.value = [...categories][0];
     }
   }
+};
+
+const fetchRecentCompletions = async () => {
+  const response = await API.getRecentCompletions();
+
+  if (response) recentCompletions.value = response;
 };
 
 watch(hideCompletedChallenges, (newValue) => {
@@ -157,5 +210,12 @@ main {
 
 #main-container {
   padding-left: 280px;
+}
+
+.recent-completion {
+  padding-left: 1rem;
+  border-left: 10px solid;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
 }
 </style>

@@ -1,6 +1,9 @@
 export interface RecentCompletion {
   user: string;
-  challenge: string;
+  challenge: {
+    title: string;
+    difficulty: string;
+  };
   isBlood: boolean;
   completionDate: string;
 }

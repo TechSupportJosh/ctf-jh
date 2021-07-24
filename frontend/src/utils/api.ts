@@ -35,7 +35,7 @@ const submitFlag = async (challengeId: number, flag: string) => {
 };
 
 const getRecentCompletions = async () => {
-  const response = await client.post<RecentCompletion[]>(`/challenges/recent`);
+  const response = await client.get<RecentCompletion[]>(`/challenges/recent`);
 
   if (response.status === 200) return response.data;
 };
