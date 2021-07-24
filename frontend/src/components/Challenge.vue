@@ -15,7 +15,7 @@
       <div class="flag-submitted" :class="{ visible: showSubmitAnimation }">
         <h1 v-if="!isBlood">Nice job!</h1>
         <h1 v-if="isBlood" style="letter-spacing: 0.5rem; color: var(--bs-danger); font-size: 4rem">
-          <strong data-v-b85aea3a="" style="white-space: pre; font-family: 'Comic Sans'"
+          <strong data-v-b85aea3a="" style="white-space: pre"
             ><span :class="bloodCharacters[0] ? 'visible' : 'invisible'">B</span>
             <span :class="bloodCharacters[1] ? 'visible' : 'invisible'">L</span>
             <span :class="bloodCharacters[2] ? 'visible' : 'invisible'">O</span>
