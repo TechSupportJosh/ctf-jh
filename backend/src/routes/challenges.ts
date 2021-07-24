@@ -61,7 +61,13 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
 });
 
 router.get("/recent", async (req, res) => {
-  const recentCompletions = await UserCompletedChallenge.find({ relations: ["user", "challenge"], take: 20 });
+  const recentCompletions = await UserCompletedChallenge.find({
+    relations: ["user", "challenge"],
+    take: 15,
+    order: {
+      completionDate: "DESC",
+    },
+  });
 
   console.log(recentCompletions);
 
