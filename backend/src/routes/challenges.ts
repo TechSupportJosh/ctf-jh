@@ -2,7 +2,7 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import { FlagSubmissionDTO } from "../dto/FlagSubmission";
 import { Challenge, ChallengeTag } from "../entity/Challenge";
-import { UserCompletedChallenge } from "../entity/User";
+import { User, UserCompletedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { sendWebhook } from "../utils/webhook";
 
@@ -45,15 +45,27 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
 
   if (challenge.flag !== flag) return res.status(400).json({ message: "Incorrect flag." });
 
+  const completions = await UserCompletedChallenge.count({ where: { challengeId: challenge.id } });
+
   const completedChallenge = new UserCompletedChallenge();
   completedChallenge.challenge = challenge;
   completedChallenge.user = req.user!;
   completedChallenge.completionDate = new Date();
+  completedChallenge.isBlood = completions === 0;
+
   await completedChallenge.save();
 
   await sendWebhook(req.user!, parseInt(req.params.challengeId));
 
-  return res.status(200).json({ message: "Great job!" });
+  return res.status(200).json({ isBlood: completedChallenge.isBlood });
+});
+
+router.get("/recent", async (req, res) => {
+  const recentCompletions = await UserCompletedChallenge.find({ relations: ["user", "challenge"], take: 20 });
+
+  console.log(recentCompletions);
+
+  return res.json(recentCompletions.map((completion) => completion.toSimpleJSON()));
 });
 
 export const challengeRouter = router;

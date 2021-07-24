@@ -3,6 +3,7 @@ import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
 import { User } from "../types/User";
 import config from "../config";
 import { Stats } from "../types/Stats";
+import { RecentCompletion } from "../types/RecentCompletion";
 
 const client = axios.create({
   baseURL: config.basePath + "api",
@@ -23,11 +24,20 @@ const getChallenges = async () => {
 };
 
 const submitFlag = async (challengeId: number, flag: string) => {
-  const response = await client.post(`/challenges/${challengeId}/submit`, {
+  const response = await client.post<{ isBlood: Boolean }>(`/challenges/${challengeId}/submit`, {
     flag: flag,
   });
 
-  return response.status;
+  return {
+    statusCode: response.status,
+    isBlood: response.status === 200 && response.data.isBlood,
+  };
+};
+
+const getRecentCompletions = async () => {
+  const response = await client.post<RecentCompletion[]>(`/challenges/recent`);
+
+  if (response.status === 200) return response.data;
 };
 
 const getAdminChallenges = async () => {
@@ -76,6 +86,7 @@ export default {
   getUser,
   getChallenges,
   submitFlag,
+  getRecentCompletions,
   getAdminChallenges,
   deleteChallenge,
   deleteChallengeSubmissions,

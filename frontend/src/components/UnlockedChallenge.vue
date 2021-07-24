@@ -84,10 +84,10 @@ let errorTimer: number | null = null;
 const submitFlag = async (challengeId: number) => {
   const response = await API.submitFlag(challengeId, flag.value);
 
-  switch (response) {
+  switch (response.statusCode) {
     case 200:
       flagCorrect.value = true;
-      emit("flagSubmitted");
+      emit("flagSubmitted", { blood: response.isBlood });
       break;
     case 429:
       flagSubmissionError.value = "Slow down! Try again in a minute.";

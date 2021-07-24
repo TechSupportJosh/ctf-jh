@@ -27,6 +27,7 @@ export interface UnlockedChallenge extends ChallengeBase {
 export interface UserChallengeCompletion {
   challengeId: number;
   completionDate: number;
+  isBlood: boolean;
 }
 
 export interface AdminChallengeCompletion extends UserChallengeCompletion {

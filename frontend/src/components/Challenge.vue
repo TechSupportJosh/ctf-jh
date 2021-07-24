@@ -13,7 +13,18 @@
       </div>
 
       <div class="flag-submitted" :class="{ visible: showSubmitAnimation }">
-        <h1>Nice job!</h1>
+        <h1 v-if="!isBlood">Nice job!</h1>
+        <h1 v-if="isBlood" style="letter-spacing: 0.5rem; color: var(--bs-danger); font-size: 4rem">
+          <strong data-v-b85aea3a="" style="white-space: pre"
+            ><span :class="bloodCharacters[0] ? 'visible' : 'invisible'">B</span>
+            <span :class="bloodCharacters[1] ? 'visible' : 'invisible'">L</span>
+            <span :class="bloodCharacters[2] ? 'visible' : 'invisible'">O</span>
+            <span :class="bloodCharacters[3] ? 'visible' : 'invisible'">O</span>
+            <span :class="bloodCharacters[4] ? 'visible' : 'invisible'">D</span>
+            <span :class="bloodCharacters[5] ? 'visible' : 'invisible'">E</span>
+            <span :class="bloodCharacters[6] ? 'visible' : 'invisible'">D</span></strong
+          >
+        </h1>
         <h3 :class="`text-${difficultyToClass(challenge.difficulty)}`" v-text="pointCountText"></h3>
       </div>
 
@@ -51,25 +62,45 @@ const emit = defineEmit(["challengeCompleted"]);
 const showSubmitAnimation = ref(false);
 const pointCountText = ref(" ");
 
-const flagSubmitted = () => {
+const isBlood = ref(true);
+const bloodCharacters = ref([false, false, false, false, false, false, false]);
+
+const flagSubmitted = (completionInfo: { blood: boolean }) => {
   showSubmitAnimation.value = true;
+  isBlood.value = completionInfo.blood;
 
   // Type the point count
   setTimeout(() => {
-    const text = `+${props.challenge.points} points`;
-    for (let i = 1; i <= text.length; i++) {
-      setTimeout(() => {
-        pointCountText.value = text.substring(0, i);
+    if (isBlood.value) {
+      const bloodText = `BLOODED`;
+      for (let i = 0; i < bloodText.length; i++) {
+        setTimeout(() => {
+          bloodCharacters.value[i] = true;
 
-        if (i === text.length) {
-          setTimeout(() => {
-            showSubmitAnimation.value = false;
-            emit("challengeCompleted");
-          }, 2000);
-        }
-      }, 100 * i);
+          if (i === bloodText.length - 1) setTimeout(startPointsAnimation, 1500);
+        }, 450 * i);
+      }
+    } else {
+      startPointsAnimation();
     }
   }, 2000);
+};
+
+const startPointsAnimation = () => {
+  const text = `+${props.challenge.points} points`;
+
+  for (let i = 1; i <= text.length; i++) {
+    setTimeout(() => {
+      pointCountText.value = text.substring(0, i);
+
+      if (i === text.length) {
+        setTimeout(() => {
+          showSubmitAnimation.value = false;
+          emit("challengeCompleted");
+        }, 2000);
+      }
+    }, 100 * i);
+  }
 };
 
 const props = defineProps({
@@ -112,5 +143,9 @@ const props = defineProps({
   opacity: 1;
   z-index: 10;
   transition: all 1s ease;
+}
+
+h1 {
+  margin-bottom: 0;
 }
 </style>

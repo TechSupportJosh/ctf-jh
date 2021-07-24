@@ -74,9 +74,21 @@ export class UserCompletedChallenge extends BaseEntity {
   @Column()
   completionDate!: Date;
 
+  @Column()
+  isBlood!: boolean;
+
   @ManyToOne(() => User, (user) => user.completedChallenges)
   public user!: User;
 
   @ManyToOne(() => Challenge)
   public challenge!: Challenge;
+
+  toSimpleJSON = () => {
+    return {
+      user: `${this.user.firstName} ${this.user.lastName[0]}`,
+      challenge: this.challenge.title,
+      isBlood: this.isBlood,
+      completionDate: this.completionDate,
+    };
+  };
 }
