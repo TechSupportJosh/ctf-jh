@@ -2,15 +2,8 @@
   <router-view></router-view>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import { RouterView } from "vue-router";
-
-export default defineComponent({
-  components: {
-    RouterView,
-  },
-});
 </script>
 <!-- 
 <style>

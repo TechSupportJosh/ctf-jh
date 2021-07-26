@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmit } from "vue";
+import { ref, defineProps } from "vue";
 
 import type { Challenge, UserChallengeCompletion } from "../types/Challenge";
 
@@ -57,8 +57,8 @@ import LockedChallengeComponent from "./LockedChallenge.vue";
 import UnlockedChallengeComponent from "./UnlockedChallenge.vue";
 
 import { difficultyToClass } from "../utils/styling";
+import store from "../plugins/store";
 
-const emit = defineEmit(["challengeCompleted"]);
 const showSubmitAnimation = ref(false);
 const pointCountText = ref(" ");
 
@@ -96,7 +96,7 @@ const startPointsAnimation = () => {
       if (i === text.length) {
         setTimeout(() => {
           showSubmitAnimation.value = false;
-          emit("challengeCompleted");
+          store.dispatch("loadUser");
         }, 2000);
       }
     }, 100 * i);

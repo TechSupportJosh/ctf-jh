@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-12">
-      <h3>Help</h3>
+      <h3>Welcome to Intake CTF 2021!</h3>
     </div>
   </div>
   <hr />
@@ -20,3 +20,6 @@
     <h5 style="margin-top: 1rem; font-weight: bold;">WMG{some_phrase_here}</h5>
   </p>
 </template>
+
+<script lang="ts" setup>
+</script>

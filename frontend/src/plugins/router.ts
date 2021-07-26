@@ -1,10 +1,14 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
-import Home from "../routes/Home.vue";
+import Help from "../routes/Help.vue";
+import RecentFeed from "../routes/RecentFeed.vue";
+import Challenges from "../routes/Challenges.vue";
 import Admin from "../routes/Admin.vue";
 import Login from "../routes/Login.vue";
 import API from "../utils/api";
 import config from "../config";
+import SidebarView from "../components/SidebarView.vue";
+import store from "./store";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -13,7 +17,21 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/",
-    component: Home,
+    component: SidebarView,
+    children: [
+      {
+        path: "/feed",
+        component: RecentFeed,
+      },
+      {
+        path: "/help",
+        component: Help,
+      },
+      {
+        path: "/challenges/:category",
+        component: Challenges,
+      },
+    ],
   },
   {
     path: "/admin",
@@ -34,12 +52,12 @@ export const useRouter = () => {
 };
 
 router.beforeEach(async (to, from) => {
-  const user = await API.getUser();
+  if (!store.state.user && to.path !== "/login") return "/login?error=requires-auth";
+  if (store.state.user && to.path === "/login") return "/help";
 
-  if (!user && to.path !== "/login") return "/login?error=requires-auth";
-  if (user && to.path === "/login") return "/";
+  if (to.meta.requiresAdmin && !store.state.user?.isAdmin) return "/help";
 
-  if (to.meta.requiresAdmin && !user?.isAdmin) return "/";
+  if (to.path === "/") return "/help";
 
   return true;
 });
