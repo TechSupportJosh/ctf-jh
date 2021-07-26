@@ -10,7 +10,7 @@
         <li class="nav-item text-center">{{ pointTotal }} Points<br />{{ user?.completedChallenges.length ?? 0 }} Challenges Owned</li>
         <hr />
         <li class="nav-item mb-2"><strong>Categories:</strong></li>
-        <li class="nav-item" v-for="category in challengeCategories">
+        <li class="nav-item" v-for="(challengeCount, category) in challengeCategories">
           <a
             href="#"
             class="nav-link"
@@ -21,7 +21,7 @@
               viewState = 'challenges';
             "
           >
-            {{ category }}
+            {{ category }} ({{ challengeCount }})
           </a>
         </li>
       </ul>
@@ -109,7 +109,7 @@ const user = ref<User>();
 const challenges = ref<Challenge[]>([]);
 const hideCompletedChallenges = ref(localStorage.getItem("hideCompletedChallenges") === "1");
 const selectedCategory = ref(localStorage.getItem("selectedCategory"));
-const challengeCategories = ref<string[]>([]);
+const challengeCategories = ref<Record<string, number>>({});
 
 const viewState = ref<"challenges" | "help" | "recentFeed">("challenges");
 const recentCompletions = ref<RecentCompletion[]>([]);
@@ -134,15 +134,14 @@ const fetchData = async () => {
   if (response) {
     challenges.value = response;
 
-    const categories = new Set<string>();
     challenges.value.forEach((challenge) => {
-      categories.add(challenge.category);
+      if (!(challenge.category in challengeCategories.value)) challengeCategories.value[challenge.category] = 0;
+
+      challengeCategories.value[challenge.category]++;
     });
 
-    challengeCategories.value = [...categories];
-
-    if (!categories.has(selectedCategory.value ?? "")) {
-      selectedCategory.value = [...categories][0];
+    if (!challengeCategories.value[selectedCategory.value ?? ""] ?? "") {
+      selectedCategory.value = challenges.value[0].category;
     }
   }
 };
