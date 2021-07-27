@@ -16,8 +16,10 @@
           </router-link>
         </li>
       </ul>
-      <router-link to="/help">Help</router-link>
-      <router-link to="/feed">Recent Solves</router-link>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><router-link to="/help" class="nav-link" active-class="active">Help</router-link></li>
+        <li class="nav-item"><router-link to="/feed" class="nav-link" active-class="active">Recent Solves</router-link></li>
+      </ul>
       <hr />
       <div>
         <strong>{{ user?.firstName }} {{ user?.lastName }}</strong
