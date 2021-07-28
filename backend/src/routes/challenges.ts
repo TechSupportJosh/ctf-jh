@@ -69,8 +69,6 @@ router.get("/recent", async (req, res) => {
     },
   });
 
-  console.log(recentCompletions);
-
   return res.json(recentCompletions.map((completion) => completion.toSimpleJSON()));
 });
 
