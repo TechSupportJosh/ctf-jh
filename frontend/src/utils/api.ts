@@ -4,6 +4,7 @@ import { User } from "../types/User";
 import config from "../config";
 import { Stats } from "../types/Stats";
 import { RecentCompletion } from "../types/RecentCompletion";
+import { Team } from "../types/Team";
 
 const client = axios.create({
   baseURL: config.basePath + "api",
@@ -38,6 +39,70 @@ const getRecentCompletions = async () => {
   const response = await client.get<RecentCompletion[]>(`/challenges/recent`);
 
   if (response.status === 200) return response.data;
+};
+
+const joinTeam = async (inviteCode: string) => {
+  const response = await client.post<{ message: string }>(`/teams/join`, {
+    inviteCode: inviteCode,
+  });
+
+  return {
+    statusCode: response.status,
+    message: response.data.message,
+  };
+};
+
+const createTeam = async (name: string) => {
+  const response = await client.post<{ message: string }>(`/teams`, {
+    name: name,
+  });
+
+  return {
+    statusCode: response.status,
+    message: response.data.message,
+  };
+};
+
+const leaveTeam = async () => {
+  const response = await client.post<{ message: string }>(`/teams/leave`);
+
+  return {
+    statusCode: response.status,
+    message: response.data.message,
+  };
+};
+
+const deleteTeam = async (teamId: number) => {
+  const response = await client.delete<{ message: string }>(`/teams/${teamId}`);
+
+  return {
+    statusCode: response.status,
+    message: response.data.message,
+  };
+};
+
+const getTeams = async () => {
+  const response = await client.get<Team[]>(`/teams`);
+
+  if (response.status === 200) return response.data;
+};
+
+const getTeam = async (teamId: number) => {
+  const response = await client.get<Team>(`/teams/${teamId}`);
+
+  if (response.status === 200) return response.data;
+};
+
+const getInviteCode = async (teamId: number) => {
+  const response = await client.get<{ inviteCode: string }>(`/teams/${teamId}/invite-code`);
+
+  if (response.status === 200) return response.data.inviteCode;
+};
+
+const createInviteCode = async (teamId: number) => {
+  const response = await client.post<{ inviteCode: string }>(`/teams/${teamId}/invite-code`);
+
+  if (response.status === 200) return response.data.inviteCode;
 };
 
 const getAdminChallenges = async () => {
@@ -87,6 +152,14 @@ export default {
   getChallenges,
   submitFlag,
   getRecentCompletions,
+  joinTeam,
+  createTeam,
+  leaveTeam,
+  deleteTeam,
+  getTeams,
+  getTeam,
+  getInviteCode,
+  createInviteCode,
   getAdminChallenges,
   deleteChallenge,
   deleteChallengeSubmissions,

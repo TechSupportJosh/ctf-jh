@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "bootstrap": "^5.0.1",
+    "copy-to-clipboard": "^3.3.1",
     "javascript-time-ago": "^2.3.8",
     "marked": "^2.0.3",
     "tsparticles": "^1.31.1",

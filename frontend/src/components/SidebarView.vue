@@ -19,6 +19,7 @@
       <ul class="nav nav-pills flex-column">
         <li class="nav-item"><router-link to="/help" class="nav-link" active-class="active">Help</router-link></li>
         <li class="nav-item"><router-link to="/feed" class="nav-link" active-class="active">Recent Solves</router-link></li>
+        <li class="nav-item"><router-link to="/team" class="nav-link" active-class="active">Team</router-link></li>
       </ul>
       <hr />
       <div>

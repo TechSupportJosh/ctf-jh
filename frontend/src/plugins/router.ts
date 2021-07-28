@@ -5,10 +5,11 @@ import RecentFeed from "../routes/RecentFeed.vue";
 import Challenges from "../routes/Challenges.vue";
 import Admin from "../routes/Admin.vue";
 import Login from "../routes/Login.vue";
-import API from "../utils/api";
 import config from "../config";
 import SidebarView from "../components/SidebarView.vue";
 import store from "./store";
+import Team from "../routes/Team.vue";
+import TeamSettings from "../routes/TeamSettings.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -30,6 +31,14 @@ const routes: RouteRecordRaw[] = [
       {
         path: "/challenges/:category",
         component: Challenges,
+      },
+      {
+        path: "/team",
+        component: Team,
+      },
+      {
+        path: "/team/settings",
+        component: TeamSettings,
       },
     ],
   },
