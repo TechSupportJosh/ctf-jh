@@ -19,6 +19,7 @@ const accessAsync = promisify(access);
 import { adminRouter } from "./routes/admin";
 import { authRouter } from "./routes/auth";
 import { challengeRouter } from "./routes/challenges";
+import { teamsRouter } from "./routes/teams";
 
 const app = express();
 app.use(cookieParser());
@@ -36,14 +37,11 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "common" : "dev"));
 const router = express.Router();
 router.use("/auth", authRouter);
 router.use("/challenges", isAuthenticated(), challengeRouter);
+router.use("/teams", isAuthenticated(), teamsRouter);
 router.use("/admin", isAdmin(), adminRouter);
 
 router.get("/me", isAuthenticated(), (req, res) => {
-  res.json(req.user);
-});
-
-app.get("/", isAuthenticated(), (req, res) => {
-  res.send("You are authenticated! " + JSON.stringify(req.user));
+  res.json(req.user!.toSelfJSON());
 });
 
 router.use("/static", express.static("uploads"));

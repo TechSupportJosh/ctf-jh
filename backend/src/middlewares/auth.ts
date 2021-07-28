@@ -4,7 +4,7 @@ import { User } from "../entity/User";
 export const getUserFromCookie = async (authCookie: string) => {
   if (!authCookie) return null;
 
-  const user = await User.findOne({ authValue: authCookie });
+  const user = await User.findOne({ where: { authValue: authCookie }, relations: ["team"] });
   if (!user) return null;
   if (user.authExpiry < new Date()) return null;
 

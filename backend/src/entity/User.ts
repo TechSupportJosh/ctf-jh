@@ -1,11 +1,7 @@
 import { randomBytes } from "crypto";
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Challenge } from "./Challenge";
-
-enum LoginType {
-  Username = 0,
-  WarwickOAuth,
-}
+import { Team } from "./Team";
 
 @Entity()
 export class User extends BaseEntity {
@@ -39,6 +35,9 @@ export class User extends BaseEntity {
   @OneToMany(() => UserCompletedChallenge, (completedChallenge) => completedChallenge.user, { eager: true })
   completedChallenges!: UserCompletedChallenge[];
 
+  @ManyToOne(() => Team, (team) => team.members, { nullable: true })
+  team!: Team | null;
+
   hasCompletedChallenge(challenge: Challenge) {
     return this.completedChallenges.findIndex((completedChallenge) => completedChallenge.challengeId === challenge.id) !== -1;
   }
@@ -57,6 +56,37 @@ export class User extends BaseEntity {
   clearAuth() {
     this.authValue = randomBytes(32).toString("base64");
     this.authExpiry = new Date(0);
+  }
+
+  toPublicJSON(withStats: boolean) {
+    const json: Record<string, any> = {
+      id: this.id,
+      name: `${this.firstName} ${this.lastName[0]}`,
+    };
+
+    if (withStats && this.completedChallenges) {
+      json.points = 0;
+      json.bloods = 0;
+      this.completedChallenges.forEach((completedChallenge) => {
+        json.points += completedChallenge.challenge?.points ?? 0;
+        json.bloods += completedChallenge.isBlood;
+      });
+      json.completions = this.completedChallenges.length;
+    }
+
+    return json;
+  }
+
+  toSelfJSON() {
+    // Reduces team information
+    const user: Record<string, any> = { ...this };
+    if (this.team) {
+      user.team = {
+        id: user.team.id,
+        name: user.team.name,
+      };
+    }
+    return user;
   }
 }
 
