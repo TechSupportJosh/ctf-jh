@@ -107,7 +107,7 @@ const chartOptions: Highcharts.Options = {
     height: 500,
   },
   tooltip: {
-    xDateFormat: "%d/%m %H:%M",
+    xDateFormat: "%d/%m %H:%M UTC",
   },
   xAxis: {
     type: "datetime",
