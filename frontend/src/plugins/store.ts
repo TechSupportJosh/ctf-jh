@@ -31,6 +31,7 @@ const store = new Vuex.Store<State>({
       if (!response) return;
 
       context.state.challenges = response;
+      context.state.categories = {};
 
       // Store the count for each category
       context.state.challenges.forEach((challenge) => {
