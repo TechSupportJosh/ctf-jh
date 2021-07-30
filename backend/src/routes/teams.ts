@@ -1,8 +1,10 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
+import { SimpleConsoleLogger } from "typeorm";
 import { maxTeamMembers } from "../constants";
 import { TeamDTO, TeamJoinDTO } from "../dto/Team";
 import { Team } from "../entity/Team";
+import { User } from "../entity/User";
 import { validator } from "../middlewares/validator";
 
 const router = express.Router();
@@ -74,6 +76,28 @@ router.delete("/:teamId", async (req, res) => {
 
   return res.json({
     message: "Team was successfully disbanded.",
+  });
+});
+
+router.post("/:teamId/kick/:userId", async (req, res) => {
+  const team = await Team.findOne({ where: { id: req.params.teamId } });
+
+  if (!team) return res.status(404).send({ message: "This team does not exist." });
+  if (team.teamLeader.id !== req.user!.id) return res.status(401).send({ message: "You are not authorised to do this." });
+
+  const user = await User.findOne({ where: { id: req.params.userId }, relations: ["team"] });
+
+  console.log(user);
+
+  if (!user) return res.status(404).send({ message: "This user does not exist." });
+  if (user.id === req.user!.id) return res.status(400).send({ message: "You cannot kick yourself from the team." });
+  if (user.team?.id !== team.id) return res.status(400).send({ message: "This user is not in your team." });
+
+  user.team = null;
+  await user.save();
+
+  return res.json({
+    message: "User successfully kicked from the team.",
   });
 });
 

@@ -105,6 +105,15 @@ const createInviteCode = async (teamId: number) => {
   if (response.status === 200) return response.data.inviteCode;
 };
 
+const kickTeamMember = async (teamId: number, userId: number) => {
+  const response = await client.post<{ message: string }>(`/teams/${teamId}/kick/${userId}`);
+
+  return {
+    statusCode: response.status,
+    message: response.data.message,
+  };
+};
+
 const getAdminChallenges = async () => {
   const response = await client.get<AdminChallenge[]>(`/admin/challenges`);
 
@@ -160,6 +169,7 @@ export default {
   getTeam,
   getInviteCode,
   createInviteCode,
+  kickTeamMember,
   getAdminChallenges,
   deleteChallenge,
   deleteChallengeSubmissions,

@@ -67,9 +67,11 @@ export class User extends BaseEntity {
     if (withStats && this.completedChallenges) {
       json.points = 0;
       json.bloods = 0;
+      json.solves = 0;
       this.completedChallenges.forEach((completedChallenge) => {
         json.points += completedChallenge.challenge?.points ?? 0;
         json.bloods += completedChallenge.isBlood;
+        json.solves += 1;
       });
       json.completions = this.completedChallenges.length;
     }

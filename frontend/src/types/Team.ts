@@ -3,6 +3,7 @@ export interface TeamMember {
   name: string;
   points?: number;
   bloods?: number;
+  solves?: number;
 }
 
 export interface UserTeam {

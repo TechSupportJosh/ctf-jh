@@ -7,11 +7,27 @@
   <hr />
   <div v-if="team">
     <h4 class="mb-3">Manage Members ({{ team.members.length }} / 5)</h4>
-    <div v-for="member in team.members" class="team-member" :class="member.id === team.teamLeader.id ? 'border-warning' : 'border-primary'">
-      <strong>{{ member.name }}</strong
-      ><br />
-      <div class="text-muted">{{ member.points }} Points - {{ member.bloods }} Bloods</div>
-    </div>
+    <div class="alert alert-danger" v-if="kickMemberError"><strong>An error occured: </strong> {{ kickMemberError }}</div>
+    <table class="table" style="font-size: 1.25rem">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">Points</th>
+          <th scope="col">Solves</th>
+          <th scope="col">Bloods</th>
+          <th scope="col" style="width: 200px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="member in team.members">
+          <th scope="row">{{ member.name }}</th>
+          <td>{{ member.points }}</td>
+          <td>{{ member.solves }}</td>
+          <td>{{ member.bloods }}</td>
+          <td><button class="btn btn-danger w-100" v-if="team.teamLeader.id !== member.id" @click="kickMember(member)">Kick</button></td>
+        </tr>
+      </tbody>
+    </table>
     <hr />
     <h4 class="mb-3">Manage Team</h4>
     <div>
@@ -47,12 +63,13 @@ import hideIcon from "../assets/eye-slash-fill.svg";
 import refreshIcon from "../assets/arrow-repeat.svg";
 import clipboardIcon from "../assets/clipboard.svg";
 import copy from "copy-to-clipboard";
-import type { Team } from "../types/Team";
+import type { Team, TeamMember } from "../types/Team";
 
 const user = computed(() => store.state.user!);
 
 const router = useRouter();
 
+const kickMemberError = ref("");
 const disbandTeamError = ref("");
 
 const showInviteCode = ref(false);
@@ -62,29 +79,30 @@ const team = ref<Team>();
 onMounted(async () => {
   if (!user.value.team) return router.push("/team");
 
-  const response = await API.getTeam(user.value.team.id);
+  await loadTeam();
+});
+
+const loadTeam = async () => {
+  const response = await API.getTeam(user.value.team!.id);
 
   if (response) {
     team.value = response;
 
     if (team.value.teamLeader.id !== user.value.id) return router.push("/team");
 
-    const codeResponse = await API.getInviteCode(user.value.team.id);
+    const codeResponse = await API.getInviteCode(user.value.team!.id);
 
     if (codeResponse) inviteCode.value = codeResponse;
   }
-});
-
-onMounted(async () => {
-  if (!user.value.team) return;
-});
+};
 
 const deleteTeam = async () => {
   if (!confirm(`Are you sure you want to disband ${user.value.team?.name}? This action is irreversible.`)) return;
 
-  const response = await API.deleteTeam(store.state.user!.team!.id);
+  const response = await API.deleteTeam(user.value.team!.id);
 
   if (response.statusCode === 200) {
+    disbandTeamError.value = "";
     await store.dispatch("loadUser");
     router.push("/team");
   } else {
@@ -92,8 +110,21 @@ const deleteTeam = async () => {
   }
 };
 
+const kickMember = async (member: TeamMember) => {
+  if (!confirm(`Are you sure you want to kick ${member.name}? This action is irreversible.`)) return;
+
+  const response = await API.kickTeamMember(team.value!.id, member.id);
+
+  if (response.statusCode === 200) {
+    await loadTeam();
+    kickMemberError.value = "";
+  } else {
+    kickMemberError.value = response.message;
+  }
+};
+
 const createInviteCode = async () => {
-  const response = await API.createInviteCode(store.state.user!.team!.id);
+  const response = await API.createInviteCode(user.value.team!.id);
 
   if (response) inviteCode.value = response;
 };
