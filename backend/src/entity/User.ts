@@ -1,6 +1,7 @@
 import { randomBytes } from "crypto";
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Challenge } from "./Challenge";
+import { UserStats } from "./Stats";
 import { Team } from "./Team";
 
 @Entity()
@@ -38,6 +39,9 @@ export class User extends BaseEntity {
   @ManyToOne(() => Team, (team) => team.members, { nullable: true })
   team!: Team | null;
 
+  @OneToMany(() => UserStats, (userStats) => userStats.user)
+  stats!: UserStats[];
+
   hasSolvedChallenge(challenge: Challenge) {
     return this.solvedChallenges.findIndex((solvedChallenge) => solvedChallenge.challengeId === challenge.id) !== -1;
   }
@@ -59,21 +63,12 @@ export class User extends BaseEntity {
   }
 
   toPublicJSON(withStats: boolean) {
-    const json: Record<string, any> = {
+    let json: Record<string, any> = {
       id: this.id,
       name: `${this.firstName} ${this.lastName[0]}`,
     };
 
-    if (withStats && this.solvedChallenges) {
-      json.points = 0;
-      json.bloods = 0;
-      json.solves = 0;
-      this.solvedChallenges.forEach((solvedChallenge) => {
-        json.points += solvedChallenge.challenge?.points ?? 0;
-        json.bloods += solvedChallenge.isBlood;
-        json.solves += 1;
-      });
-    }
+    if (withStats && this.solvedChallenges) json = { ...json, ...this.getSolveStats() };
 
     return json;
   }
@@ -88,6 +83,22 @@ export class User extends BaseEntity {
       };
     }
     return user;
+  }
+
+  getSolveStats() {
+    const stats = {
+      points: 0,
+      solves: 0,
+      bloods: 0,
+    };
+
+    this.solvedChallenges.forEach((solvedChallenge) => {
+      stats.points += solvedChallenge.challenge?.points ?? 0;
+      stats.bloods += solvedChallenge.isBlood ? 1 : 0;
+      stats.solves += 1;
+    });
+
+    return stats;
   }
 }
 

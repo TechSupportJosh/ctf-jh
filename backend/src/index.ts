@@ -21,7 +21,7 @@ import { adminRouter } from "./routes/admin";
 import { authRouter } from "./routes/auth";
 import { challengeRouter } from "./routes/challenges";
 import { teamsRouter } from "./routes/teams";
-import { Team, TeamStats } from "./entity/Team";
+import { updateStats } from "./utils/statsCron";
 
 const app = express();
 app.use(cookieParser());
@@ -66,38 +66,7 @@ app.use("/api", router);
     await mkdirAsync(uploadDirectory);
   }
 
-  const job = new CronJob("0 0 * * * *", async function () {
-    console.log("Updating team stats for all teams...");
-    const currentDate = new Date();
-
-    const teams = await Team.createQueryBuilder("team")
-      .leftJoinAndSelect("team.members", "members")
-      .leftJoinAndSelect("team.teamLeader", "teamLeader")
-      .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
-      .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
-      .getMany();
-
-    await Promise.all(
-      teams.map((team) => {
-        const entry = new TeamStats();
-        entry.team = team;
-        entry.date = currentDate;
-        entry.points = 0;
-        entry.bloods = 0;
-        entry.solves = 0;
-
-        team.members.forEach((member) => {
-          member.solvedChallenges.forEach((solvedChallenge) => {
-            entry.points += solvedChallenge.challenge.points;
-            entry.bloods += solvedChallenge.isBlood ? 1 : 0;
-            entry.solves += 1;
-          });
-        });
-
-        return entry.save();
-      })
-    );
-  });
+  const job = new CronJob("0 0 * * * *", updateStats);
   job.start();
 
   app.listen(8080, () => {
