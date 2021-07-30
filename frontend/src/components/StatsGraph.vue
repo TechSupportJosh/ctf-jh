@@ -1,10 +1,9 @@
 <template>
-  <highchart :options="chartOptions"></highchart>
+  <div id="chart-container"></div>
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref } from "vue";
-import { Chart as Highchart } from "highcharts-vue";
+import { defineProps, onBeforeUnmount, onMounted, ref } from "vue";
 import HighchartTheme from "../assets/HighchartTheme";
 import Highcharts from "highcharts";
 import timeAgo from "../utils/timeAgo";
@@ -94,32 +93,39 @@ const series = ref<Highcharts.SeriesOptionsType[]>([
 ]);
 
 Highcharts.setOptions(HighchartTheme);
+let chart: Highcharts.Chart | null;
 
-const chartOptions: Highcharts.Options = {
-  title: {
-    text: "",
-  },
-  subtitle: {
-    text: `Last updated ${lastUpdated ? timeAgo.format(new Date(lastUpdated)) : "never"}`,
-  },
-  chart: {
-    type: "line",
-    height: 500,
-  },
-  tooltip: {
-    xDateFormat: "%d/%m %H:%M UTC",
-  },
-  xAxis: {
-    type: "datetime",
-    units: [["minute", [0, 15, 30, 45]]],
-  },
-  yAxis: {
-    tickAmount: 10,
-    tickInterval: 5,
+onMounted(() => {
+  chart = Highcharts.chart("chart-container", {
     title: {
       text: "",
     },
-  },
-  series: series.value,
-};
+    subtitle: {
+      text: `Last updated ${lastUpdated ? timeAgo.format(new Date(lastUpdated)) : "never"}`,
+    },
+    chart: {
+      type: "line",
+      height: 500,
+    },
+    tooltip: {
+      xDateFormat: "%d/%m %H:%M UTC",
+    },
+    xAxis: {
+      type: "datetime",
+      units: [["minute", [0, 15, 30, 45]]],
+    },
+    yAxis: {
+      tickAmount: 10,
+      tickInterval: 5,
+      title: {
+        text: "",
+      },
+    },
+    series: series.value,
+  });
+});
+
+onBeforeUnmount(() => {
+  chart?.destroy();
+});
 </script>

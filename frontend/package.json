@@ -12,7 +12,6 @@
     "bootstrap": "^5.0.1",
     "copy-to-clipboard": "^3.3.1",
     "highcharts": "^9.1.2",
-    "highcharts-vue": "^1.4.0",
     "javascript-time-ago": "^2.3.8",
     "marked": "^2.0.3",
     "tsparticles": "^1.31.1",
