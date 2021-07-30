@@ -34,8 +34,8 @@ import type { Challenge } from "../types/Challenge";
 import ChallengeComponent from "../components/Challenge.vue";
 import { useRoute } from "vue-router";
 
-const { challenges } = store.state;
 const user = computed(() => store.state.user);
+const challenges = computed(() => store.state.challenges);
 
 const currentRoute = useRoute();
 const category = ref<string>();
@@ -55,11 +55,11 @@ const getRequiredCompletedEntry = ({ unlockRequirement }: Challenge) => {
 };
 
 const getRequiredChallenge = ({ unlockRequirement }: Challenge) => {
-  return challenges.find((challenge) => challenge.id === unlockRequirement);
+  return challenges.value.find((challenge) => challenge.id === unlockRequirement);
 };
 
 const filteredChallenges = computed(() => {
-  const selectedChallenges = challenges
+  const selectedChallenges = challenges.value
     .filter((challenge) => challenge.category === category.value)
     .sort((a, b) => a.title.localeCompare(b.title) || a.difficulty.localeCompare(b.difficulty));
 

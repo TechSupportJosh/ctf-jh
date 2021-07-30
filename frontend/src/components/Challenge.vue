@@ -97,6 +97,7 @@ const startPointsAnimation = () => {
         setTimeout(() => {
           showSubmitAnimation.value = false;
           store.dispatch("loadUser");
+          store.dispatch("loadChallenges");
         }, 2000);
       }
     }, 100 * i);
