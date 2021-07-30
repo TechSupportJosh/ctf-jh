@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { getRandomWords } from "../utils/randomwords";
 import { User } from "./User";
 
@@ -21,6 +21,9 @@ export class Team extends BaseEntity {
   @OneToMany(() => User, (user) => user.team, { eager: true })
   members!: User[];
 
+  @OneToMany(() => TeamStats, (teamStats) => teamStats.team)
+  stats!: TeamStats[];
+
   createInviteCode() {
     this.inviteCode = getRandomWords(3, " ");
   }
@@ -32,4 +35,25 @@ export class Team extends BaseEntity {
       members: this.members.map((member) => member.toPublicJSON(true)),
     };
   }
+}
+
+@Entity()
+export class TeamStats extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @ManyToOne(() => Team)
+  team!: Team;
+
+  @Column()
+  date!: Date;
+
+  @Column()
+  points!: number;
+
+  @Column()
+  solves!: number;
+
+  @Column()
+  bloods!: number;
 }

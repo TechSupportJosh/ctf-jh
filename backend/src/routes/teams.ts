@@ -23,6 +23,7 @@ router.get("/:teamId", async (req, res) => {
     .where("team.id = :teamId", { teamId: req.params.teamId })
     .leftJoinAndSelect("team.members", "members")
     .leftJoinAndSelect("team.teamLeader", "teamLeader")
+    .leftJoinAndSelect("team.stats", "stats")
     .leftJoinAndSelect("members.completedChallenges", "completedChallenges")
     .leftJoinAndSelect("completedChallenges.challenge", "challenge")
     .getOne();
