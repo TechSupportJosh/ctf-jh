@@ -29,7 +29,7 @@
 
   <hr />
 
-  <template v-if="!challengeCompletion">
+  <template v-if="!challengeSolve">
     <label for="basic-url" class="form-label"
       >Enter the flag from the challenge (<a @click.prevent="showHint = !showHint" href="#">Need a hint?</a>):</label
     >
@@ -55,17 +55,17 @@
 
   <div class="d-flex d-flex justify-content-between">
     <div><strong class="text-muted">Challenge Author: </strong>{{ challenge.author }}</div>
-    <div><strong class="text-muted">Solves: </strong>{{ challenge.completionCount }}</div>
+    <div><strong class="text-muted">Solves: </strong>{{ challenge.solveCount }}</div>
   </div>
 
-  <template v-if="challengeCompletion"><strong class="text-muted">Completed at: </strong>{{ completedAt }}</template>
+  <template v-if="challengeSolve"><strong class="text-muted">Solved at: </strong>{{ solvedAt }}</template>
 </template>
 
 <script lang="ts" setup>
 import marked from "marked";
 import { computed, defineProps, ref, defineEmit } from "vue";
 
-import type { UnlockedChallenge, UserChallengeCompletion } from "../types/Challenge";
+import type { UnlockedChallenge, UserChallengeSolve } from "../types/Challenge";
 
 import { difficultyToClass } from "../utils/styling";
 
@@ -110,8 +110,8 @@ const submitFlag = async (challengeId: number) => {
   }, 4500);
 };
 
-const completedAt = computed(() => {
-  return props.challengeCompletion ? new Date(props.challengeCompletion.completionDate).toLocaleString() : "";
+const solvedAt = computed(() => {
+  return props.challengeSolve ? new Date(props.challengeSolve.solveDate).toLocaleString() : "";
 });
 
 const props = defineProps({
@@ -119,8 +119,8 @@ const props = defineProps({
     type: Object as () => UnlockedChallenge,
     required: true,
   },
-  challengeCompletion: {
-    type: Object as () => UserChallengeCompletion,
+  challengeSolve: {
+    type: Object as () => UserChallengeSolve,
     required: false,
   },
 });

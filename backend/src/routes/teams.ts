@@ -13,8 +13,8 @@ router.get("/", async (req, res) => {
   const teams = await Team.createQueryBuilder("team")
     .leftJoinAndSelect("team.members", "members")
     .leftJoinAndSelect("team.teamLeader", "teamLeader")
-    .leftJoinAndSelect("members.completedChallenges", "completedChallenges")
-    .leftJoinAndSelect("completedChallenges.challenge", "challenge")
+    .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
+    .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
     .getMany();
 
   return res.json(teams);
@@ -26,8 +26,8 @@ router.get("/:teamId", async (req, res) => {
     .leftJoinAndSelect("team.members", "members")
     .leftJoinAndSelect("team.teamLeader", "teamLeader")
     .leftJoinAndSelect("team.stats", "stats")
-    .leftJoinAndSelect("members.completedChallenges", "completedChallenges")
-    .leftJoinAndSelect("completedChallenges.challenge", "challenge")
+    .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
+    .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
     .getOne();
 
   if (!team) return res.sendStatus(404);

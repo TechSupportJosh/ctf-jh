@@ -8,14 +8,14 @@ export interface State {
   challenges: Challenge[];
   categories: Record<string, number>;
   user?: User;
-  hideCompletedChallenges: boolean;
+  hideSolvedChallenges: boolean;
 }
 
 const store = new Vuex.Store<State>({
   state: {
     challenges: [],
     categories: {},
-    hideCompletedChallenges: false,
+    hideSolvedChallenges: false,
   },
   mutations: {
     setUser(state, user) {

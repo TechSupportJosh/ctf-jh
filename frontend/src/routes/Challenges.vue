@@ -7,8 +7,8 @@
     </div>
     <div class="col-6 d-flex align-items-center justify-content-end">
       <div class="form-check form-switch mb-1">
-        <input class="form-check-input" type="checkbox" v-model="hideCompletedChallenges" />
-        <label class="form-check-label">Hide completed challenges</label>
+        <input class="form-check-input" type="checkbox" v-model="hideSolvedChallenges" />
+        <label class="form-check-label">Hide solved challenges</label>
       </div>
     </div>
   </div>
@@ -18,9 +18,9 @@
       v-for="challenge in filteredChallenges"
       :key="challenge.id"
       :challenge="challenge"
-      :challenge-completion="getCompletedEntry(challenge)"
+      :challenge-solve="getSolvedEntry(challenge)"
       :requirement-challenge="getRequiredChallenge(challenge)"
-      :requirement-challenge-completion="getRequiredCompletedEntry(challenge)"
+      :requirement-challenge-solve="getRequiredSolvedEntry(challenge)"
       class="challenge mb-4"
     ></challenge-component>
   </div>
@@ -48,10 +48,10 @@ watch(
   { immediate: true }
 );
 
-const hideCompletedChallenges = computed(() => store.state.hideCompletedChallenges);
+const hideSolvedChallenges = computed(() => store.state.hideSolvedChallenges);
 
-const getRequiredCompletedEntry = ({ unlockRequirement }: Challenge) => {
-  return user.value?.completedChallenges.find((challenge) => challenge.challengeId === unlockRequirement);
+const getRequiredSolvedEntry = ({ unlockRequirement }: Challenge) => {
+  return user.value?.solvedChallenges.find((challenge) => challenge.challengeId === unlockRequirement);
 };
 
 const getRequiredChallenge = ({ unlockRequirement }: Challenge) => {
@@ -63,12 +63,12 @@ const filteredChallenges = computed(() => {
     .filter((challenge) => challenge.category === category.value)
     .sort((a, b) => a.title.localeCompare(b.title) || a.difficulty.localeCompare(b.difficulty));
 
-  if (!hideCompletedChallenges.value) return selectedChallenges;
+  if (!hideSolvedChallenges.value) return selectedChallenges;
 
-  return selectedChallenges.filter((challenge) => !getCompletedEntry(challenge));
+  return selectedChallenges.filter((challenge) => !getSolvedEntry(challenge));
 });
 
-const getCompletedEntry = ({ id }: Challenge) => {
-  return user.value?.completedChallenges.find((challenge) => challenge.challengeId === id);
+const getSolvedEntry = ({ id }: Challenge) => {
+  return user.value?.solvedChallenges.find((challenge) => challenge.challengeId === id);
 };
 </script>

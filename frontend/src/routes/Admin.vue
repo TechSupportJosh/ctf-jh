@@ -24,7 +24,7 @@
       <div class="col-sm-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-text">{{ stats?.totalCompletions }}</h5>
+            <h5 class="card-text">{{ stats?.totalSolves }}</h5>
             <p class="card-text text-muted">Flags Submitted</p>
           </div>
         </div>

@@ -5,7 +5,7 @@
         <th>ID</th>
         <th>Name</th>
         <th>Category</th>
-        <th>Completions</th>
+        <th>Solves</th>
         <th>
           <button
             class="btn btn-success w-100"
@@ -23,13 +23,13 @@
         <td>{{ challenge.id }}</td>
         <td>{{ challenge.title }}</td>
         <td>{{ challenge.category }}</td>
-        <td>{{ challenge.completions.length }}</td>
+        <td>{{ challenge.solves.length }}</td>
         <td>
           <div class="d-flex justify-content-between">
             <button class="btn btn-light" @click="editChallenge = { ...challenge }" data-bs-toggle="modal" data-bs-target="#challengeModal">
               ✏️
             </button>
-            <button class="btn btn-light" @click="deleteChallengeSubmissions(challenge)">🗑️</button>
+            <button class="btn btn-light" @click="deleteChallengeSolves(challenge)">🗑️</button>
             <button class="btn btn-light" @click="deleteChallenge(challenge)">❌</button>
           </div>
         </td>
@@ -163,7 +163,7 @@ const challengeTemplate: AdminChallenge = {
   educationResources: [],
   difficulty: "Easy",
   url: "",
-  completions: [],
+  solves: [],
 };
 
 const editChallenge = ref<AdminChallenge>(challengeTemplate);
@@ -175,9 +175,9 @@ const descriptionText = computed(() => {
 const hintText = computed(() => {
   return marked.parseInline(editChallenge.value.hint);
 });
-const deleteChallengeSubmissions = async ({ id, title }: AdminChallenge) => {
-  if (confirm(`Are you sure you want to delete ${title}'s submissions?`)) {
-    const response = await API.deleteChallengeSubmissions(id);
+const deleteChallengeSolves = async ({ id, title }: AdminChallenge) => {
+  if (confirm(`Are you sure you want to delete ${title}'s solves?`)) {
+    const response = await API.deleteChallengeSolves(id);
   }
 };
 

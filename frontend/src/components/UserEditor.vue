@@ -22,7 +22,7 @@
         <td>{{ user.username ?? "N/A" }}</td>
         <td>{{ user.warwickId ?? "N/A" }}</td>
         <td>{{ user.isAdmin ? "Yes" : "No" }}</td>
-        <td>{{ user.completedChallenges.length }}</td>
+        <td>{{ user.solvedChallenges.length }}</td>
         <td>
           <div class="d-flex justify-content-between">
             <button class="btn btn-light" @click="editUser = { ...user, password: '' }" data-bs-toggle="modal" data-bs-target="#userModal">
@@ -104,7 +104,7 @@ const userTemplate: EditUser = {
   firstName: "",
   lastName: "",
   isAdmin: false,
-  completedChallenges: [],
+  solvedChallenges: [],
 };
 
 const editUser = ref<EditUser>(userTemplate);

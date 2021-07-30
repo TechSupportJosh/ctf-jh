@@ -39,7 +39,7 @@
           <unlocked-challenge-component
             v-else
             :challenge="challenge"
-            :challenge-completion="challengeCompletion"
+            :challenge-solve="challengeSolve"
             @flag-submitted="flagSubmitted"
           ></unlocked-challenge-component>
         </p>
@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 import { ref, defineProps } from "vue";
 
-import type { Challenge, UserChallengeCompletion } from "../types/Challenge";
+import type { Challenge, UserChallengeSolve } from "../types/Challenge";
 
 import LockedChallengeComponent from "./LockedChallenge.vue";
 import UnlockedChallengeComponent from "./UnlockedChallenge.vue";
@@ -65,9 +65,10 @@ const pointCountText = ref(" ");
 const isBlood = ref(true);
 const bloodCharacters = ref([false, false, false, false, false, false, false]);
 
-const flagSubmitted = (completionInfo: { blood: boolean }) => {
+// TODO: Change to isBlood
+const flagSubmitted = (solveInfo: { blood: boolean }) => {
   showSubmitAnimation.value = true;
-  isBlood.value = completionInfo.blood;
+  isBlood.value = solveInfo.blood;
 
   // Type the point count
   setTimeout(() => {
@@ -109,16 +110,16 @@ const props = defineProps({
     type: Object as () => Challenge,
     required: true,
   },
-  challengeCompletion: {
-    type: Object as () => UserChallengeCompletion,
+  challengeSolve: {
+    type: Object as () => UserChallengeSolve,
     required: false,
   },
   requirementChallenge: {
     type: Object as () => Challenge,
     required: false,
   },
-  requirementChallengeCompletion: {
-    type: Object as () => UserChallengeCompletion,
+  requirementChallengeSolve: {
+    type: Object as () => UserChallengeSolve,
     required: false,
   },
 });

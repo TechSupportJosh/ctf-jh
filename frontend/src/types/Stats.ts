@@ -1,4 +1,4 @@
 export interface Stats {
   userCount: number;
-  totalCompletions: number;
+  totalSolves: number;
 }

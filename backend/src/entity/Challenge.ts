@@ -1,5 +1,5 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinTable } from "typeorm";
-import { UserCompletedChallenge } from "./User";
+import { UserSolvedChallenge } from "./User";
 
 @Entity()
 export class Challenge extends BaseEntity {
@@ -56,8 +56,8 @@ export class Challenge extends BaseEntity {
   @Column({ nullable: true })
   url?: string;
 
-  @OneToMany(() => UserCompletedChallenge, (completedChallenge) => completedChallenge.challenge)
-  completions!: UserCompletedChallenge[];
+  @OneToMany(() => UserSolvedChallenge, (solvedChallenge) => solvedChallenge.challenge)
+  solves!: UserSolvedChallenge[];
 
   toJSON() {
     return {
@@ -65,7 +65,7 @@ export class Challenge extends BaseEntity {
       unlockRequirement: this.unlockRequirement?.id,
       tags: this.tags.map((tag) => tag.tag),
       educationResources: this.educationResources.map((resource) => resource.resource),
-      completionCount: this.completions.length,
+      solves: this.solves.length,
     };
   }
 

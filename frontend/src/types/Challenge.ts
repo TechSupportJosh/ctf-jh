@@ -6,7 +6,7 @@ export interface ChallengeBase {
   category: string;
   difficulty: string;
   unlockRequirement?: number;
-  completionCount?: number;
+  solveCount?: number;
 }
 
 export interface LockedChallenge extends ChallengeBase {
@@ -24,20 +24,20 @@ export interface UnlockedChallenge extends ChallengeBase {
   fileHash?: string;
 }
 
-export interface UserChallengeCompletion {
+export interface UserChallengeSolve {
   challengeId: number;
-  completionDate: number;
+  solveDate: number;
   isBlood: boolean;
 }
 
-export interface AdminChallengeCompletion extends UserChallengeCompletion {
+export interface AdminChallengeSolve extends UserChallengeSolve {
   userId: number;
 }
 
 export interface AdminChallenge extends UnlockedChallenge {
   flag: string;
   disabled: boolean;
-  completions: AdminChallengeCompletion[];
+  solves: AdminChallengeSolve[];
 }
 
 export type Challenge = UnlockedChallenge | LockedChallenge;

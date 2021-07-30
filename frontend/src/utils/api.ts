@@ -3,7 +3,7 @@ import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
 import { User } from "../types/User";
 import config from "../config";
 import { Stats } from "../types/Stats";
-import { RecentCompletion } from "../types/RecentCompletion";
+import { RecentSolve } from "../types/RecentSolve";
 import { Team } from "../types/Team";
 
 const client = axios.create({
@@ -35,8 +35,8 @@ const submitFlag = async (challengeId: number, flag: string) => {
   };
 };
 
-const getRecentCompletions = async () => {
-  const response = await client.get<RecentCompletion[]>(`/challenges/recent`);
+const getRecentSolves = async () => {
+  const response = await client.get<RecentSolve[]>(`/challenges/recent`);
 
   if (response.status === 200) return response.data;
 };
@@ -126,8 +126,8 @@ const deleteChallenge = async (challengeId: number) => {
   return response.status === 200;
 };
 
-const deleteChallengeSubmissions = async (challengeId: number) => {
-  const response = await client.delete(`/admin/challenges/${challengeId}/submissions`);
+const deleteChallengeSolves = async (challengeId: number) => {
+  const response = await client.delete(`/admin/challenges/${challengeId}/solves`);
 
   return response.status === 200;
 };
@@ -160,7 +160,7 @@ export default {
   getUser,
   getChallenges,
   submitFlag,
-  getRecentCompletions,
+  getRecentSolves,
   joinTeam,
   createTeam,
   leaveTeam,
@@ -172,7 +172,7 @@ export default {
   kickTeamMember,
   getAdminChallenges,
   deleteChallenge,
-  deleteChallengeSubmissions,
+  deleteChallengeSolves,
   getAdminStats,
   getAdminUsers,
   deleteUser,

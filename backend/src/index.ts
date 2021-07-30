@@ -73,8 +73,8 @@ app.use("/api", router);
     const teams = await Team.createQueryBuilder("team")
       .leftJoinAndSelect("team.members", "members")
       .leftJoinAndSelect("team.teamLeader", "teamLeader")
-      .leftJoinAndSelect("members.completedChallenges", "completedChallenges")
-      .leftJoinAndSelect("completedChallenges.challenge", "challenge")
+      .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
+      .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
       .getMany();
 
     await Promise.all(
@@ -87,9 +87,9 @@ app.use("/api", router);
         entry.solves = 0;
 
         team.members.forEach((member) => {
-          member.completedChallenges.forEach((completedChallenge) => {
-            entry.points += completedChallenge.challenge.points;
-            entry.bloods += completedChallenge.isBlood ? 1 : 0;
+          member.solvedChallenges.forEach((solvedChallenge) => {
+            entry.points += solvedChallenge.challenge.points;
+            entry.bloods += solvedChallenge.isBlood ? 1 : 0;
             entry.solves += 1;
           });
         });

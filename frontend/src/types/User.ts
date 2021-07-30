@@ -1,4 +1,4 @@
-import { UserChallengeCompletion } from "./Challenge";
+import { UserChallengeSolve } from "./Challenge";
 import { UserTeam } from "./Team";
 
 export interface User {
@@ -8,6 +8,6 @@ export interface User {
   firstName: string;
   lastName: string;
   isAdmin: boolean;
-  completedChallenges: UserChallengeCompletion[];
+  solvedChallenges: UserChallengeSolve[];
   team?: UserTeam;
 }

@@ -32,14 +32,14 @@ export class User extends BaseEntity {
   @Column({ select: false, nullable: true })
   authExpiry!: Date;
 
-  @OneToMany(() => UserCompletedChallenge, (completedChallenge) => completedChallenge.user, { eager: true })
-  completedChallenges!: UserCompletedChallenge[];
+  @OneToMany(() => UserSolvedChallenge, (solvedChallenge) => solvedChallenge.user, { eager: true })
+  solvedChallenges!: UserSolvedChallenge[];
 
   @ManyToOne(() => Team, (team) => team.members, { nullable: true })
   team!: Team | null;
 
-  hasCompletedChallenge(challenge: Challenge) {
-    return this.completedChallenges.findIndex((completedChallenge) => completedChallenge.challengeId === challenge.id) !== -1;
+  hasSolvedChallenge(challenge: Challenge) {
+    return this.solvedChallenges.findIndex((solvedChallenge) => solvedChallenge.challengeId === challenge.id) !== -1;
   }
 
   createAuth() {
@@ -64,16 +64,15 @@ export class User extends BaseEntity {
       name: `${this.firstName} ${this.lastName[0]}`,
     };
 
-    if (withStats && this.completedChallenges) {
+    if (withStats && this.solvedChallenges) {
       json.points = 0;
       json.bloods = 0;
       json.solves = 0;
-      this.completedChallenges.forEach((completedChallenge) => {
-        json.points += completedChallenge.challenge?.points ?? 0;
-        json.bloods += completedChallenge.isBlood;
+      this.solvedChallenges.forEach((solvedChallenge) => {
+        json.points += solvedChallenge.challenge?.points ?? 0;
+        json.bloods += solvedChallenge.isBlood;
         json.solves += 1;
       });
-      json.completions = this.completedChallenges.length;
     }
 
     return json;
@@ -93,9 +92,9 @@ export class User extends BaseEntity {
 }
 
 @Entity()
-export class UserCompletedChallenge extends BaseEntity {
+export class UserSolvedChallenge extends BaseEntity {
   @PrimaryGeneratedColumn()
-  completedChallengeId!: number;
+  solvedChallengeId!: number;
 
   @Column()
   userId!: number;
@@ -104,12 +103,12 @@ export class UserCompletedChallenge extends BaseEntity {
   challengeId!: number;
 
   @Column()
-  completionDate!: Date;
+  solveDate!: Date;
 
   @Column()
   isBlood!: boolean;
 
-  @ManyToOne(() => User, (user) => user.completedChallenges)
+  @ManyToOne(() => User, (user) => user.solvedChallenges)
   public user!: User;
 
   @ManyToOne(() => Challenge)
@@ -123,7 +122,7 @@ export class UserCompletedChallenge extends BaseEntity {
         difficulty: this.challenge.difficulty,
       },
       isBlood: this.isBlood,
-      completionDate: this.completionDate,
+      solveDate: this.solveDate,
     };
   };
 }

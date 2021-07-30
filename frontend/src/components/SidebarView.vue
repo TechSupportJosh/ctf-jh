@@ -7,7 +7,7 @@
       </div>
       <hr />
       <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item text-center">{{ pointTotal }} Points<br />{{ user?.completedChallenges.length ?? 0 }} Challenges Owned</li>
+        <li class="nav-item text-center">{{ pointTotal }} Points<br />{{ user?.solvedChallenges.length ?? 0 }} Challenges Solved</li>
         <hr />
         <li class="nav-item mb-2"><strong>Categories:</strong></li>
         <li class="nav-item" v-for="(challengeCount, category) in categories">
@@ -44,9 +44,9 @@ const user = computed(() => store.state.user);
 const { challenges, categories } = store.state;
 
 const pointTotal = computed(() => {
-  return user.value?.completedChallenges
-    .map((completedChallenge) => {
-      return challenges.find((challenge) => challenge.id === completedChallenge.challengeId)?.points ?? 0;
+  return user.value?.solvedChallenges
+    .map((solvedChallenge) => {
+      return challenges.find((challenge) => challenge.id === solvedChallenge.challengeId)?.points ?? 0;
     })
     .reduce((value, total) => total + value, 0);
 });

@@ -6,16 +6,16 @@
   </div>
   <hr />
   <div
-    v-for="completion in recentCompletions"
-    :class="`border-${difficultyToClass(completion.challenge.difficulty)}`"
-    class="recent-completion"
-    v-if="recentCompletions.length"
+    v-for="solve in recentSolves"
+    :class="`border-${difficultyToClass(solve.challenge.difficulty)}`"
+    class="recent-solve"
+    v-if="recentSolves.length"
   >
-    <strong>{{ completion.user }}</strong
-    >&nbsp;<strong class="text-danger" v-if="completion.isBlood">BLOODED</strong><span v-else>solved</span>&nbsp;<strong>
-      {{ completion.challenge.title }}</strong
+    <strong>{{ solve.user }}</strong
+    >&nbsp;<strong class="text-danger" v-if="solve.isBlood">BLOODED</strong><span v-else>solved</span>&nbsp;<strong>
+      {{ solve.challenge.title }}</strong
     >
-    <div class="text-muted">{{ timeAgo.format(new Date(completion.completionDate)) }}</div>
+    <div class="text-muted">{{ timeAgo.format(new Date(solve.solveDate)) }}</div>
   </div>
   <div v-else>No challenge solves...</div>
 </template>
@@ -24,33 +24,33 @@
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { difficultyToClass } from "../utils/styling";
 import API from "../utils/api";
-import type { RecentCompletion } from "../types/RecentCompletion";
+import type { RecentSolve } from "../types/RecentSolve";
 import timeAgo from "../utils/timeAgo";
 
-const recentCompletions = ref<RecentCompletion[]>([]);
+const recentSolves = ref<RecentSolve[]>([]);
 
 let fetchTimer: number | null = null;
 
 onMounted(async () => {
   // fetchData();
 
-  await fetchRecentCompletions();
-  fetchTimer = setInterval(fetchRecentCompletions, 60 * 1000);
+  await fetchRecentSolves();
+  fetchTimer = setInterval(fetchRecentSolves, 60 * 1000);
 });
 
 onBeforeUnmount(() => {
   if (fetchTimer !== null) clearInterval(fetchTimer);
 });
 
-const fetchRecentCompletions = async () => {
-  const response = await API.getRecentCompletions();
+const fetchRecentSolves = async () => {
+  const response = await API.getRecentSolves();
 
-  if (response) recentCompletions.value = response;
+  if (response) recentSolves.value = response;
 };
 </script>
 
-<style>
-.recent-completion {
+<style scoped>
+.recent-solve {
   padding-left: 1rem;
   border-left: 10px solid;
   margin-bottom: 0.5rem;

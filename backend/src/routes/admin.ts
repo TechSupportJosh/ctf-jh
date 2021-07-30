@@ -3,7 +3,7 @@ import md5File from "md5-file";
 import multer from "multer";
 import { ChallengeDTO } from "../dto/Challenge";
 import { Challenge, ChallengeTag, EducationResource } from "../entity/Challenge";
-import { User, UserCompletedChallenge } from "../entity/User";
+import { User, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import path from "path";
 import { UserDTO } from "../dto/User";
@@ -28,16 +28,16 @@ const upload = multer({
 
 router.get("/stats", async (req, res) => {
   const userCount = await User.count();
-  const totalCompletions = await UserCompletedChallenge.count();
+  const totalSolves = await UserSolvedChallenge.count();
 
   res.json({
     userCount,
-    totalCompletions,
+    totalSolves,
   });
 });
 
 router.get("/challenges", async (req, res) => {
-  const challenges = await Challenge.find({ relations: ["unlockRequirement", "completions"] });
+  const challenges = await Challenge.find({ relations: ["unlockRequirement", "solves"] });
 
   res.json(challenges.map((challenge) => challenge.toJSON()));
 });
@@ -105,21 +105,21 @@ router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), asy
 });
 
 router.delete("/challenges/:challengeId", async (req, res) => {
-  const challenge = await Challenge.findOne({ relations: ["completions"], where: { id: req.params.challengeId } });
+  const challenge = await Challenge.findOne({ relations: ["solves"], where: { id: req.params.challengeId } });
   if (!challenge) return res.status(404);
 
-  await Promise.all(challenge.completions.map((completion) => completion.remove()));
+  await Promise.all(challenge.solves.map((solve) => solve.remove()));
 
   await challenge.remove();
 
   return res.sendStatus(200);
 });
 
-router.delete("/challenges/:challengeId/submissions", async (req, res) => {
-  const challenge = await Challenge.findOne({ relations: ["completions"], where: { id: req.params.challengeId } });
+router.delete("/challenges/:challengeId/solves", async (req, res) => {
+  const challenge = await Challenge.findOne({ relations: ["solves"], where: { id: req.params.challengeId } });
   if (!challenge) return res.status(404);
 
-  await Promise.all(challenge.completions.map((completion) => completion.remove()));
+  await Promise.all(challenge.solves.map((solve) => solve.remove()));
 
   return res.sendStatus(200);
 });
@@ -167,10 +167,10 @@ router.post("/users", validator(UserDTO), async (req, res) => {
 });
 
 router.delete("/users/:userId", async (req, res) => {
-  const user = await User.findOne({ relations: ["completedChallenges"], where: { id: req.params.userId } });
+  const user = await User.findOne({ relations: ["solvedChallenges"], where: { id: req.params.userId } });
   if (!user) return res.status(404);
 
-  await Promise.all(user.completedChallenges.map((completion) => completion.remove()));
+  await Promise.all(user.solvedChallenges.map((solve) => solve.remove()));
 
   await user.remove();
 
@@ -178,10 +178,10 @@ router.delete("/users/:userId", async (req, res) => {
 });
 
 router.delete("/users/:userId/submissions", async (req, res) => {
-  const user = await User.findOne({ relations: ["completedChallenges"], where: { id: req.params.userId } });
+  const user = await User.findOne({ relations: ["solvedChallenges"], where: { id: req.params.userId } });
   if (!user) return res.status(404);
 
-  await Promise.all(user.completedChallenges.map((completion) => completion.remove()));
+  await Promise.all(user.solvedChallenges.map((solve) => solve.remove()));
 
   return res.sendStatus(200);
 });
