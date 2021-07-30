@@ -52,7 +52,7 @@ const pointTotal = computed(() => {
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #app {
   height: 100vh;
 }
