@@ -2,7 +2,7 @@ import axios from "axios";
 import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
 import { User } from "../types/User";
 import config from "../config";
-import { Stats } from "../types/Stats";
+import { SolveStats, Stats } from "../types/Stats";
 import { RecentSolve } from "../types/RecentSolve";
 import { Team } from "../types/Team";
 
@@ -14,6 +14,12 @@ const client = axios.create({
 
 const getUser = async () => {
   const response = await client.get<User>(`/me`);
+
+  if (response.status === 200) return response.data;
+};
+
+const getStats = async () => {
+  const response = await client.get<SolveStats[]>(`/me/stats`);
 
   if (response.status === 200) return response.data;
 };
@@ -159,6 +165,7 @@ const deleteUserSubmissions = async (userId: number) => {
 export default {
   getUser,
   getChallenges,
+  getStats,
   submitFlag,
   getRecentSolves,
   joinTeam,

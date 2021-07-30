@@ -22,6 +22,7 @@ import { authRouter } from "./routes/auth";
 import { challengeRouter } from "./routes/challenges";
 import { teamsRouter } from "./routes/teams";
 import { updateStats } from "./utils/statsCron";
+import { User } from "./entity/User";
 
 const app = express();
 app.use(cookieParser());
@@ -44,6 +45,11 @@ router.use("/admin", isAdmin(), adminRouter);
 
 router.get("/me", isAuthenticated(), (req, res) => {
   res.json(req.user!.toSelfJSON());
+});
+
+router.get("/me/stats", isAuthenticated(), async (req, res) => {
+  const user = await User.findOne({ where: { id: req.user!.id }, relations: ["stats"] });
+  res.json(user!.stats);
 });
 
 router.use("/static", express.static("uploads"));

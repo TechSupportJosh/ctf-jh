@@ -1,15 +1,15 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-
-import Help from "../routes/Help.vue";
-import RecentFeed from "../routes/RecentFeed.vue";
-import Challenges from "../routes/Challenges.vue";
-import Admin from "../routes/Admin.vue";
-import Login from "../routes/Login.vue";
-import config from "../config";
 import SidebarView from "../components/SidebarView.vue";
-import store from "./store";
+import config from "../config";
+import Admin from "../routes/Admin.vue";
+import Challenges from "../routes/Challenges.vue";
+import Help from "../routes/Help.vue";
+import Login from "../routes/Login.vue";
+import Profile from "../routes/Profile.vue";
+import RecentFeed from "../routes/RecentFeed.vue";
 import Team from "../routes/Team.vue";
 import TeamSettings from "../routes/TeamSettings.vue";
+import store from "./store";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -27,6 +27,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: "/help",
         component: Help,
+      },
+      {
+        path: "/profile",
+        component: Profile,
       },
       {
         path: "/challenges/:category",

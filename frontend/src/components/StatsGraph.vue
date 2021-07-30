@@ -4,16 +4,16 @@
 
 <script lang="ts" setup>
 import { defineProps, ref } from "vue";
-import type { TeamStats } from "../types/Team";
 import { Chart as Highchart } from "highcharts-vue";
 import HighchartTheme from "../assets/HighchartTheme";
 import Highcharts from "highcharts";
 import timeAgo from "../utils/timeAgo";
+import type { SolveStats } from "../types/Stats";
 
 const props = defineProps({
   stats: {
     default: [],
-    type: Array as () => TeamStats[],
+    type: Array as () => SolveStats[],
     required: true,
   },
 });
