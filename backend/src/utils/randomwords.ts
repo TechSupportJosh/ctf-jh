@@ -1,11 +1,4 @@
-import fs from "fs";
-import path from "path";
-
-const wordlist: string[] = [];
-
-fs.readFile(path.join(__dirname, "..", "assets", "wordlist.txt"), "utf-8", (err, data) => {
-  wordlist.push(...data.split("\n"));
-});
+import wordlist from "../assets/wordlist.json";
 
 export const getRandomWords = (count: number, seperator: string) => {
   const output = [];
