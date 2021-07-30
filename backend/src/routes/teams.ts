@@ -87,8 +87,6 @@ router.post("/:teamId/kick/:userId", async (req, res) => {
 
   const user = await User.findOne({ where: { id: req.params.userId }, relations: ["team"] });
 
-  console.log(user);
-
   if (!user) return res.status(404).send({ message: "This user does not exist." });
   if (user.id === req.user!.id) return res.status(400).send({ message: "You cannot kick yourself from the team." });
   if (user.team?.id !== team.id) return res.status(400).send({ message: "This user is not in your team." });
@@ -158,7 +156,6 @@ router.post("/join", validator(TeamJoinDTO), joinLimiter, async (req, res) => {
 });
 
 router.post("/leave", async (req, res) => {
-  console.log("Before", req.user);
   if (!req.user!.team) return res.status(400).json({ message: "You are not in a team." });
 
   if (req.user!.team.teamLeader.id == req.user!.id)
@@ -167,7 +164,6 @@ router.post("/leave", async (req, res) => {
   req.user!.team = null;
   await req.user!.save();
 
-  console.log("After", req.user);
   return res.json({ message: "You've left the team." });
 });
 

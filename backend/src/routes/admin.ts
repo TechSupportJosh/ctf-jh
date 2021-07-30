@@ -136,8 +136,6 @@ router.post("/users", validator(UserDTO), async (req, res) => {
   let user = await User.createQueryBuilder("user").addSelect("user.password").where({ id: dto.id }).getOne();
   if (!user) user = new User();
 
-  console.log(user);
-
   if (dto.username !== undefined) {
     // Ensure that a user with a username cannot be created without a password
     if (user.password === undefined && dto.password === undefined) return res.redirect("/admin?error=no-password");
