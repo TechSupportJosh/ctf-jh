@@ -21,15 +21,11 @@
 </template>
 
 <script lang="ts" setup>
-import TimeAgo from "javascript-time-ago";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { difficultyToClass } from "../utils/styling";
-import en from "javascript-time-ago/locale/en";
 import API from "../utils/api";
 import type { RecentCompletion } from "../types/RecentCompletion";
-
-TimeAgo.addDefaultLocale(en);
-const timeAgo = new TimeAgo("en-US");
+import timeAgo from "../utils/timeAgo";
 
 const recentCompletions = ref<RecentCompletion[]>([]);
 

@@ -19,7 +19,8 @@
         <div class="text-muted">{{ member.points }} Points - {{ member.bloods }} Bloods</div>
       </div>
       <hr />
-      <h4 class="mb-3">Point Graphs</h4>
+      <h4 class="mb-3">Stats</h4>
+      <stats-graph :stats="team.stats"></stats-graph>
       <hr />
       <template v-if="user.id !== team.teamLeader.id">
         <div class="alert alert-danger" v-if="leaveTeamError"><strong>An error occured: </strong>{{ leaveTeamError }}</div>
@@ -58,6 +59,7 @@ import JoinTeam from "../components/JoinTeam.vue";
 import CreateTeam from "../components/CreateTeam.vue";
 import API from "../utils/api";
 import type { Team } from "../types/Team";
+import StatsGraph from "../components/StatsGraph.vue";
 
 const user = computed(() => store.state.user!);
 const team = ref<Team>();
