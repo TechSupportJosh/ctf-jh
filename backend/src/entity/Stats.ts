@@ -21,6 +21,17 @@ export class UserStats extends BaseEntity {
 
   @Column()
   bloods!: number;
+
+  toLeaderboardJSON() {
+    return {
+      user: this.user.toPublicJSON(false),
+      stats: {
+        points: this.points,
+        solves: this.solves,
+        bloods: this.bloods,
+      },
+    };
+  }
 }
 
 @Entity()
@@ -42,4 +53,18 @@ export class TeamStats extends BaseEntity {
 
   @Column()
   bloods!: number;
+
+  toLeaderboardJSON() {
+    return {
+      team: {
+        id: this.team.id,
+        name: this.team.name,
+      },
+      stats: {
+        points: this.points,
+        solves: this.solves,
+        bloods: this.bloods,
+      },
+    };
+  }
 }

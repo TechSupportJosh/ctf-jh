@@ -92,6 +92,7 @@ export class User extends BaseEntity {
       bloods: 0,
     };
 
+    console.log(this.solvedChallenges);
     this.solvedChallenges.forEach((solvedChallenge) => {
       stats.points += solvedChallenge.challenge?.points ?? 0;
       stats.bloods += solvedChallenge.isBlood ? 1 : 0;

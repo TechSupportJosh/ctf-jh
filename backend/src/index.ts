@@ -20,9 +20,11 @@ const accessAsync = promisify(access);
 import { adminRouter } from "./routes/admin";
 import { authRouter } from "./routes/auth";
 import { challengeRouter } from "./routes/challenges";
+import { leaderboardRouter } from "./routes/leaderboard";
 import { teamsRouter } from "./routes/teams";
 import { updateStats } from "./utils/statsCron";
 import { User } from "./entity/User";
+import { UserStats } from "./entity/Stats";
 
 const app = express();
 app.use(cookieParser());
@@ -41,6 +43,7 @@ const router = express.Router();
 router.use("/auth", authRouter);
 router.use("/challenges", isAuthenticated(), challengeRouter);
 router.use("/teams", isAuthenticated(), teamsRouter);
+router.use("/leaderboard", isAuthenticated(), leaderboardRouter);
 router.use("/admin", isAdmin(), adminRouter);
 
 router.get("/me", isAuthenticated(), (req, res) => {
@@ -72,7 +75,7 @@ app.use("/api", router);
     await mkdirAsync(uploadDirectory);
   }
 
-  const job = new CronJob("0 0 * * * *", updateStats);
+  const job = new CronJob("0 0 * * * *", () => updateStats(connection));
   job.start();
 
   app.listen(8080, () => {

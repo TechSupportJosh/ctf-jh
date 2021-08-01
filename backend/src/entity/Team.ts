@@ -36,4 +36,21 @@ export class Team extends BaseEntity {
       members: this.members.map((member) => member.toPublicJSON(true)),
     };
   }
+
+  getSolveStats() {
+    const stats = {
+      points: 0,
+      solves: 0,
+      bloods: 0,
+    };
+
+    this.members.forEach((member) => {
+      const userStats = member.getSolveStats();
+      stats.points += userStats.points;
+      stats.bloods += userStats.bloods;
+      stats.solves += userStats.solves;
+    });
+
+    return stats;
+  }
 }
