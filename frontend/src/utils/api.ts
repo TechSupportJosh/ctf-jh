@@ -2,7 +2,7 @@ import axios from "axios";
 import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
 import { User } from "../types/User";
 import config from "../config";
-import { SolveStats, Stats } from "../types/Stats";
+import { AdminStats, SolveStats, Stats, TeamLeaderboardStats, UserLeaderboardStats } from "../types/Stats";
 import { RecentSolve } from "../types/RecentSolve";
 import { Team } from "../types/Team";
 
@@ -120,6 +120,18 @@ const kickTeamMember = async (teamId: number, userId: number) => {
   };
 };
 
+const getUserLeaderboard = async () => {
+  const response = await client.get<UserLeaderboardStats>(`/leaderboard/users`);
+
+  if (response.status === 200) return response.data;
+};
+
+const getTeamLeaderboard = async () => {
+  const response = await client.get<TeamLeaderboardStats>(`/leaderboard/teams`);
+
+  if (response.status === 200) return response.data;
+};
+
 const getAdminChallenges = async () => {
   const response = await client.get<AdminChallenge[]>(`/admin/challenges`);
 
@@ -139,7 +151,7 @@ const deleteChallengeSolves = async (challengeId: number) => {
 };
 
 const getAdminStats = async () => {
-  const response = await client.get<Stats>(`/admin/stats`);
+  const response = await client.get<AdminStats>(`/admin/stats`);
 
   if (response.status === 200) return response.data;
 };
@@ -177,6 +189,8 @@ export default {
   getInviteCode,
   createInviteCode,
   kickTeamMember,
+  getUserLeaderboard,
+  getTeamLeaderboard,
   getAdminChallenges,
   deleteChallenge,
   deleteChallengeSolves,

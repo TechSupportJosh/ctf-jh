@@ -47,10 +47,10 @@ import ChallengeEditor from "../components/ChallengeEditor.vue";
 import UserEditor from "../components/UserEditor.vue";
 import config from "../config";
 import API from "../utils/api";
-import type { Stats } from "../types/Stats";
+import type { AdminStats } from "../types/Stats";
 import { useRoute } from "vue-router";
 
-const stats = ref<Stats>();
+const stats = ref<AdminStats>();
 
 const route = useRoute();
 const errorCode = route.query.error;

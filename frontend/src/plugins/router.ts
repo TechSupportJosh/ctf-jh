@@ -4,6 +4,7 @@ import config from "../config";
 import Admin from "../routes/Admin.vue";
 import Challenges from "../routes/Challenges.vue";
 import Help from "../routes/Help.vue";
+import Leaderboard from "../routes/Leaderboard.vue";
 import Login from "../routes/Login.vue";
 import Profile from "../routes/Profile.vue";
 import RecentFeed from "../routes/RecentFeed.vue";
@@ -43,6 +44,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: "/team/settings",
         component: TeamSettings,
+      },
+      {
+        path: "/leaderboard",
+        component: Leaderboard,
       },
     ],
   },
