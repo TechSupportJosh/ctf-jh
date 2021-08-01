@@ -51,7 +51,7 @@ seriesData.points = padData(seriesData.points);
 seriesData.bloods = padData(seriesData.bloods);
 seriesData.solves = padData(seriesData.solves);
 
-const lastUpdated = props.stats.length ? props.stats[0].date : undefined;
+const lastUpdated = props.stats.length ? props.stats[props.stats.length - 1].date : undefined;
 
 const series = ref<Highcharts.SeriesOptionsType[]>([
   {
