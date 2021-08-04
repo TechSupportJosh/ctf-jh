@@ -24,7 +24,9 @@
   </p>
 
   <p v-if="challenge.url">
-    <strong>Challenge URL: </strong><a :href="challenge.url">{{ challenge.url }}</a>
+    <strong>Challenge URL: </strong>
+    <a :href="challenge.url" v-if="challenge.url.startsWith('http')">{{ challenge.url }}</a>
+    <span v-else>{{ challenge.url }}</span>
   </p>
 
   <hr />
