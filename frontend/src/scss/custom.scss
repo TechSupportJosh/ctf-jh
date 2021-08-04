@@ -1,24 +1,15 @@
-// Custom.scss
-// Option B: Include parts of Bootstrap
-
-// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
-@import "../../node_modules/bootstrap/scss/functions";
-
-// 2. Include any default variable overrides here
-// $primary: #577590;
-// $success: #43aa8b;
-// $danger: #f94144;
-// $warning: #f3722c;
-
 @import "./superhero_variables.scss";
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
 
-// $body-bg: #0f2537;
+$custom-colors: (
+  "very-hard": #900,
+);
 
-// 3. Include remainder of required Bootstrap stylesheets
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import "../../node_modules/bootstrap/scss/utilities";
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
-
-// 5. Add additional custom code here
-
 @import "./superhero_bootswatch.scss";
 
 body,

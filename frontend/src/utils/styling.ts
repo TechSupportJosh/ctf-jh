@@ -5,7 +5,7 @@ export const difficultyToClass = (difficulty: string) => {
       Easy: "success",
       Medium: "warning",
       Hard: "danger",
-      "Very Hard": "dark",
+      "Very Hard": "very-hard",
     }[difficulty] ?? ""
   );
 };
