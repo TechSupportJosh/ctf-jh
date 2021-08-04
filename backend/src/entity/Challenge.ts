@@ -75,7 +75,7 @@ export class Challenge extends BaseEntity {
       unlockRequirement: this.unlockRequirement?.id,
       tags: this.tags.map((tag) => tag.tag),
       educationResources: this.educationResources.map((resource) => resource.resource),
-      solves: this.solves.length,
+      solveCount: this.solves.length,
     };
   }
 
