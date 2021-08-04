@@ -101,12 +101,9 @@ onMounted(() => {
   background-color: #5b3069;
 }
 #main-container {
-  display: flex;
-  vertical-align: bottom;
-  min-height: 100vh;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
+  position: absolute;
+  left: 0;
+  right: 0;
 }
 #login-container {
   text-align: center;

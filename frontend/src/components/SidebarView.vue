@@ -1,12 +1,23 @@
 <template>
-  <main>
-    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" id="sidebar">
-      <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white flex-column">
-        <span class="fs-4">Intake CTF</span>
-        <router-link v-if="user?.isAdmin" to="/admin">Admin Panel</router-link>
-      </div>
-      <hr />
-      <ul class="nav nav-pills flex-column mb-auto">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-left p-3">
+    <span class="fs-4 navbar-brand">Intake CTF</span>
+    <router-link v-if="user?.isAdmin && false" to="/admin">Admin Panel</router-link>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarsExampleDefault"
+      aria-controls="navbarsExampleDefault"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <ul class="navbar-nav navbar-nav-scroll nav-pills flex-column mb-auto">
+        <hr />
         <li class="nav-item text-center">{{ pointTotal }} Points<br />{{ user?.solvedChallenges.length ?? 0 }} Challenges Solved</li>
         <hr />
         <li class="nav-item mb-2"><strong>Categories:</strong></li>
@@ -15,25 +26,24 @@
             {{ category }} ({{ challengeCount }})
           </router-link>
         </li>
-      </ul>
-      <ul class="nav nav-pills flex-column">
+        <hr />
         <li class="nav-item"><router-link to="/profile" class="nav-link" active-class="active">Profile</router-link></li>
         <li class="nav-item"><router-link to="/team" class="nav-link" active-class="active">Team</router-link></li>
         <li class="nav-item"><router-link to="/feed" class="nav-link" active-class="active">Recent Solves</router-link></li>
         <li class="nav-item"><router-link to="/leaderboard" class="nav-link" active-class="active">Leaderboard</router-link></li>
         <li class="nav-item"><router-link to="/help" class="nav-link" active-class="active">Help</router-link></li>
+        <hr />
+        <div class="w-100 text-center">
+          <strong>{{ user?.firstName }} {{ user?.lastName }}</strong
+          ><br />
+          <a :href="`${config.basePath}api/auth/logout`" class="text-white">Log Out</a>
+        </div>
       </ul>
-      <hr />
-      <div>
-        <strong>{{ user?.firstName }} {{ user?.lastName }}</strong
-        ><br />
-        <a :href="`${config.basePath}api/auth/logout`" class="text-white">Log Out</a>
-      </div>
     </div>
-    <div class="container mt-4" id="main-container">
-      <router-view></router-view>
-    </div>
-  </main>
+  </nav>
+  <div class="container p-4">
+    <router-view></router-view>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -54,23 +64,6 @@ const pointTotal = computed(() => {
 });
 </script>
 
-<style lang="scss" scoped>
-#app {
-  height: 100vh;
-}
-main {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-}
-
-#sidebar {
-  width: 280px;
-  position: fixed;
-  height: 100vh;
-}
-
-#main-container {
-  padding-left: 280px;
-}
+<style>
+@import "../scss/sidebar.scss";
 </style>
