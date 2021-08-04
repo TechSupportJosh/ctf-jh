@@ -22,6 +22,9 @@ export class ChallengeDTO {
   @(jf.number().integer().required())
   points!: number;
 
+  @(jf.string().valid(["string", "location"]).required())
+  flagType!: string;
+
   @(jf.string().required())
   flag!: string;
 

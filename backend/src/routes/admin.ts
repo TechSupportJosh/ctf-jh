@@ -54,6 +54,7 @@ router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), asy
   challenge.author = dto.author;
   challenge.category = dto.category;
   challenge.points = dto.points;
+  challenge.flagType = dto.flagType;
   challenge.flag = dto.flag;
   challenge.difficulty = dto.difficulty;
   challenge.hint = dto.hint;

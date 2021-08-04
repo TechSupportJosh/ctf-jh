@@ -1,10 +1,12 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import { FlagSubmissionDTO } from "../dto/FlagSubmission";
-import { Challenge, ChallengeTag } from "../entity/Challenge";
+import { Challenge, ChallengeTag, FlagType } from "../entity/Challenge";
 import { User, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { sendWebhook } from "../utils/webhook";
+import { getDistance } from "geolib";
+import { flagLocationPrecision } from "../constants";
 
 const router = express.Router();
 
@@ -43,7 +45,26 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
   if (challenge.unlockRequirement && !req.user?.hasSolvedChallenge(challenge.unlockRequirement))
     return res.status(400).json({ message: "Challenge is locked." });
 
-  if (challenge.flag !== flag) return res.status(400).json({ message: "Incorrect flag." });
+  if (challenge.flagType === FlagType.STRING && challenge.flag !== flag) return res.status(400).json({ message: "Incorrect flag." });
+
+  if (challenge.flagType === FlagType.LOCATION) {
+    // Firstly attempt to split up their flag
+    const [latitudeString, longitudeString] = challenge.flag.split(",");
+    const latitude = parseFloat(latitudeString);
+    const longitude = parseFloat(longitudeString);
+
+    if (isNaN(longitude) || isNaN(latitude)) {
+      return res.status(400).json({ message: "Incorrect flag." });
+    }
+
+    const [flagLatituideString, flatLongitudeString] = challenge.flag.split(",");
+    const flagLatitude = parseFloat(flagLatituideString);
+    const flagLongitude = parseFloat(flatLongitudeString);
+
+    if (getDistance({ latitude: flagLatitude, longitude: flagLongitude }, { latitude, longitude }) > flagLocationPrecision) {
+      return res.status(400).json({ message: "Incorrect flag." });
+    }
+  }
 
   const solves = await UserSolvedChallenge.count({ where: { challengeId: challenge.id } });
 

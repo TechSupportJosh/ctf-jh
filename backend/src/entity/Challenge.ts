@@ -1,6 +1,11 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinTable } from "typeorm";
 import { UserSolvedChallenge } from "./User";
 
+export enum FlagType {
+  STRING = "string",
+  LOCATION = "location",
+}
+
 @Entity()
 export class Challenge extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -23,6 +28,11 @@ export class Challenge extends BaseEntity {
 
   @Column()
   points!: number;
+
+  @Column({
+    type: "simple-enum",
+  })
+  flagType!: string;
 
   @Column()
   flag!: string;
