@@ -8,6 +8,10 @@ import { verifyPassword } from "../utils/password";
 
 const router = express.Router();
 
+const adminIds = process.env.WARWICK_ADMIN_IDS ? process.env.WARWICK_ADMIN_IDS.split(",") : [];
+const whitelistedIds = process.env.WARWICK_ID_WHITELIST ? process.env.WARWICK_ID_WHITELIST.split(",") : [];
+const whitelistedCourses = process.env.WARWICK_COURSE_WHITELIST ? process.env.WARWICK_COURSE_WHITELIST.split(",") : [];
+
 router.get("/warwick", async (req, res) => {
   const authorizationUri = await getAuthorizationURI();
 
@@ -26,15 +30,25 @@ router.get("/callback", async (req, res) => {
 
   if (!attributes) return res.redirect("/login?error=oauth");
 
+  console.log(whitelistedIds);
+  console.log(whitelistedCourses);
+  console.log(attributes);
+
+  // Now evaluate whether this user can currently login in (i.e. check whitelists)
+  if (whitelistedCourses.length || whitelistedIds.length) {
+    if (!whitelistedCourses.includes(attributes.warwickcoursecode) && !whitelistedIds.includes(attributes.id))
+      return res.redirect("/login?error=no-access");
+  }
+
   let user = await User.findOne({ warwickId: parseInt(attributes.id) });
 
   if (!user) {
-    user = new User();
-    user.warwickId = parseInt(attributes.id);
-    user.firstName = attributes.firstname;
-    user.lastName = attributes.lastname;
-    // TODO: Remove hardcoded admin ID
-    user.isAdmin = attributes.id === "1906821";
+    user = User.create({
+      warwickId: parseInt(attributes.id),
+      firstName: attributes.firstname,
+      lastName: attributes.lastname,
+      isAdmin: attributes.id in adminIds,
+    });
   }
 
   user.createAuth();

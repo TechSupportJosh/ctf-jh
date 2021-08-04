@@ -80,7 +80,7 @@ switch (errorCode) {
   case "oauth":
     errorMessage.value = "Failed to fetch OAuth status, please try again";
     break;
-  case "course-id":
+  case "no-access":
     errorMessage.value = "You do not have access to this site, please contact an administrator";
     break;
   case "requires-auth":
