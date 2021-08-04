@@ -70,7 +70,14 @@
               <div v-html="descriptionText" style="white-space: pre-line"></div>
             </div>
             <div class="mb-3">
-              <label class="form-label">Flag (include WMG{})</label>
+              <label class="form-label">Flag Type</label>
+              <select class="form-control" name="flagType" v-model="editChallenge.flagType" required>
+                <option value="string">String (WMG{AAAA})</option>
+                <option value="location">Location (Lat, Long)</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Flag</label>
               <textarea class="form-control" name="flag" v-model="editChallenge.flag" required />
             </div>
             <div class="mb-3">
@@ -154,6 +161,7 @@ const challengeTemplate: AdminChallenge = {
   title: "",
   description: "",
   author: "",
+  flagType: "string",
   flag: "",
   points: 10,
   tags: [],

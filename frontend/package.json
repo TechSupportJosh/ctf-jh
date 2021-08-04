@@ -13,6 +13,7 @@
     "copy-to-clipboard": "^3.3.1",
     "highcharts": "^9.1.2",
     "javascript-time-ago": "^2.3.8",
+    "leaflet": "^1.7.1",
     "marked": "^2.0.3",
     "tsparticles": "^1.31.1",
     "vue": "^3.0.11",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@types/javascript-time-ago": "^2.0.3",
+    "@types/leaflet": "^1.7.4",
     "@types/marked": "^2.0.2",
     "@vitejs/plugin-vue": "^1.2.2",
     "@vue/compiler-sfc": "^3.0.5",

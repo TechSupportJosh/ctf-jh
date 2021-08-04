@@ -34,23 +34,19 @@
       >Enter the flag from the challenge (<a @click.prevent="showHint = !showHint" href="#">Need a hint?</a>):</label
     >
     <div class="mb-2" v-if="showHint" v-html="'<strong>Hint: </strong>' + marked.parseInline(challenge.hint)"></div>
-    <div class="input-group mb-3 has-validation">
-      <input
-        type="text"
-        class="form-control"
-        :class="{
-          'is-invalid': flagSubmissionError,
-          'is-valid': flagCorrect,
-        }"
-        :readonly="flagCorrect"
-        placeholder="WMG{AAAAAAAA}"
-        v-model="flag"
-      />
-      <button class="btn" :class="`btn-${difficultyToClass(challenge.difficulty)}`" type="button" @click="submitFlag(challenge.id)">
-        Submit
-      </button>
-      <div class="invalid-feedback">{{ flagSubmissionError }}</div>
-    </div>
+
+    <flag-string
+      :challenge="challenge"
+      :flag-submission-error="flagSubmissionError"
+      v-if="challenge.flagType === 'string'"
+      @flag-submitted="submitFlag"
+    ></flag-string>
+    <flag-location
+      :challenge="challenge"
+      :flag-submission-error="flagSubmissionError"
+      v-if="challenge.flagType === 'location'"
+      @flag-submitted="submitFlag"
+    ></flag-location>
   </template>
 
   <div class="d-flex d-flex justify-content-between">
@@ -67,26 +63,23 @@ import { computed, defineProps, ref, defineEmit } from "vue";
 
 import type { UnlockedChallenge, UserChallengeSolve } from "../types/Challenge";
 
-import { difficultyToClass } from "../utils/styling";
-
 import config from "../config";
 import API from "../utils/api";
+import FlagString from "./flagInputs/String.vue";
+import FlagLocation from "./flagInputs/Location.vue";
 
 const showHint = ref(false);
-const flag = ref("");
 const flagSubmissionError = ref("");
-const flagCorrect = ref(false);
 
 const emit = defineEmit(["flagSubmitted"]);
 
 let errorTimer: number | null = null;
 
-const submitFlag = async (challengeId: number) => {
-  const response = await API.submitFlag(challengeId, flag.value);
+const submitFlag = async (flag: string) => {
+  const response = await API.submitFlag(props.challenge.id, flag);
 
   switch (response.statusCode) {
     case 200:
-      flagCorrect.value = true;
       emit("flagSubmitted", { blood: response.isBlood });
       break;
     case 429:

@@ -18,6 +18,7 @@ export interface UnlockedChallenge extends ChallengeBase {
   description: string;
   hint: string;
   tags: string[];
+  flagType: "string" | "location";
   educationResources: string[];
   url?: string;
   fileName?: string;
