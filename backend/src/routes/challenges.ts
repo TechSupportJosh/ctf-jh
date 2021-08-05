@@ -37,7 +37,7 @@ const flagSubmissionLimiter = rateLimit({
 router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmissionLimiter, async (req, res) => {
   const { flag } = res.locals.dto as FlagSubmissionDTO;
 
-  const challenge = await Challenge.findOne({ select: ["id", "flag", "unlockRequirement"], where: { id: req.params.challengeId } });
+  const challenge = await Challenge.createQueryBuilder("challenge").addSelect("flag").where({ id: req.params.challengeId }).getOne();
   if (!challenge) return res.status(404);
 
   if (req.user?.hasSolvedChallenge(challenge)) return res.status(400).json({ message: "Challenge has already been submitted." });
@@ -49,7 +49,7 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
 
   if (challenge.flagType === FlagType.LOCATION) {
     // Firstly attempt to split up their flag
-    const [latitudeString, longitudeString] = challenge.flag.split(",");
+    const [latitudeString, longitudeString] = flag.split(",");
     const latitude = parseFloat(latitudeString);
     const longitude = parseFloat(longitudeString);
 
