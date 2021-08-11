@@ -8,7 +8,7 @@
   <div v-if="user.team">
     <template v-if="!team">Loading...</template>
     <template v-else>
-      <h4 class="mb-3">Members</h4>
+      <h4 class="mb-3">Members ({{ team.members.length }} / {{ maxTeamMembers }})</h4>
       <div
         v-for="member in team.members"
         class="team-member"
@@ -60,6 +60,7 @@ import CreateTeam from "../components/CreateTeam.vue";
 import API from "../utils/api";
 import type { Team } from "../types/Team";
 import StatsGraph from "../components/StatsGraph.vue";
+import { maxTeamMembers } from "shared/config";
 
 const user = computed(() => store.state.user!);
 const team = ref<Team>();

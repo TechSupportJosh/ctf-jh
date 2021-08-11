@@ -1,7 +1,6 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { SimpleConsoleLogger } from "typeorm";
-import { maxTeamMembers } from "../constants";
+import { maxTeamMembers } from "shared/config";
 import { TeamDTO, TeamJoinDTO } from "../dto/Team";
 import { Team } from "../entity/Team";
 import { User } from "../entity/User";
