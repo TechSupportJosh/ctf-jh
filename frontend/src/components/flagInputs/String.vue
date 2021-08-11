@@ -17,13 +17,13 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmit, defineProps, ref } from "vue";
+import { ref } from "vue";
 import type { Challenge } from "../../types/Challenge";
 import { difficultyToClass } from "../../utils/styling";
 
 const flag = ref("");
 
-const emit = defineEmit(["flagSubmitted"]);
+const emit = defineEmits(["flagSubmitted"]);
 
 const props = defineProps({
   challenge: {

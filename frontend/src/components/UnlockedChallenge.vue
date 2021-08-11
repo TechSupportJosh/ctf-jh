@@ -19,7 +19,7 @@
 
   <p v-if="challenge.fileName">
     <strong>Challenge File:</strong><br />File Name:
-    <a :href="`${config.basePath}api/static/${challenge.fileName}`" download>{{ challenge.fileName }}</a
+    <a :href="`${basePath}api/static/${challenge.fileName}`" download>{{ challenge.fileName }}</a
     ><br />MD5 Hash: {{ challenge.fileHash }}
   </p>
 
@@ -61,19 +61,19 @@
 
 <script lang="ts" setup>
 import marked from "marked";
-import { computed, defineProps, ref, defineEmit } from "vue";
+import { computed, ref } from "vue";
 
 import type { UnlockedChallenge, UserChallengeSolve } from "../types/Challenge";
 
-import config from "../config";
 import API from "../utils/api";
 import FlagString from "./flagInputs/String.vue";
 import FlagLocation from "./flagInputs/Location.vue";
+import { basePath } from "shared/config";
 
 const showHint = ref(false);
 const flagSubmissionError = ref("");
 
-const emit = defineEmit(["flagSubmitted"]);
+const emit = defineEmits(["flagSubmitted"]);
 
 let errorTimer: number | null = null;
 

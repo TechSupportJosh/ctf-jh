@@ -39,7 +39,7 @@
   <div class="modal" id="userModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <form :action="`${config.basePath}api/admin/users`" method="POST">
+        <form :action="`${basePath}api/admin/users`" method="POST">
           <div class="modal-header">
             <h5 class="modal-title">Creating or Editing User</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts" setup>
-import config from "../config";
+import { basePath } from "shared/config";
 import API from "../utils/api";
 import { onMounted, ref } from "vue";
 import type { User } from "../types/User";

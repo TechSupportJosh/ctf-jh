@@ -36,7 +36,7 @@
         <div class="w-100 text-center">
           <strong>{{ user?.firstName }} {{ user?.lastName }}</strong
           ><br />
-          <a :href="`${config.basePath}api/auth/logout`" class="text-white">Log Out</a>
+          <a :href="`${basePath}api/auth/logout`" class="text-white">Log Out</a>
         </div>
       </ul>
     </div>
@@ -49,7 +49,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import store from "../plugins/store";
-import config from "../config";
+import { basePath } from "shared/config";
 import { RouterView } from "vue-router";
 
 const user = computed(() => store.state.user);

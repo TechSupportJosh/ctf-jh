@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmit, defineProps, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import type { Challenge } from "../../types/Challenge";
 import { difficultyToClass } from "../../utils/styling";
 import L from "leaflet";
@@ -70,7 +70,7 @@ const flagString = computed(() => `${flag.value.lat.toFixed(7)}, ${flag.value.ln
 const gmapsURL = ref("");
 const gmapsURLError = ref("");
 
-const emit = defineEmit(["flagSubmitted"]);
+const emit = defineEmits(["flagSubmitted"]);
 let map: L.Map | null = null;
 let mapCircle: L.Circle | null = null;
 
