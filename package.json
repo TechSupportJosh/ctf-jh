@@ -4,11 +4,6 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {},
-  "workspaces": [
-    "backend",
-    "frontend",
-    "shared"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TechSupportJosh/ctf-jh.git"
@@ -18,5 +13,10 @@
   "bugs": {
     "url": "https://github.com/TechSupportJosh/ctf-jh/issues"
   },
-  "homepage": "https://github.com/TechSupportJosh/ctf-jh#readme"
+  "homepage": "https://github.com/TechSupportJosh/ctf-jh#readme",
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ]
 }

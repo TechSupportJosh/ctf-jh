@@ -2,7 +2,7 @@
   "name": "backend",
   "private": true,
   "version": "1.0.0",
-  "description": "",
+  "description": "I wanted to use the University of Warwick's OAuth login for some projects, however all the OAuth 1.0a libraries I tried either didn't have TypeScript support, or didn't work as expected. Therefore, I ended up using the helper library (OAuth-1.0a)[https://www.npmjs.com/package/oauth-1.0a] to handle the signing of the requests and implementing the flow myself.",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -42,5 +42,13 @@
     "@types/node": "^16.3.2",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TechSupportJosh/ctf-jh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TechSupportJosh/ctf-jh/issues"
+  },
+  "homepage": "https://github.com/TechSupportJosh/ctf-jh#readme"
 }
