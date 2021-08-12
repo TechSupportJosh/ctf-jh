@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
 import { User } from "../types/User";
-import {basePath} from "shared";
+import { basePath } from "shared";
 import { AdminStats, SolveStats, Stats, TeamLeaderboardStats, UserLeaderboardStats } from "../types/Stats";
 import { RecentSolve } from "../types/RecentSolve";
 import { Team } from "../types/Team";

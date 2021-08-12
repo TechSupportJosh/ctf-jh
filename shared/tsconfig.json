@@ -2,13 +2,12 @@
   "compilerOptions": {
     "composite": true,
     "target": "esnext",
-    "module": "commonjs",
+    "module": "ES6",
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
-    "esModuleInterop": true,
-    "typeRoots": ["../node_modules/@types"],
-    "resolveJsonModule": true
+    "moduleResolution": "node",
+    "typeRoots": ["../node_modules/@types"]
   },
 
   "include": ["config.ts"],
