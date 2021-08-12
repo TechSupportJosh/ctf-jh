@@ -68,7 +68,7 @@ import type { UnlockedChallenge, UserChallengeSolve } from "../types/Challenge";
 import API from "../utils/api";
 import FlagString from "./flagInputs/String.vue";
 import FlagLocation from "./flagInputs/Location.vue";
-import { basePath } from "shared/config";
+import { basePath } from "shared";
 
 const showHint = ref(false);
 const flagSubmissionError = ref("");

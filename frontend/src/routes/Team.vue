@@ -60,7 +60,7 @@ import CreateTeam from "../components/CreateTeam.vue";
 import API from "../utils/api";
 import type { Team } from "../types/Team";
 import StatsGraph from "../components/StatsGraph.vue";
-import { maxTeamMembers } from "shared/config";
+import { maxTeamMembers } from "shared";
 
 const user = computed(() => store.state.user!);
 const team = ref<Team>();

@@ -45,7 +45,7 @@
 import { onMounted, ref } from "vue";
 import ChallengeEditor from "../components/ChallengeEditor.vue";
 import UserEditor from "../components/UserEditor.vue";
-import {basePath} from "shared/config";
+import {basePath} from "shared";
 import API from "../utils/api";
 import type { AdminStats } from "../types/Stats";
 import { useRoute } from "vue-router";

@@ -1,6 +1,6 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { maxTeamMembers } from "shared/config";
+import { maxTeamMembers } from "shared";
 import { TeamDTO, TeamJoinDTO } from "../dto/Team";
 import { Team } from "../entity/Team";
 import { User } from "../entity/User";

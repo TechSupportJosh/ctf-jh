@@ -141,7 +141,7 @@
 </template>
 
 <script lang="ts" setup>
-import { basePath } from "shared/config";
+import { basePath } from "shared";
 import marked from "marked";
 import API from "../utils/api";
 import { computed, onMounted, ref } from "vue";

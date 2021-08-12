@@ -55,7 +55,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { basePath } from "shared/config";
+import { basePath } from "shared";
 import { tsParticles } from "tsparticles";
 import particlesConfig from "../assets/particles.json";
 

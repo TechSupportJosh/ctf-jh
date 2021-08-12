@@ -3,9 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "build_society": "vue-tsc --noEmit && vite build --base=/intakectf/",
+    "dev": "tsc -b ../shared && vite",
+    "build": "tsc -b ../shared && vue-tsc --noEmit && vite build",
     "serve": "vite preview"
   },
   "dependencies": {

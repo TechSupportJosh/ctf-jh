@@ -49,7 +49,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import store from "../plugins/store";
-import { basePath } from "shared/config";
+import { basePath } from "shared";
 import { RouterView } from "vue-router";
 
 const user = computed(() => store.state.user);

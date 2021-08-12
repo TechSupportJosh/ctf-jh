@@ -2,13 +2,13 @@
   "name": "backend",
   "private": true,
   "version": "1.0.0",
-  "description": "I wanted to use the University of Warwick's OAuth login for some projects, however all the OAuth 1.0a libraries I tried either didn't have TypeScript support, or didn't work as expected. Therefore, I ended up using the helper library (OAuth-1.0a)[https://www.npmjs.com/package/oauth-1.0a] to handle the signing of the requests and implementing the flow myself.",
+  "description": "",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --files src/index.ts",
-    "build": "tsc",
-    "start": "tsc && NODE_ENV=production node dist/index.js"
+    "build": "tsc -b",
+    "start": "tsc -b && NODE_ENV=production node dist/index.js"
   },
   "keywords": [],
   "author": "",

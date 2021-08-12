@@ -6,7 +6,7 @@ import { User, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { sendWebhook } from "../utils/webhook";
 import { getDistance } from "geolib";
-import { locationFlagPrecision } from "shared/config";
+import { locationFlagPrecision } from "shared";
 
 const router = express.Router();
 

@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts" setup>
-import { basePath } from "shared/config";
+import { basePath } from "shared";
 import API from "../utils/api";
 import { onMounted, ref } from "vue";
 import type { User } from "../types/User";

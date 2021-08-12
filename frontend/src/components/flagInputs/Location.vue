@@ -61,7 +61,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import type { Challenge } from "../../types/Challenge";
 import { difficultyToClass } from "../../utils/styling";
 import L from "leaflet";
-import { locationFlagPrecision } from "shared/config";
+import { locationFlagPrecision } from "shared";
 
 import "leaflet/dist/leaflet.css";
 
