@@ -1,0 +1,18 @@
+# Build application
+FROM node:16 as build-stage
+WORKDIR /app
+RUN mkdir /app/backend /app/shared
+
+COPY package*.json ./
+COPY ./backend/package.json ./backend
+COPY ./shared/package.json ./shared
+
+RUN npm install
+
+ADD ./backend /app/backend
+ADD ./shared /app/shared
+
+WORKDIR /app/backend
+RUN npm run build
+
+CMD ["node", "./dist/index.js"]
