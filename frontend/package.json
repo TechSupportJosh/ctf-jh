@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "tsc -b ../shared && vite",
-    "build": "tsc -b ../shared && vue-tsc --noEmit && vite build",
+    "dev": "tsc -b ../shared/tsconfig.json && vite",
+    "build": "tsc -b ../shared/tsconfig.json && vue-tsc --noEmit && vite build",
     "serve": "vite preview"
   },
   "dependencies": {

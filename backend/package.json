@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --files src/index.ts",
-    "build": "tsc -b",
-    "start": "tsc -b && NODE_ENV=production node dist/index.js"
+    "build": "tsc -b ../shared/tsconfig-cjs.json",
+    "start": "tsc -b ../shared/tsconfig-cjs.json && NODE_ENV=production node dist/index.js"
   },
   "keywords": [],
   "author": "",
