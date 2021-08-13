@@ -15,4 +15,6 @@ ADD ./shared /app/shared
 WORKDIR /app/backend
 RUN npm run build
 
+ENV NODE_ENV=production
+
 CMD ["node", "./dist/index.js"]
