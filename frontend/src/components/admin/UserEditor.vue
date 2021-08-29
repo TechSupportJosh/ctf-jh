@@ -25,12 +25,16 @@
         <td>{{ user.isAdmin ? "Yes" : "No" }}</td>
         <td>{{ user.solvedChallenges.length }}</td>
         <td>
-          <div class="d-flex justify-content-between">
-            <button class="btn btn-light" @click="editUser = { ...user, password: '' }" data-bs-toggle="modal" data-bs-target="#userModal">
-              ✏️
-            </button>
-            <button class="btn btn-light" @click="deleteUserSubmissions(user)">🗑️</button>
-            <button class="btn btn-light" @click="deleteUser(user)">❌</button>
+          <div class="d-flex">
+            <button
+              class="btn btn-primary btn-flex"
+              @click="editUser = { ...user, password: '' }"
+              data-bs-toggle="modal"
+              data-bs-target="#userModal"
+            >
+              Edit</button
+            >&nbsp;
+            <button class="btn btn-danger btn-flex" @click="deleteUser(user)">Delete</button>
           </div>
         </td>
       </tr>
@@ -77,6 +81,9 @@
             </div>
           </div>
           <div class="modal-footer">
+            <div v-if="editUser.id !== -1" class="me-auto">
+              <button class="btn btn-danger" @click="deleteUserSubmissions(editUser)">Delete Submissions</button>
+            </div>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary">Save changes</button>
           </div>
@@ -139,3 +146,9 @@ const deleteUser = async ({ id, firstName, lastName }: User) => {
   }
 };
 </script>
+
+<style scoped>
+.btn-flex {
+  flex: 1;
+}
+</style>

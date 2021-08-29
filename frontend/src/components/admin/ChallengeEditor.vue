@@ -26,12 +26,16 @@
         <td>{{ challenge.category }}</td>
         <td>{{ challenge.solves.length }}</td>
         <td>
-          <div class="d-flex justify-content-between">
-            <button class="btn btn-light" @click="editChallenge = { ...challenge }" data-bs-toggle="modal" data-bs-target="#challengeModal">
-              ✏️
-            </button>
-            <button class="btn btn-light" @click="deleteChallengeSolves(challenge)">🗑️</button>
-            <button class="btn btn-light" @click="deleteChallenge(challenge)">❌</button>
+          <div class="d-flex">
+            <button
+              class="btn btn-primary btn-flex"
+              @click="editChallenge = { ...challenge }"
+              data-bs-toggle="modal"
+              data-bs-target="#challengeModal"
+            >
+              Edit</button
+            >&nbsp;
+            <button class="btn btn-danger btn-flex" @click="deleteChallenge(challenge)">Delete</button>
           </div>
         </td>
       </tr>
@@ -132,6 +136,9 @@
             </div>
           </div>
           <div class="modal-footer">
+            <div v-if="editChallenge.id !== -1" class="me-auto">
+              <button class="btn btn-danger" @click="deleteChallengeSolves(editChallenge)">Delete Submissions</button>
+            </div>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary">Save changes</button>
           </div>
@@ -153,7 +160,7 @@ const challenges = ref<AdminChallenge[]>([]);
 onMounted(async () => {
   const response = await API.getAdminChallenges();
 
-  if (response) challenges.value = response;
+  if (response) challenges.value = response.sort((a, b) => a.category.localeCompare(b.category) || a.title.localeCompare(b.title));
 });
 
 const challengeTemplate: AdminChallenge = {
@@ -198,3 +205,9 @@ const deleteChallenge = async ({ id, title }: AdminChallenge) => {
   }
 };
 </script>
+
+<style scoped>
+.btn-flex {
+  flex: 1;
+}
+</style>
