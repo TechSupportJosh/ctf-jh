@@ -7,14 +7,14 @@
         <div class="alert alert-danger" v-if="errorMessage"><strong>An error occured: </strong>{{ errorMessage }}</div>
         <div v-show="!showUsernameLogin">
           <div class="mb-2">
-            <a :href="`${basePath}api/auth/warwick`" class="btn text-white w-100" id="login-button">Login With Warwick ID</a>
+            <a :href="`${config.basePath}api/auth/warwick`" class="btn text-white w-100" id="login-button">Login With Warwick ID</a>
           </div>
           <div>
             <button class="btn btn-secondary text-white w-100" @click="showUsernameLogin = true">Login With Username</button>
           </div>
         </div>
         <div v-show="showUsernameLogin" class="text-left">
-          <form :action="`${basePath}api/auth/login`" method="POST">
+          <form :action="`${config.basePath}api/auth/login`" method="POST">
             <div class="mb-3">
               <label class="form-label">Username</label>
               <input
@@ -55,11 +55,9 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { basePath } from "shared";
+import config from "../config";
 import { tsParticles } from "tsparticles";
 import particlesConfig from "../assets/particles.json";
-
-console.log("basePath is ", basePath);
 
 const route = useRoute();
 const errorCode = route.query.error;

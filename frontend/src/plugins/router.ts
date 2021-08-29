@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import SidebarView from "../components/SidebarView.vue";
-import { basePath } from "shared";
+import config from "../config";
 import Admin from "../routes/Admin.vue";
 import Challenges from "../routes/Challenges.vue";
 import Help from "../routes/Help.vue";
@@ -61,7 +61,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(basePath),
+  history: createWebHistory(config.basePath),
   routes: routes,
 });
 

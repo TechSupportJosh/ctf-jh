@@ -39,7 +39,7 @@
   <div class="modal" id="challengeModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <form :action="`${basePath}api/admin/challenges`" method="POST" enctype="multipart/form-data">
+        <form :action="`${config.basePath}api/admin/challenges`" method="POST" enctype="multipart/form-data">
           <div class="modal-header">
             <h5 class="modal-title">Creating or Editing Challenge</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -141,7 +141,7 @@
 </template>
 
 <script lang="ts" setup>
-import { basePath } from "shared";
+import config from "../config";
 import marked from "marked";
 import API from "../utils/api";
 import { computed, onMounted, ref } from "vue";

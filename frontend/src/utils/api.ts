@@ -1,13 +1,13 @@
 import axios from "axios";
 import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
 import { User } from "../types/User";
-import { basePath } from "shared";
+import config from "../config";
 import { AdminStats, SolveStats, Stats, TeamLeaderboardStats, UserLeaderboardStats } from "../types/Stats";
 import { RecentSolve } from "../types/RecentSolve";
 import { Team } from "../types/Team";
 
 const client = axios.create({
-  baseURL: basePath + "api",
+  baseURL: config.basePath + "api",
   validateStatus: undefined,
   withCredentials: true,
 });

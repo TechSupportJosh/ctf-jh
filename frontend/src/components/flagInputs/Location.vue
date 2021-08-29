@@ -57,11 +57,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, defineEmit, defineProps, onBeforeUnmount, onMounted, ref } from "vue";
 import type { Challenge } from "../../types/Challenge";
 import { difficultyToClass } from "../../utils/styling";
 import L from "leaflet";
-import { locationFlagPrecision } from "shared";
 
 import "leaflet/dist/leaflet.css";
 
@@ -71,7 +70,7 @@ const flagString = computed(() => `${flag.value.lat.toFixed(7)}, ${flag.value.ln
 const gmapsURL = ref("");
 const gmapsURLError = ref("");
 
-const emit = defineEmits(["flagSubmitted"]);
+const emit = defineEmit(["flagSubmitted"]);
 let map: L.Map | null = null;
 let mapCircle: L.Circle | null = null;
 
@@ -115,7 +114,7 @@ onMounted(() => {
       color: "red",
       fillColor: "#f03",
       fillOpacity: 0.5,
-      radius: locationFlagPrecision,
+      radius: 10,
     }).addTo(map);
 
     map.on("click", (event) => {

@@ -7,7 +7,7 @@
       <div class="col-4 d-flex align-items-center justify-content-end">
         <div>
           <router-link to="/">Home</router-link>&nbsp;&nbsp;
-          <a :href="`${basePath}api/auth/logout`">Log Out</a>
+          <a :href="`${config.basePath}api/auth/logout`">Log Out</a>
         </div>
       </div>
     </div>
@@ -45,7 +45,7 @@
 import { onMounted, ref } from "vue";
 import ChallengeEditor from "../components/ChallengeEditor.vue";
 import UserEditor from "../components/UserEditor.vue";
-import {basePath} from "shared";
+import config from "../config";
 import API from "../utils/api";
 import type { AdminStats } from "../types/Stats";
 import { useRoute } from "vue-router";

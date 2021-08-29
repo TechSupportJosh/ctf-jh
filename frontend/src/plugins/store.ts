@@ -1,3 +1,4 @@
+import { reactive, useContext } from "vue";
 import Vuex from "vuex";
 import { Challenge } from "../types/Challenge";
 import { User } from "../types/User";
