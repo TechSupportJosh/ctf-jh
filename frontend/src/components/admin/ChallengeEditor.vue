@@ -1,4 +1,5 @@
 <template>
+  <h2>Challenges</h2>
   <table class="table align-middle">
     <thead>
       <tr>
@@ -141,11 +142,11 @@
 </template>
 
 <script lang="ts" setup>
-import config from "../config";
+import config from "../../config";
 import marked from "marked";
-import API from "../utils/api";
+import API from "../../utils/api";
 import { computed, onMounted, ref } from "vue";
-import type { AdminChallenge } from "../types/Challenge";
+import type { AdminChallenge } from "../../types/Challenge";
 
 const challenges = ref<AdminChallenge[]>([]);
 

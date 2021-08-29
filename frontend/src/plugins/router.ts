@@ -12,6 +12,10 @@ import Team from "../routes/Team.vue";
 import TeamSettings from "../routes/TeamSettings.vue";
 import store from "./store";
 
+import AdminHome from "../components/admin/Home.vue";
+import ChallengeEditor from "../components/admin/ChallengeEditor.vue";
+import UserEditor from "../components/admin/UserEditor.vue";
+
 const routes: RouteRecordRaw[] = [
   {
     path: "/login",
@@ -49,14 +53,28 @@ const routes: RouteRecordRaw[] = [
         path: "/leaderboard",
         component: Leaderboard,
       },
+      {
+        path: "/admin",
+        component: Admin,
+        meta: {
+          requiresAdmin: true,
+        },
+        children: [
+          {
+            path: "",
+            component: AdminHome,
+          },
+          {
+            path: "users",
+            component: UserEditor,
+          },
+          {
+            path: "challenges",
+            component: ChallengeEditor,
+          },
+        ],
+      },
     ],
-  },
-  {
-    path: "/admin",
-    component: Admin,
-    meta: {
-      requiresAdmin: true,
-    },
   },
 ];
 

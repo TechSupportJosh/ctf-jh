@@ -1,4 +1,5 @@
 <template>
+  <h2>Users</h2>
   <table class="table align-middle">
     <thead>
       <tr>
@@ -86,10 +87,10 @@
 </template>
 
 <script lang="ts" setup>
-import config from "../config";
-import API from "../utils/api";
+import config from "../../config";
+import API from "../../utils/api";
 import { onMounted, ref } from "vue";
-import type { User } from "../types/User";
+import type { User } from "../../types/User";
 
 const users = ref<User[]>([]);
 
