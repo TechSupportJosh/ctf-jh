@@ -1,11 +1,10 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { SimpleConsoleLogger } from "typeorm";
-import { maxTeamMembers } from "../constants";
 import { TeamDTO, TeamJoinDTO } from "../dto/Team";
 import { Team } from "../entity/Team";
 import { User } from "../entity/User";
 import { validator } from "../middlewares/validator";
+import { getConfig } from "../utils/config";
 
 const router = express.Router();
 
@@ -147,7 +146,9 @@ router.post("/join", validator(TeamJoinDTO), joinLimiter, async (req, res) => {
 
   if (!team) return res.status(400).json({ message: "This invite code does not exist." });
 
-  if (team.members.length >= maxTeamMembers) return res.status(400).json({ message: "This team is full." });
+  const config = await getConfig();
+
+  if (team.members.length >= config.maxTeamSize) return res.status(400).json({ message: "This team is full." });
 
   req.user!.team = team;
   await req.user!.save();

@@ -25,6 +25,7 @@ import { teamsRouter } from "./routes/teams";
 import { updateStats } from "./utils/statsCron";
 import { User } from "./entity/User";
 import { UserStats } from "./entity/Stats";
+import { getConfig } from "./utils/config";
 
 const app = express();
 app.use(cookieParser());
@@ -53,6 +54,11 @@ router.get("/me", isAuthenticated(), (req, res) => {
 router.get("/me/stats", isAuthenticated(), async (req, res) => {
   const user = await User.findOne({ where: { id: req.user!.id }, relations: ["stats"] });
   res.json(user!.stats);
+});
+
+router.get("/config", isAuthenticated(), async (req, res) => {
+  const config = await getConfig();
+  res.json({ ...config, id: undefined });
 });
 
 router.use("/static", express.static("uploads"));

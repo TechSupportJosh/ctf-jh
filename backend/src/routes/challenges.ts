@@ -6,7 +6,7 @@ import { User, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { sendWebhook } from "../utils/webhook";
 import { getDistance } from "geolib";
-import { flagLocationPrecision } from "../constants";
+import { getConfig } from "../utils/config";
 
 const router = express.Router();
 
@@ -61,7 +61,9 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
     const flagLatitude = parseFloat(flagLatituideString);
     const flagLongitude = parseFloat(flatLongitudeString);
 
-    if (getDistance({ latitude: flagLatitude, longitude: flagLongitude }, { latitude, longitude }) > flagLocationPrecision) {
+    const config = await getConfig();
+
+    if (getDistance({ latitude: flagLatitude, longitude: flagLongitude }, { latitude, longitude }) > config.locationFlagPrecision) {
       return res.status(400).json({ message: "Incorrect flag." });
     }
   }

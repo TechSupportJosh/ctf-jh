@@ -10,6 +10,8 @@ import { UserDTO } from "../dto/User";
 import { Not } from "typeorm";
 import { hashPassword } from "../utils/password";
 import { uploadDirectory } from "../constants";
+import { ConfigDTO } from "../dto/Config";
+import { Config } from "../entity/Config";
 
 const router = express.Router();
 
@@ -184,6 +186,11 @@ router.delete("/users/:userId/submissions", async (req, res) => {
 
   await Promise.all(user.solvedChallenges.map((solve) => solve.remove()));
 
+  return res.sendStatus(200);
+});
+
+router.post("/config", validator(ConfigDTO), async (req, res) => {
+  await Config.createQueryBuilder("config").update(res.locals.dto).execute();
   return res.sendStatus(200);
 });
 
