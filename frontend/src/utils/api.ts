@@ -5,12 +5,19 @@ import config from "../config";
 import { AdminStats, SolveStats, Stats, TeamLeaderboardStats, UserLeaderboardStats } from "../types/Stats";
 import { RecentSolve } from "../types/RecentSolve";
 import { Team } from "../types/Team";
+import { Config } from "../types/Config";
 
 const client = axios.create({
   baseURL: config.basePath + "api",
   validateStatus: undefined,
   withCredentials: true,
 });
+
+const getConfig = async () => {
+  const response = await client.get<Config>(`/config`);
+
+  if (response.status === 200) return response.data;
+};
 
 const getUser = async () => {
   const response = await client.get<User>(`/me`);
@@ -175,6 +182,7 @@ const deleteUserSubmissions = async (userId: number) => {
 };
 
 export default {
+  getConfig,
   getUser,
   getChallenges,
   getStats,

@@ -8,7 +8,7 @@
   <div v-if="user.team">
     <template v-if="!team">Loading...</template>
     <template v-else>
-      <h4 class="mb-3">Members</h4>
+      <h4 class="mb-3">Members ({{ team.members.length }} / {{ store.state.config.maxTeamSize }})</h4>
       <div
         v-for="member in team.members"
         class="team-member"

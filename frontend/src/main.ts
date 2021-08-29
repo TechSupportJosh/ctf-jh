@@ -8,6 +8,7 @@ import "bootstrap/dist/js/bootstrap.min.js";
 (async function () {
   await store.dispatch("loadUser");
   await store.dispatch("loadChallenges");
+  await store.dispatch("loadConfig");
 
   const app = createApp(App);
   app.use(router);

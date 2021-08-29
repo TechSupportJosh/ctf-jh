@@ -63,6 +63,7 @@ import { difficultyToClass } from "../../utils/styling";
 import L from "leaflet";
 
 import "leaflet/dist/leaflet.css";
+import store from "../../plugins/store";
 
 const flag = ref<L.LatLng>(new L.LatLng(52.3828467, -1.5610438));
 const flagString = computed(() => `${flag.value.lat.toFixed(7)}, ${flag.value.lng.toFixed(7)}`);
@@ -114,7 +115,7 @@ onMounted(() => {
       color: "red",
       fillColor: "#f03",
       fillOpacity: 0.5,
-      radius: 10,
+      radius: store.state.config.locationFlagPrecision,
     }).addTo(map);
 
     map.on("click", (event) => {

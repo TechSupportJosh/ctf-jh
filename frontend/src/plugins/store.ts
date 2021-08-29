@@ -1,6 +1,7 @@
 import { reactive, useContext } from "vue";
 import Vuex from "vuex";
 import { Challenge } from "../types/Challenge";
+import { Config } from "../types/Config";
 import { User } from "../types/User";
 import API from "../utils/api";
 
@@ -9,6 +10,7 @@ export interface State {
   categories: Record<string, number>;
   user?: User;
   hideSolvedChallenges: boolean;
+  config: Config;
 }
 
 const store = new Vuex.Store<State>({
@@ -16,6 +18,10 @@ const store = new Vuex.Store<State>({
     challenges: [],
     categories: {},
     hideSolvedChallenges: false,
+    config: {
+      maxTeamSize: 5,
+      locationFlagPrecision: 10,
+    },
   },
   mutations: {
     setUser(state, user) {
@@ -43,6 +49,10 @@ const store = new Vuex.Store<State>({
     async loadUser(context) {
       const user = await API.getUser();
       context.commit("setUser", user);
+    },
+    async loadConfig(context) {
+      const config = await API.getConfig();
+      if (config) context.state.config = config;
     },
   },
 });
