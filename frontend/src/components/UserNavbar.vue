@@ -2,7 +2,9 @@
   <div class="collapse navbar-collapse" id="navbar">
     <ul class="navbar-nav navbar-nav-scroll nav-pills sflex-column mb-auto">
       <hr />
-      <li class="nav-item text-center">{{ pointTotal }} Points<br />{{ user?.solvedChallenges.length ?? 0 }} Challenges Solved</li>
+      <li class="nav-item text-center">
+        {{ pointTotal }} Points<br />{{ user?.solvedChallenges.length ?? 0 }} Challenges Solved<br /><br /><c-t-f-timer></c-t-f-timer>
+      </li>
       <hr />
       <li class="nav-item mb-2"><strong>Categories:</strong></li>
       <li class="nav-item" v-for="(challengeCount, category) in categories">
@@ -30,6 +32,7 @@
 import { computed } from "vue";
 import store from "../plugins/store";
 import config from "../config";
+import CTFTimer from "./CTFTimer.vue";
 
 const user = computed(() => store.state.user);
 const { challenges, categories } = store.state;

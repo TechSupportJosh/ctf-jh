@@ -21,6 +21,9 @@ const store = new Vuex.Store<State>({
     config: {
       maxTeamSize: 5,
       locationFlagPrecision: 10,
+      startTime: "",
+      endTime: "",
+      maintenance: false,
     },
   },
   mutations: {
