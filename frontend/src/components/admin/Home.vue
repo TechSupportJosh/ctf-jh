@@ -34,7 +34,7 @@
     <div class="mb-3 row">
       <label class="col-sm-3 col-form-label"
         >CTF Time (UTC)<label class="form-text"
-          >After the finish time, flag submission will be enabled but challenges will still be visible.</label
+          >After the finish time, flag submission will be disabled but challenges will still be visible.</label
         ></label
       >
       <div class="col-sm-9">
