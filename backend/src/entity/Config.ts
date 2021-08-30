@@ -21,4 +21,12 @@ export class Config extends BaseEntity {
 
   @Column()
   endTime!: Date;
+
+  canViewChallenges() {
+    return !this.maintenance && new Date() > this.startTime;
+  }
+
+  canSubmitFlags() {
+    return !this.maintenance && new Date() > this.startTime && new Date() < this.endTime;
+  }
 }

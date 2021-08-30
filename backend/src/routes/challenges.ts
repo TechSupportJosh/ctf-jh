@@ -11,6 +11,10 @@ import { getConfig } from "../utils/config";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  const config = await getConfig();
+
+  if (!config.canViewChallenges()) return res.json([]);
+
   const challenges = await Challenge.find({ relations: ["unlockRequirement", "solves"], where: { disabled: false } });
 
   res.json(
@@ -36,6 +40,10 @@ const flagSubmissionLimiter = rateLimit({
 });
 router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmissionLimiter, async (req, res) => {
   const { flag } = res.locals.dto as FlagSubmissionDTO;
+
+  const config = await getConfig();
+
+  if (!config.canSubmitFlags()) return res.status(400).json({ message: "Unable to submit flags at this time." });
 
   const challenge = await Challenge.createQueryBuilder("challenge").addSelect("flag").where({ id: req.params.challengeId }).getOne();
   if (!challenge) return res.status(404);
