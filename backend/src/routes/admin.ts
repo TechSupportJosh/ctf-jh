@@ -189,7 +189,7 @@ router.delete("/users/:userId/submissions", async (req, res) => {
   return res.sendStatus(200);
 });
 
-router.post("/config", validator(ConfigDTO), async (req, res) => {
+router.put("/config", validator(ConfigDTO), async (req, res) => {
   await Config.createQueryBuilder("config").update(res.locals.dto).execute();
   return res.sendStatus(200);
 });

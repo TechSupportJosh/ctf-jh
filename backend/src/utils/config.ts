@@ -10,6 +10,8 @@ export const getConfig = async () => {
 
   // If no config exists, create one
   config = new Config();
+  config.startTime = new Date();
+  config.endTime = new Date();
   await config.save();
 
   return config;

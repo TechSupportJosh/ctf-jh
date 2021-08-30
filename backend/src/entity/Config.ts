@@ -10,4 +10,15 @@ export class Config extends BaseEntity {
 
   @Column({ default: "10" })
   locationFlagPrecision!: number;
+
+  @Column({ default: true })
+  maintenance!: Boolean;
+
+  // There's not a great multi-dbms solution for default dates, therefore,
+  // these times are set within utils/config.ts
+  @Column()
+  startTime!: Date;
+
+  @Column()
+  endTime!: Date;
 }

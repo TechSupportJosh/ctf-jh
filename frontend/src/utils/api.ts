@@ -181,6 +181,12 @@ const deleteUserSubmissions = async (userId: number) => {
   return response.status === 200;
 };
 
+const updateConfig = async (config: Config) => {
+  const response = await client.put(`/admin/config`, config);
+
+  return response.status === 200;
+};
+
 export default {
   getConfig,
   getUser,
@@ -206,4 +212,5 @@ export default {
   getAdminUsers,
   deleteUser,
   deleteUserSubmissions,
+  updateConfig,
 };
