@@ -26,6 +26,7 @@ import { updateStats } from "./utils/statsCron";
 import { User } from "./entity/User";
 import { UserStats } from "./entity/Stats";
 import { getConfig } from "./utils/config";
+import { addSSEClient, removeSSEClient } from "./utils/sse";
 
 const app = express();
 app.use(cookieParser());
@@ -59,6 +60,25 @@ router.get("/me/stats", isAuthenticated(), async (req, res) => {
 router.get("/config", isAuthenticated(), async (req, res) => {
   const config = await getConfig();
   res.json({ ...config, id: undefined });
+});
+
+router.get("/events", (req, res) => {
+  res.writeHead(200, {
+    Connection: "keep-alive",
+    "Cache-Control": "no-cache",
+    "Content-Type": "text/event-stream",
+    "X-Accel-Buffering": "no",
+  });
+
+  const client = addSSEClient(res);
+
+  // Keep-alive, should send periodically
+  res.write("retry: 10000\n\n");
+  res.write(":heartbeat\n\n");
+
+  req.on("close", () => {
+    removeSSEClient(client);
+  });
 });
 
 router.use("/static", express.static("uploads"));

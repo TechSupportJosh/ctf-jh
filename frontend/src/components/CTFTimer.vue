@@ -4,11 +4,11 @@
 
 <script lang="ts" setup>
 import { onMounted } from "@vue/runtime-core";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import store from "../plugins/store";
 
-const startTime = new Date(store.state.config.startTime);
-const endTime = new Date(store.state.config.endTime);
+const startTime = computed(() => new Date(store.state.config.startTime));
+const endTime = computed(() => new Date(store.state.config.endTime));
 const formattedTime = ref("");
 const ctfStarted = ref(false);
 const ctfFinished = ref(false);
@@ -21,9 +21,9 @@ const formatTime = () => {
   time += 1000;
 
   const nowDate = new Date();
-  ctfStarted.value = nowDate > startTime;
-  ctfFinished.value = nowDate > endTime;
-  const futureDate = ctfStarted ? endTime : startTime;
+  ctfStarted.value = nowDate > startTime.value;
+  ctfFinished.value = nowDate > endTime.value;
+  const futureDate = ctfStarted ? endTime.value : startTime.value;
 
   if (ctfFinished.value) return;
 

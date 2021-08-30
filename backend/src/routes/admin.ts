@@ -12,6 +12,7 @@ import { hashPassword } from "../utils/password";
 import { uploadDirectory } from "../constants";
 import { ConfigDTO } from "../dto/Config";
 import { Config } from "../entity/Config";
+import { sendEvent } from "../utils/sse";
 
 const router = express.Router();
 
@@ -104,6 +105,8 @@ router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), asy
       })
     );
 
+  sendEvent("fetch", ["challenges"]);
+
   res.redirect(303, "/admin?success=challenge-updated");
 });
 
@@ -191,6 +194,7 @@ router.delete("/users/:userId/submissions", async (req, res) => {
 
 router.put("/config", validator(ConfigDTO), async (req, res) => {
   await Config.createQueryBuilder("config").update(res.locals.dto).execute();
+  sendEvent("fetch", ["config", "challenges"]);
   return res.sendStatus(200);
 });
 
