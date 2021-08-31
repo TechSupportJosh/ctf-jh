@@ -7,7 +7,7 @@
     </div>
     <div class="col-6 d-flex align-items-center justify-content-end">
       <div class="form-check form-switch mb-1">
-        <input class="form-check-input" type="checkbox" v-model="hideSolvedChallenges" />
+        <input class="form-check-input" type="checkbox" v-model="store.state.hideSolvedChallenges" />
         <label class="form-check-label">Hide solved challenges</label>
       </div>
     </div>
@@ -69,10 +69,15 @@ watch(
   { immediate: true }
 );
 
-const hideSolvedChallenges = computed(() => store.state.hideSolvedChallenges);
-
+const solvedChallenges = computed(() => {
+  if (store.state.team) {
+    return store.state.team.members.map((member) => member.solvedChallenges).flat();
+  } else {
+    return store.state.user?.solvedChallenges;
+  }
+});
 const getRequiredSolvedEntry = ({ unlockRequirement }: Challenge) => {
-  return user.value?.solvedChallenges.find((challenge) => challenge.challengeId === unlockRequirement);
+  return solvedChallenges.value?.find((challenge) => challenge.challengeId === unlockRequirement);
 };
 
 const getRequiredChallenge = ({ unlockRequirement }: Challenge) => {
@@ -84,12 +89,12 @@ const filteredChallenges = computed(() => {
     .filter((challenge) => challenge.category === category.value && showDifficulty[challenge.difficulty])
     .sort((a, b) => a.title.localeCompare(b.title) || a.difficulty.localeCompare(b.difficulty));
 
-  if (!hideSolvedChallenges.value) return selectedChallenges;
+  if (!store.state.hideSolvedChallenges) return selectedChallenges;
 
   return selectedChallenges.filter((challenge) => !getSolvedEntry(challenge));
 });
 
 const getSolvedEntry = ({ id }: Challenge) => {
-  return user.value?.solvedChallenges.find((challenge) => challenge.challengeId === id);
+  return solvedChallenges.value?.find((challenge) => challenge.challengeId === id);
 };
 </script>

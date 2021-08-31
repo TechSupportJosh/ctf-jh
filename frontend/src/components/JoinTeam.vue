@@ -28,6 +28,7 @@ const joinTeam = async () => {
 
   if (response.statusCode === 200) {
     await store.dispatch("loadUser");
+    await store.dispatch("loadTeam");
   } else {
     validationError.value = response.message;
   }

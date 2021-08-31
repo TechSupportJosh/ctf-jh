@@ -110,13 +110,12 @@ import JoinTeam from "../components/JoinTeam.vue";
 import store from "../plugins/store";
 import type { UserChallengeSolve } from "../types/Challenge";
 import type { AttemptStats } from "../types/Stats";
-import type { Team } from "../types/Team";
 import API from "../utils/api";
 import { hasCTFStarted } from "../utils/status";
 
 const user = computed(() => store.state.user!);
 const challenges = computed(() => store.state.challenges);
-const team = ref<Team>();
+const team = computed(() => store.state.team);
 
 const currentForm = ref<"joinTeam" | "createTeam">();
 const leaveTeamError = ref("");
@@ -128,24 +127,16 @@ const solveAttempts = ref<AttemptStats>({
 const solvedChallenges = ref<UserChallengeSolve[]>([]);
 
 watch(
-  () => user.value,
-  async (user) => {
-    if (!user.team) return;
+  team,
+  () => {
+    team.value?.members.forEach((member) => {
+      solveAttempts.value.correct += member.solveAttempts?.correct ?? 0;
+      solveAttempts.value.incorrect += member.solveAttempts?.incorrect ?? 0;
 
-    const response = await API.getTeam(user.team?.id);
+      solvedChallenges.value.push(...(member.solvedChallenges ?? []));
+    });
 
-    if (response) {
-      team.value = response;
-
-      team.value.members.forEach((member) => {
-        solveAttempts.value.correct += member.solveAttempts?.correct ?? 0;
-        solveAttempts.value.incorrect += member.solveAttempts?.incorrect ?? 0;
-
-        solvedChallenges.value.push(...(member.solvedChallenges ?? []));
-      });
-
-      solvedChallenges.value.sort((a, b) => new Date(b.solveDate).valueOf() - new Date(a.solveDate).valueOf());
-    }
+    solvedChallenges.value.sort((a, b) => new Date(b.solveDate).valueOf() - new Date(a.solveDate).valueOf());
   },
   { immediate: true }
 );
@@ -157,6 +148,7 @@ const leaveTeam = async () => {
 
   if (response.statusCode === 200) {
     await store.dispatch("loadUser");
+    await store.dispatch("loadTeam");
   } else {
     leaveTeamError.value = response.message;
   }

@@ -4,9 +4,9 @@ import { AttemptStats, SolveStats, Stats } from "./Stats";
 export interface TeamMember {
   id: number;
   name: string;
-  stats?: Stats;
-  solveAttempts?: AttemptStats;
-  solvedChallenges?: UserChallengeSolve[];
+  stats: Stats;
+  solveAttempts: AttemptStats;
+  solvedChallenges: UserChallengeSolve[];
 }
 
 export interface UserTeam {

@@ -56,7 +56,10 @@
     <div><strong class="text-muted">Solves: </strong>{{ challenge.solveCount }}</div>
   </div>
 
-  <template v-if="challengeSolve"><strong class="text-muted">Solved at: </strong>{{ solvedAt }}</template>
+  <template v-if="challengeSolve"
+    ><strong class="text-muted">{{ solvedByLabel }}</strong
+    >{{ solvedAt }}</template
+  >
 </template>
 
 <script lang="ts" setup>
@@ -69,13 +72,26 @@ import config from "../config";
 import API from "../utils/api";
 import FlagString from "./flagInputs/String.vue";
 import FlagLocation from "./flagInputs/Location.vue";
+import store from "../plugins/store";
 
 const showHint = ref(false);
 const flagSubmissionError = ref("");
+const user = computed(() => store.state.user);
+const team = computed(() => store.state.team);
 
 const emit = defineEmit(["flagSubmitted"]);
 
 let errorTimer: number | null = null;
+
+const solvedByLabel = computed(() => {
+  if (props.challengeSolve!.userId !== user.value!.id) {
+    // If not solved by user, it must have been solved by a team member
+    const solver = team.value?.members.find((member) => member.id === props.challengeSolve!.userId);
+    if (solver) return `Solved by ${solver.name} at: `;
+  }
+
+  return `Solved at: `;
+});
 
 const submitFlag = async (flag: string) => {
   const response = await API.submitFlag(props.challenge.id, flag);

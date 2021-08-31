@@ -8,6 +8,7 @@ import { ServerEvent } from "./types/Events";
 
 (async function () {
   await store.dispatch("loadUser");
+  await store.dispatch("loadTeam");
   await store.dispatch("loadChallenges");
   await store.dispatch("loadConfig");
 
@@ -23,6 +24,7 @@ import { ServerEvent } from "./types/Events";
           if (type === "user") await store.dispatch("loadUser");
           else if (type === "challenges") await store.dispatch("loadChallenges");
           else if (type === "config") await store.dispatch("loadConfig");
+          else if (type === "team") await store.dispatch("loadTeam");
         }
       }
     } catch {
