@@ -24,8 +24,12 @@
         <hr />
       </template>
       <li class="nav-item"><router-link to="/profile" class="nav-link" active-class="active">Profile</router-link></li>
-      <li class="nav-item"><router-link to="/team" class="nav-link" active-class="active">Team</router-link></li>
-      <li class="nav-item"><router-link to="/feed" class="nav-link" active-class="active">Recent Solves</router-link></li>
+      <li class="nav-item">
+        <router-link to="/team" class="nav-link" active-class="active">Team {{ user?.team ? `(${user?.team.name})` : "" }}</router-link>
+      </li>
+      <li class="nav-item" v-if="hasCTFStarted && !hasCTFFinished">
+        <router-link to="/feed" class="nav-link" active-class="active">Recent Solves</router-link>
+      </li>
       <li class="nav-item"><router-link to="/leaderboard" class="nav-link" active-class="active">Leaderboard</router-link></li>
       <li class="nav-item"><router-link to="/help" class="nav-link" active-class="active">Help</router-link></li>
       <hr />
@@ -43,7 +47,7 @@ import { computed } from "vue";
 import config from "../config";
 import store from "../plugins/store";
 import CTFTimer from "./CTFTimer.vue";
-import { hasCTFStarted } from "../utils/status";
+import { hasCTFStarted, hasCTFFinished } from "../utils/status";
 
 const user = computed(() => store.state.user);
 const maintenance = computed(() => store.state.config.maintenance);
