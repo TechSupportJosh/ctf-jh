@@ -23,10 +23,18 @@ export class Config extends BaseEntity {
   endTime!: Date;
 
   canViewChallenges() {
-    return !this.maintenance && new Date() > this.startTime;
+    return !this.maintenance && this.hasStarted();
   }
 
   canSubmitFlags() {
-    return !this.maintenance && new Date() > this.startTime && new Date() < this.endTime;
+    return !this.maintenance && !this.hasFinished() && this.hasStarted();
+  }
+
+  hasStarted() {
+    return new Date() > this.startTime;
+  }
+
+  hasFinished() {
+    return new Date() > this.endTime;
   }
 }
