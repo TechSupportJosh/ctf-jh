@@ -1,12 +1,13 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { FlagSubmissionDTO } from "../dto/FlagSubmission";
-import { Challenge, ChallengeTag, FlagType } from "../entity/Challenge";
-import { User, UserSolveAttempt, UserSolvedChallenge } from "../entity/User";
-import { validator } from "../middlewares/validator";
-import { sendWebhook } from "../utils/webhook";
 import { getDistance } from "geolib";
+import { FlagSubmissionDTO } from "../dto/FlagSubmission";
+import { Challenge, FlagType } from "../entity/Challenge";
+import { Team } from "../entity/Team";
+import { UserSolveAttempt, UserSolvedChallenge } from "../entity/User";
+import { validator } from "../middlewares/validator";
 import { getConfig } from "../utils/config";
+import { sendWebhook } from "../utils/webhook";
 
 const router = express.Router();
 
@@ -17,11 +18,15 @@ router.get("/", async (req, res) => {
 
   const challenges = await Challenge.find({ relations: ["unlockRequirement", "solves"], where: { disabled: false } });
 
+  console.log(req.user!.team);
   res.json(
     challenges.map((challenge) => {
       // Check whether the user has solved this challenge
       // If they haven't, then we returned a censored version of the challenge
-      if (challenge.unlockRequirement && !req.user?.hasSolvedChallenge(challenge.unlockRequirement)) {
+      if (
+        challenge.unlockRequirement &&
+        !(req.user?.hasSolvedChallenge(challenge.unlockRequirement) || req.user?.team?.hasSolvedChallenge(challenge.unlockRequirement))
+      ) {
         return challenge.toLockedJSON();
       }
 
@@ -48,7 +53,14 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
   const challenge = await Challenge.createQueryBuilder("challenge").addSelect("flag").where({ id: req.params.challengeId }).getOne();
   if (!challenge) return res.status(404);
 
-  if (req.user?.hasSolvedChallenge(challenge)) return res.status(400).json({ message: "Challenge has already been submitted." });
+  const userTeam = await Team.createQueryBuilder("team")
+    .leftJoinAndSelect("team.members", "members")
+    .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
+    .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
+    .getOne();
+
+  if (req.user?.hasSolvedChallenge(challenge) || userTeam?.hasSolvedChallenge(challenge))
+    return res.status(400).json({ message: "Challenge has already been submitted." });
 
   if (challenge.unlockRequirement && !req.user?.hasSolvedChallenge(challenge.unlockRequirement))
     return res.status(400).json({ message: "Challenge is locked." });

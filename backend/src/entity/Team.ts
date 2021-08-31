@@ -1,6 +1,6 @@
-import { randomBytes } from "crypto";
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { getRandomWords } from "../utils/randomwords";
+import { Challenge } from "./Challenge";
 import { TeamStats } from "./Stats";
 import { User } from "./User";
 
@@ -52,5 +52,9 @@ export class Team extends BaseEntity {
     });
 
     return stats;
+  }
+
+  hasSolvedChallenge(challenge: Challenge) {
+    return this.members.some((member) => member.hasSolvedChallenge(challenge));
   }
 }
