@@ -35,6 +35,27 @@
         <category-breakdown-graph :solved-challenges="solvedChallenges" class="mb-4"></category-breakdown-graph>
         <h4 class="text-center">Team Breakdown</h4>
         <team-breakdown-graph :team-members="team.members" class="mb-4"></team-breakdown-graph>
+        <h4 class="text-center">Challenges Solved</h4>
+        <table class="table" style="font-size: 1em">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th>Member</th>
+              <th>Challenge</th>
+              <th>Category</th>
+              <th>Points</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="solve in solvedChallenges">
+              <th scope="row">{{ new Date(solve.solveDate).toLocaleString() }}</th>
+              <td>{{ team.members.find((user) => user.id === solve.userId)?.name }}</td>
+              <td>{{ challenges.find((challenge) => challenge.id === solve.challengeId)?.title }}</td>
+              <td>{{ challenges.find((challenge) => challenge.id === solve.challengeId)?.category }}</td>
+              <td>{{ challenges.find((challenge) => challenge.id === solve.challengeId)?.points }}</td>
+            </tr>
+          </tbody>
+        </table>
       </template>
       <template v-else>
         <p class="text-muted text-center">Your team's stats will appear once the CTF has started.</p>
@@ -94,6 +115,7 @@ import API from "../utils/api";
 import { hasCTFStarted } from "../utils/status";
 
 const user = computed(() => store.state.user!);
+const challenges = computed(() => store.state.challenges);
 const team = ref<Team>();
 
 const currentForm = ref<"joinTeam" | "createTeam">();
@@ -121,6 +143,8 @@ watch(
 
         solvedChallenges.value.push(...(member.solvedChallenges ?? []));
       });
+
+      solvedChallenges.value.sort((a, b) => new Date(b.solveDate).valueOf() - new Date(a.solveDate).valueOf());
     }
   },
   { immediate: true }

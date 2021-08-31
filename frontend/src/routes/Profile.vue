@@ -14,8 +14,27 @@
     <h4 class="text-center">Attempts</h4>
     <solve-attempts-graph :solve-attempts="user.solveAttempts" class="mb-4"></solve-attempts-graph>
     <h4 class="text-center">Challenge Breakdown</h4>
-    <category-breakdown-graph :solved-challenges="user.solvedChallenges"></category-breakdown-graph
-  ></template>
+    <category-breakdown-graph :solved-challenges="user.solvedChallenges" class="mb-4"></category-breakdown-graph>
+    <h4 class="text-center">Challenges Solved</h4>
+    <table class="table" style="font-size: 1em">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th>Challenge</th>
+          <th>Category</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="solve in user.solvedChallenges">
+          <th scope="row">{{ new Date(solve.solveDate).toLocaleString() }}</th>
+          <td>{{ challenges.find((challenge) => challenge.id === solve.challengeId)?.title }}</td>
+          <td>{{ challenges.find((challenge) => challenge.id === solve.challengeId)?.category }}</td>
+          <td>{{ challenges.find((challenge) => challenge.id === solve.challengeId)?.points }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </template>
   <template v-else>
     <p class="text-muted text-center">Your stats will appear once the CTF has started.</p>
   </template>

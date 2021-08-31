@@ -26,6 +26,7 @@ export interface UnlockedChallenge extends ChallengeBase {
 }
 
 export interface UserChallengeSolve {
+  userId: number;
   challengeId: number;
   solveDate: number;
   isBlood: boolean;
