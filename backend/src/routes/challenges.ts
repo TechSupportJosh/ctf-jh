@@ -7,6 +7,7 @@ import { Team } from "../entity/Team";
 import { UserSolveAttempt, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { getConfig } from "../utils/config";
+import { sendEvent } from "../utils/sse";
 import { sendWebhook } from "../utils/webhook";
 
 const router = express.Router();
@@ -18,7 +19,6 @@ router.get("/", async (req, res) => {
 
   const challenges = await Challenge.find({ relations: ["unlockRequirement", "solves"], where: { disabled: false } });
 
-  console.log(req.user!.team);
   res.json(
     challenges.map((challenge) => {
       // Check whether the user has solved this challenge
@@ -107,6 +107,17 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
 
   await sendWebhook(req.user!, parseInt(req.params.challengeId));
 
+  if (userTeam) {
+    // If the user is apart of a team, we need to send SSE event which ensures that
+    // they have the up to date versions of challenges / team info
+    // We explicitly ignore the request user, as the frontend will handle retrieivng
+    // the new challenges
+    sendEvent(
+      "fetch",
+      ["team", "challenges"],
+      userTeam.members.filter((member) => member.id !== req.user!.id).map((member) => member.id)
+    );
+  }
   return res.status(200).json({ isBlood: solvedChallenge.isBlood });
 });
 

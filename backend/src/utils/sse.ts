@@ -6,10 +6,12 @@ import { EventEmitter } from "events";
 interface QueueItem {
   event: string;
   payload: any;
+  userIds?: number[];
 }
 
 interface SSEClient {
   id: string;
+  userId: number;
   response: Response;
 }
 
@@ -31,30 +33,33 @@ emitter.on("entry", async (entry) => {
 
   while (queue.length > 0) {
     const item = queue.shift()!;
-    await sendSSE(item.event, item.payload);
+    await sendSSE(item.event, item.payload, item.userIds);
   }
 
   processingQueue = false;
 });
 
-const sendSSE = async (event: string, payload: any) => {
+const sendSSE = async (event: string, payload: any, userIds?: number[]) => {
   const data = JSON.stringify(payload);
 
   clients.forEach((client) => {
-    sendSSEMessage(client, event, data);
+    // If userIds is specified, ensure the client userId is in the list
+    if (!userIds || userIds.includes(client.userId)) sendSSEMessage(client, event, data);
   });
 };
 
-export const sendEvent = (event: string, payload: any) => {
+export const sendEvent = (event: string, payload: any, userIds?: number[]) => {
   emitter.emit("entry", {
     event,
     payload: payload ?? {},
+    userIds: userIds,
   });
 };
 
-export const addSSEClient = (res: Response) => {
+export const addSSEClient = (res: Response, userId: number) => {
   const client = {
     id: uuid.v4(),
+    userId: userId,
     response: res,
   };
 

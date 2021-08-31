@@ -62,7 +62,7 @@ router.get("/config", isAuthenticated(), async (req, res) => {
   res.json({ ...config, id: undefined });
 });
 
-router.get("/events", (req, res) => {
+router.get("/events", isAuthenticated(), (req, res) => {
   res.writeHead(200, {
     Connection: "keep-alive",
     "Cache-Control": "no-cache",
@@ -70,7 +70,7 @@ router.get("/events", (req, res) => {
     "X-Accel-Buffering": "no",
   });
 
-  const client = addSSEClient(res);
+  const client = addSSEClient(res, req.user!.id);
 
   // Keep-alive, should send periodically
   res.write("retry: 10000\n\n");
