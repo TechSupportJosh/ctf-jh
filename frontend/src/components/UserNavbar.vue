@@ -6,7 +6,7 @@
         {{ pointTotal }} Points<br />{{ user?.solvedChallenges.length ?? 0 }} Challenges Solved<br /><br /><c-t-f-timer></c-t-f-timer>
       </li>
       <hr />
-      <template v-if="ctfStarted">
+      <template v-if="hasCTFStarted">
         <template v-if="!maintenance">
           <li class="nav-item mb-2"><strong>Categories:</strong></li>
           <li class="nav-item" v-for="(challengeCount, category) in categories">
@@ -43,14 +43,12 @@ import { computed } from "vue";
 import config from "../config";
 import store from "../plugins/store";
 import CTFTimer from "./CTFTimer.vue";
+import { hasCTFStarted } from "../utils/status";
 
 const user = computed(() => store.state.user);
 const maintenance = computed(() => store.state.config.maintenance);
-const startTime = computed(() => store.state.config.startTime);
 const challenges = computed(() => store.state.challenges);
 const categories = computed(() => store.state.categories);
-
-const ctfStarted = computed(() => new Date() > new Date(startTime.value));
 
 const pointTotal = computed(() => {
   return user.value?.solvedChallenges

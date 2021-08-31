@@ -1,17 +1,17 @@
 <template>
-  <span v-if="!ctfFinished"> CTF {{ ctfStarted ? "ends" : "starts" }} in<br />{{ formattedTime }} </span><span v-else>CTF finished!</span>
+  <span v-if="!hasCTFFinished"> CTF {{ hasCTFStarted ? "ends" : "starts" }} in<br />{{ formattedTime }} </span
+  ><span v-else>CTF finished!</span>
 </template>
 
 <script lang="ts" setup>
 import { onMounted } from "@vue/runtime-core";
 import { computed, ref } from "vue";
 import store from "../plugins/store";
+import { hasCTFFinished, hasCTFStarted } from "../utils/status";
 
 const startTime = computed(() => new Date(store.state.config.startTime));
 const endTime = computed(() => new Date(store.state.config.endTime));
 const formattedTime = ref("");
-const ctfStarted = ref(false);
-const ctfFinished = ref(false);
 
 // https://www.sitepoint.com/creating-accurate-timers-in-javascript/
 const start = new Date().getTime();
@@ -21,11 +21,9 @@ const formatTime = () => {
   time += 1000;
 
   const nowDate = new Date();
-  ctfStarted.value = nowDate > startTime.value;
-  ctfFinished.value = nowDate > endTime.value;
-  const futureDate = ctfStarted ? endTime.value : startTime.value;
+  const futureDate = hasCTFStarted.value ? endTime.value : startTime.value;
 
-  if (ctfFinished.value) return;
+  if (hasCTFFinished.value) return;
 
   let delta = Math.abs(futureDate.valueOf() - nowDate.valueOf()) / 1000;
 
