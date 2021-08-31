@@ -39,7 +39,7 @@
     <h4 class="mb-3">Manage Team</h4>
     <div>
       <label for="basic-url" class="form-label">Invite Code</label>
-      <div class="mb-3 input-group">
+      <div class="input-group">
         <input
           :type="showInviteCode ? 'text' : 'password'"
           readonly
@@ -50,8 +50,11 @@
         <button class="btn btn-primary" type="button" @click="showInviteCode = !showInviteCode">
           <img :src="showInviteCode ? showIcon : hideIcon" />
         </button>
-        <button class="btn btn-secondary" type="button" @click="createInviteCode"><img :src="refreshIcon" /></button>
-        <button class="btn btn-success" type="button" @click="copy(inviteCode)"><img :src="clipboardIcon" /></button>
+        <button class="btn btn-secondary" type="button" @click="createInviteCode"><img :src="regenerateIcon" /></button>
+        <button class="btn btn-success" type="button" @click="copyInviteCode"><img :src="inviteButtonIcon" /></button>
+      </div>
+      <div class="form-text mb-3">
+        People can join your team with this invite code. Ensure you only send this code to those who you wish to join your team.
       </div>
     </div>
 
@@ -68,10 +71,10 @@ import API from "../utils/api";
 import showIcon from "../assets/eye-fill.svg";
 import hideIcon from "../assets/eye-slash-fill.svg";
 import refreshIcon from "../assets/arrow-repeat.svg";
+import tickIcon from "../assets/check-lg.svg";
 import clipboardIcon from "../assets/clipboard.svg";
 import copy from "copy-to-clipboard";
 import type { Team, TeamMember } from "../types/Team";
-
 const user = computed(() => store.state.user!);
 
 const router = useRouter();
@@ -83,11 +86,22 @@ const showInviteCode = ref(false);
 const inviteCode = ref("");
 const team = ref<Team>();
 
+const regenerateIcon = ref(refreshIcon);
+const inviteButtonIcon = ref(clipboardIcon);
+
 onMounted(async () => {
   if (!user.value.team) return router.push("/team");
 
   await loadTeam();
 });
+
+const copyInviteCode = () => {
+  copy(inviteCode.value);
+  inviteButtonIcon.value = tickIcon;
+  setTimeout(() => {
+    inviteButtonIcon.value = clipboardIcon;
+  }, 3000);
+};
 
 const loadTeam = async () => {
   const response = await API.getTeam(user.value.team!.id);
@@ -133,7 +147,13 @@ const kickMember = async (member: TeamMember) => {
 const createInviteCode = async () => {
   const response = await API.createInviteCode(user.value.team!.id);
 
-  if (response) inviteCode.value = response;
+  if (response) {
+    inviteCode.value = response;
+    regenerateIcon.value = tickIcon;
+    setTimeout(() => {
+      regenerateIcon.value = refreshIcon;
+    }, 3000);
+  }
 };
 </script>
 
