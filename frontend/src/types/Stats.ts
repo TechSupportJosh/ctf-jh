@@ -35,3 +35,8 @@ export interface TeamLeaderboardStats {
     stats: Stats;
   }[];
 }
+
+export interface AttemptStats {
+  correct: number;
+  incorrect: number;
+}

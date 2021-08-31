@@ -71,7 +71,13 @@ export class User extends BaseEntity {
       name: `${this.firstName} ${this.lastName[0]}`,
     };
 
-    if (withStats && this.solvedChallenges) json = { ...json, stats: this.getSolveStats(), solveAttempts: this.getAttemptStats() };
+    if (withStats && this.solvedChallenges)
+      json = {
+        ...json,
+        solvedChallenges: this.solvedChallenges.map((challenge) => ({ ...challenge, challenge: undefined })),
+        stats: this.getSolveStats(),
+        solveAttempts: this.getAttemptStats(),
+      };
 
     return json;
   }

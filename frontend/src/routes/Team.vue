@@ -8,7 +8,14 @@
   <div v-if="user.team">
     <template v-if="!team">Loading...</template>
     <template v-else>
-      <h4 class="mb-3">Members ({{ team.members.length }} / {{ store.state.config.maxTeamSize }})</h4>
+      <div class="row">
+        <div class="col-9">
+          <h4 class="mb-3">Members ({{ team.members.length }} / {{ store.state.config.maxTeamSize }})</h4>
+        </div>
+        <div class="col-3" v-if="user.id === team.teamLeader.id">
+          <router-link class="btn btn-primary w-100" to="/team/settings">View Team Settings</router-link>
+        </div>
+      </div>
       <div
         v-for="member in team.members"
         class="team-member"
@@ -16,20 +23,23 @@
       >
         <strong>{{ member.name }}</strong
         ><br />
-        <div class="text-muted">{{ member.points }} Points - {{ member.bloods }} Bloods</div>
+        <div class="text-muted">{{ member.stats?.points }} Points - {{ member.stats?.bloods }} Bloods</div>
       </div>
       <hr />
-      <h4 class="mb-3">Stats</h4>
-      <stats-graph :stats="team.stats"></stats-graph>
+      <h4 class="text-center">Stats</h4>
+      <stats-graph :stats="team.stats" class="mb-4"></stats-graph>
+      <h4 class="text-center">Attempts</h4>
+      <solve-attempts-graph :solve-attempts="solveAttempts" class="mb-4"></solve-attempts-graph>
+      <h4 class="text-center">Challenge Breakdown</h4>
+      <category-breakdown-graph :solved-challenges="solvedChallenges" class="mb-4"></category-breakdown-graph>
+      <h4 class="text-center">Team Breakdown</h4>
+      <team-breakdown-graph :team-members="team.members" class="mb-4"></team-breakdown-graph>
       <hr />
       <template v-if="user.id !== team.teamLeader.id">
         <div class="alert alert-danger" v-if="leaveTeamError"><strong>An error occured: </strong>{{ leaveTeamError }}</div>
         <button class="btn btn-danger" @click="leaveTeam">Leave Team</button>
       </template>
-      <template v-else>
-        <router-link class="btn btn-primary" to="/team/settings">View Team Settings</router-link>
-      </template></template
-    >
+    </template>
   </div>
   <div v-else>
     <p>
@@ -53,19 +63,30 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
-import store from "../plugins/store";
-import JoinTeam from "../components/JoinTeam.vue";
+import { computed, ref, watch } from "vue";
 import CreateTeam from "../components/CreateTeam.vue";
-import API from "../utils/api";
+import CategoryBreakdownGraph from "../components/graphs/CategoryBreakdownGraph.vue";
+import TeamBreakdownGraph from "../components/graphs/TeamBreakdownGraph.vue";
+import SolveAttemptsGraph from "../components/graphs/SolveAttemptsGraph.vue";
+import StatsGraph from "../components/graphs/StatsGraph.vue";
+import JoinTeam from "../components/JoinTeam.vue";
+import store from "../plugins/store";
+import type { UserChallengeSolve } from "../types/Challenge";
+import type { AttemptStats } from "../types/Stats";
 import type { Team } from "../types/Team";
-import StatsGraph from "../components/StatsGraph.vue";
+import API from "../utils/api";
 
 const user = computed(() => store.state.user!);
 const team = ref<Team>();
 
 const currentForm = ref<"joinTeam" | "createTeam">();
 const leaveTeamError = ref("");
+
+const solveAttempts = ref<AttemptStats>({
+  correct: 0,
+  incorrect: 0,
+});
+const solvedChallenges = ref<UserChallengeSolve[]>([]);
 
 watch(
   () => user.value,
@@ -74,7 +95,16 @@ watch(
 
     const response = await API.getTeam(user.team?.id);
 
-    if (response) team.value = response;
+    if (response) {
+      team.value = response;
+
+      team.value.members.forEach((member) => {
+        solveAttempts.value.correct += member.solveAttempts?.correct ?? 0;
+        solveAttempts.value.incorrect += member.solveAttempts?.incorrect ?? 0;
+
+        solvedChallenges.value.push(...(member.solvedChallenges ?? []));
+      });
+    }
   },
   { immediate: true }
 );

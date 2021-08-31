@@ -6,7 +6,14 @@
   </div>
   <hr />
   <div v-if="team">
-    <h4 class="mb-3">Manage Members ({{ team.members.length }} / 5)</h4>
+    <div class="row">
+      <div class="col-9">
+        <h4 class="mb-3">Members ({{ team.members.length }} / {{ store.state.config.maxTeamSize }})</h4>
+      </div>
+      <div class="col-3">
+        <router-link class="btn btn-primary w-100" to="/team">Go Back</router-link>
+      </div>
+    </div>
     <div class="alert alert-danger" v-if="kickMemberError"><strong>An error occured: </strong> {{ kickMemberError }}</div>
     <table class="table" style="font-size: 1.25rem">
       <thead>
@@ -21,9 +28,9 @@
       <tbody>
         <tr v-for="member in team.members">
           <th scope="row">{{ member.name }}</th>
-          <td>{{ member.points }}</td>
-          <td>{{ member.solves }}</td>
-          <td>{{ member.bloods }}</td>
+          <td>{{ member.stats?.points }}</td>
+          <td>{{ member.stats?.solves }}</td>
+          <td>{{ member.stats?.bloods }}</td>
           <td><button class="btn btn-danger w-100" v-if="team.teamLeader.id !== member.id" @click="kickMember(member)">Kick</button></td>
         </tr>
       </tbody>

@@ -1,13 +1,13 @@
 <template>
-  <div id="chart-container"></div>
+  <div id="stats-chart-container"></div>
 </template>
 
 <script lang="ts" setup>
 import { defineProps, onBeforeUnmount, onMounted, ref } from "vue";
-import HighchartTheme from "../assets/HighchartTheme";
+import HighchartTheme from "../../assets/HighchartTheme";
 import Highcharts from "highcharts";
-import timeAgo from "../utils/timeAgo";
-import type { SolveStats } from "../types/Stats";
+import timeAgo from "../../utils/timeAgo";
+import type { SolveStats } from "../../types/Stats";
 
 const props = defineProps({
   stats: {
@@ -96,7 +96,7 @@ Highcharts.setOptions(HighchartTheme);
 let chart: Highcharts.Chart | null;
 
 onMounted(() => {
-  chart = Highcharts.chart("chart-container", {
+  chart = Highcharts.chart("stats-chart-container", {
     title: {
       text: "",
     },

@@ -52,7 +52,6 @@ const categories = computed(() => store.state.categories);
 
 const ctfStarted = computed(() => new Date() > new Date(startTime.value));
 
-console.log(ctfStarted.value);
 const pointTotal = computed(() => {
   return user.value?.solvedChallenges
     .map((solvedChallenge) => {
