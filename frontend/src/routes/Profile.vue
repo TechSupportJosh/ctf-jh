@@ -8,12 +8,17 @@
   <h3 class="text-center"><strong>Joshua H</strong></h3>
   <h3 class="text-center">{{ pointTotal }} Points</h3>
   <hr />
-  <h4 class="text-center">Stats</h4>
-  <stats-graph :stats="stats" v-if="stats" class="mb-4"></stats-graph>
-  <h4 class="text-center">Attempts</h4>
-  <solve-attempts-graph :solve-attempts="user.solveAttempts" class="mb-4"></solve-attempts-graph>
-  <h4 class="text-center">Challenge Breakdown</h4>
-  <category-breakdown-graph :solved-challenges="user.solvedChallenges"></category-breakdown-graph>
+  <template v-if="hasCTFStarted">
+    <h4 class="text-center">Stats</h4>
+    <stats-graph :stats="stats" v-if="stats" class="mb-4"></stats-graph>
+    <h4 class="text-center">Attempts</h4>
+    <solve-attempts-graph :solve-attempts="user.solveAttempts" class="mb-4"></solve-attempts-graph>
+    <h4 class="text-center">Challenge Breakdown</h4>
+    <category-breakdown-graph :solved-challenges="user.solvedChallenges"></category-breakdown-graph
+  ></template>
+  <template v-else>
+    <p class="text-muted text-center">Your stats will appear once the CTF has started.</p>
+  </template>
 </template>
 
 <script lang="ts" setup>
@@ -24,6 +29,7 @@ import StatsGraph from "../components/graphs/StatsGraph.vue";
 import SolveAttemptsGraph from "../components/graphs/SolveAttemptsGraph.vue";
 import CategoryBreakdownGraph from "../components/graphs/CategoryBreakdownGraph.vue";
 import type { SolveStats } from "../types/Stats";
+import { hasCTFStarted } from "../utils/status";
 
 const user = computed(() => store.state.user!);
 const challenges = computed(() => store.state.challenges);

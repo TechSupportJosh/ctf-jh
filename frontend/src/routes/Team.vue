@@ -26,39 +26,55 @@
         <div class="text-muted">{{ member.stats?.points }} Points - {{ member.stats?.bloods }} Bloods</div>
       </div>
       <hr />
-      <h4 class="text-center">Stats</h4>
-      <stats-graph :stats="team.stats" class="mb-4"></stats-graph>
-      <h4 class="text-center">Attempts</h4>
-      <solve-attempts-graph :solve-attempts="solveAttempts" class="mb-4"></solve-attempts-graph>
-      <h4 class="text-center">Challenge Breakdown</h4>
-      <category-breakdown-graph :solved-challenges="solvedChallenges" class="mb-4"></category-breakdown-graph>
-      <h4 class="text-center">Team Breakdown</h4>
-      <team-breakdown-graph :team-members="team.members" class="mb-4"></team-breakdown-graph>
-      <hr />
-      <template v-if="user.id !== team.teamLeader.id">
+      <template v-if="hasCTFStarted">
+        <h4 class="text-center">Stats</h4>
+        <stats-graph :stats="team.stats" class="mb-4"></stats-graph>
+        <h4 class="text-center">Attempts</h4>
+        <solve-attempts-graph :solve-attempts="solveAttempts" class="mb-4"></solve-attempts-graph>
+        <h4 class="text-center">Challenge Breakdown</h4>
+        <category-breakdown-graph :solved-challenges="solvedChallenges" class="mb-4"></category-breakdown-graph>
+        <h4 class="text-center">Team Breakdown</h4>
+        <team-breakdown-graph :team-members="team.members" class="mb-4"></team-breakdown-graph>
+      </template>
+      <template v-else>
+        <p class="text-muted text-center">Your team's stats will appear once the CTF has started.</p>
+      </template>
+      <template v-if="user.id !== team.teamLeader.id && !hasCTFStarted">
+        <hr />
+        <h4 class="text-center">Leave Team</h4>
         <div class="alert alert-danger" v-if="leaveTeamError"><strong>An error occured: </strong>{{ leaveTeamError }}</div>
-        <button class="btn btn-danger" @click="leaveTeam">Leave Team</button>
+        <p class="text-center">If you leave this team, you must request a new invite code from the team leader to rejoin.</p>
+        <div class="row">
+          <div class="col-4 offset-4">
+            <button class="btn btn-danger w-100" @click="leaveTeam">Leave Team</button>
+          </div>
+        </div>
       </template>
     </template>
   </div>
   <div v-else>
-    <p>
-      You are not currently a member of a team. You can create one yourself or join another one. To join another team, you must ask the team
-      leader to provide you with their team invite code.
-    </p>
+    <template v-if="!hasCTFStarted">
+      <p>
+        You are not currently a member of a team. You can create one yourself or join another one. To join another team, you must ask the
+        team leader to provide you with their team invite code.
+      </p>
 
-    <div class="row mb-4">
-      <div class="col-6">
-        <button class="btn btn-success w-100" @click="currentForm = 'createTeam'">Create Team</button>
+      <div class="row mb-4">
+        <div class="col-6">
+          <button class="btn btn-success w-100" @click="currentForm = 'createTeam'">Create Team</button>
+        </div>
+        <div class="col-6">
+          <button class="btn btn-primary w-100" @click="currentForm = 'joinTeam'">Join Team</button>
+        </div>
       </div>
-      <div class="col-6">
-        <button class="btn btn-primary w-100" @click="currentForm = 'joinTeam'">Join Team</button>
-      </div>
-    </div>
 
-    <hr />
-    <join-team v-if="currentForm === 'joinTeam'"> </join-team>
-    <create-team v-if="currentForm === 'createTeam'"></create-team>
+      <hr />
+      <join-team v-if="currentForm === 'joinTeam'"> </join-team>
+      <create-team v-if="currentForm === 'createTeam'"></create-team>
+    </template>
+    <template v-else>
+      <p>You are not a member of a team. As the CTF has started, you are unable to create or join a new team.</p>
+    </template>
   </div>
 </template>
 
@@ -75,6 +91,7 @@ import type { UserChallengeSolve } from "../types/Challenge";
 import type { AttemptStats } from "../types/Stats";
 import type { Team } from "../types/Team";
 import API from "../utils/api";
+import { hasCTFStarted } from "../utils/status";
 
 const user = computed(() => store.state.user!);
 const team = ref<Team>();

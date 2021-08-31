@@ -31,7 +31,9 @@
           <td>{{ member.stats?.points }}</td>
           <td>{{ member.stats?.solves }}</td>
           <td>{{ member.stats?.bloods }}</td>
-          <td><button class="btn btn-danger w-100" v-if="team.teamLeader.id !== member.id" @click="kickMember(member)">Kick</button></td>
+          <td v-if="!hasCTFStarted">
+            <button class="btn btn-danger w-100" v-if="team.teamLeader.id !== member.id" @click="kickMember(member)">Kick</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -59,7 +61,7 @@
     </div>
 
     <div class="alert alert-danger" v-if="disbandTeamError"><strong>An error occured: </strong> {{ disbandTeamError }}</div>
-    <button class="btn btn-danger w-100" to="/team/settings" @click="deleteTeam">Disband Team</button>
+    <button class="btn btn-danger w-100" to="/team/settings" @click="deleteTeam" v-if="!hasCTFStarted">Disband Team</button>
   </div>
 </template>
 
@@ -75,6 +77,8 @@ import tickIcon from "../assets/check-lg.svg";
 import clipboardIcon from "../assets/clipboard.svg";
 import copy from "copy-to-clipboard";
 import type { Team, TeamMember } from "../types/Team";
+import { hasCTFStarted } from "../utils/status";
+
 const user = computed(() => store.state.user!);
 
 const router = useRouter();
