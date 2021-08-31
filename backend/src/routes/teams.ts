@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
     .leftJoinAndSelect("team.members", "members")
     .leftJoinAndSelect("team.teamLeader", "teamLeader")
     .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
+    .leftJoinAndSelect("members.solveAttempts", "solveAttempts")
     .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
     .getMany();
 
@@ -26,6 +27,7 @@ router.get("/:teamId", async (req, res) => {
     .leftJoinAndSelect("team.teamLeader", "teamLeader")
     .leftJoinAndSelect("team.stats", "stats")
     .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
+    .leftJoinAndSelect("members.solveAttempts", "solveAttempts")
     .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
     .getOne();
 

@@ -2,7 +2,7 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import { FlagSubmissionDTO } from "../dto/FlagSubmission";
 import { Challenge, ChallengeTag, FlagType } from "../entity/Challenge";
-import { User, UserSolvedChallenge } from "../entity/User";
+import { User, UserSolveAttempt, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { sendWebhook } from "../utils/webhook";
 import { getDistance } from "geolib";
@@ -53,7 +53,10 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
   if (challenge.unlockRequirement && !req.user?.hasSolvedChallenge(challenge.unlockRequirement))
     return res.status(400).json({ message: "Challenge is locked." });
 
-  if (challenge.flagType === FlagType.STRING && challenge.flag !== flag) return res.status(400).json({ message: "Incorrect flag." });
+  if (challenge.flagType === FlagType.STRING && challenge.flag !== flag) {
+    await UserSolveAttempt.create({ challenge: challenge, user: req.user, correct: false }).save();
+    return res.status(400).json({ message: "Incorrect flag." });
+  }
 
   if (challenge.flagType === FlagType.LOCATION) {
     // Firstly attempt to split up their flag
@@ -62,6 +65,7 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
     const longitude = parseFloat(longitudeString);
 
     if (isNaN(longitude) || isNaN(latitude)) {
+      await UserSolveAttempt.create({ challenge: challenge, user: req.user, correct: false }).save();
       return res.status(400).json({ message: "Incorrect flag." });
     }
 
@@ -72,6 +76,7 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
     const config = await getConfig();
 
     if (getDistance({ latitude: flagLatitude, longitude: flagLongitude }, { latitude, longitude }) > config.locationFlagPrecision) {
+      await UserSolveAttempt.create({ challenge: challenge, user: req.user, correct: false }).save();
       return res.status(400).json({ message: "Incorrect flag." });
     }
   }
@@ -85,6 +90,8 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
   solvedChallenge.isBlood = solves === 0;
 
   await solvedChallenge.save();
+
+  await UserSolveAttempt.create({ challenge: challenge, user: req.user, correct: true }).save();
 
   await sendWebhook(req.user!, parseInt(req.params.challengeId));
 

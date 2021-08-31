@@ -53,7 +53,7 @@ router.get("/me", isAuthenticated(), (req, res) => {
 });
 
 router.get("/me/stats", isAuthenticated(), async (req, res) => {
-  const user = await User.findOne({ where: { id: req.user!.id }, relations: ["stats"] });
+  const user = await User.findOne({ where: { id: req.user!.id }, relations: ["stats", "solveAttempts"] });
   res.json(user!.stats);
 });
 

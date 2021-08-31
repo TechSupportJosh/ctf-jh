@@ -42,6 +42,9 @@ export class User extends BaseEntity {
   @OneToMany(() => UserStats, (userStats) => userStats.user)
   stats!: UserStats[];
 
+  @OneToMany(() => UserSolveAttempt, (solveAttempt) => solveAttempt.user, { eager: true })
+  solveAttempts!: UserSolveAttempt[];
+
   hasSolvedChallenge(challenge: Challenge) {
     return this.solvedChallenges.findIndex((solvedChallenge) => solvedChallenge.challengeId === challenge.id) !== -1;
   }
@@ -68,7 +71,7 @@ export class User extends BaseEntity {
       name: `${this.firstName} ${this.lastName[0]}`,
     };
 
-    if (withStats && this.solvedChallenges) json = { ...json, ...this.getSolveStats() };
+    if (withStats && this.solvedChallenges) json = { ...json, stats: this.getSolveStats(), solveAttempts: this.getAttemptStats() };
 
     return json;
   }
@@ -82,6 +85,7 @@ export class User extends BaseEntity {
         name: user.team.name,
       };
     }
+    user.solveAttempts = this.getAttemptStats();
     return user;
   }
 
@@ -92,11 +96,24 @@ export class User extends BaseEntity {
       bloods: 0,
     };
 
-    console.log(this.solvedChallenges);
     this.solvedChallenges.forEach((solvedChallenge) => {
       stats.points += solvedChallenge.challenge?.points ?? 0;
       stats.bloods += solvedChallenge.isBlood ? 1 : 0;
       stats.solves += 1;
+    });
+
+    return stats;
+  }
+
+  getAttemptStats() {
+    const stats = {
+      correct: 0,
+      incorrect: 0,
+    };
+
+    this.solveAttempts.forEach((solveAttempt) => {
+      stats.correct += solveAttempt.correct ? 1 : 0;
+      stats.incorrect += !solveAttempt.correct ? 1 : 0;
     });
 
     return stats;
@@ -137,4 +154,25 @@ export class UserSolvedChallenge extends BaseEntity {
       solveDate: this.solveDate,
     };
   };
+}
+
+@Entity()
+export class UserSolveAttempt extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  solveAttemptId!: number;
+
+  @Column()
+  userId!: number;
+
+  @Column()
+  challengeId!: number;
+
+  @Column()
+  correct!: boolean;
+
+  @ManyToOne(() => User, (user) => user.solvedChallenges)
+  public user!: User;
+
+  @ManyToOne(() => Challenge)
+  public challenge!: Challenge;
 }
