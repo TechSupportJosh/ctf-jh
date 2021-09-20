@@ -87,12 +87,7 @@ router.use("/static", express.static("uploads"));
 app.use("/api", router);
 
 (async () => {
-  const connection: Connection = await createConnection({
-    type: "sqlite",
-    database: "database.db",
-    synchronize: true,
-    entities: [path.join(__dirname, "entity", "*.js"), path.join(__dirname, "entity", "*.ts")],
-  });
+  const connection: Connection = await createConnection();
 
   // Create upload directory
   try {
