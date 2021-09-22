@@ -4,12 +4,6 @@
       <div class="col-8">
         <h1>Intake CTF Admin</h1>
       </div>
-      <div class="col-4 d-flex align-items-center justify-content-end">
-        <div>
-          <router-link to="/">Home</router-link>&nbsp;&nbsp;
-          <a :href="`${config.basePath}api/auth/logout`">Log Out</a>
-        </div>
-      </div>
     </div>
     <hr />
     <div class="alert alert-danger" v-if="errorMessage"><strong>An error occured: </strong>{{ errorMessage }}</div>

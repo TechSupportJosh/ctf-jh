@@ -1,7 +1,6 @@
 <template>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-left p-3">
     <span class="fs-4 navbar-brand">Intake CTF</span>
-    <router-link v-if="user?.isAdmin" to="/admin">Admin Panel</router-link>
 
     <button
       class="navbar-toggler"

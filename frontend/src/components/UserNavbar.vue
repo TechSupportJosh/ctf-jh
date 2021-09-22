@@ -1,6 +1,11 @@
 <template>
   <div class="collapse navbar-collapse" id="navbar">
     <ul class="navbar-nav navbar-nav-scroll nav-pills sflex-column mb-auto">
+      <template v-if="user?.isAdmin">
+        <hr />
+        <router-link to="/admin" class="btn btn-primary w-100">Admin Panel</router-link>
+      </template>
+
       <hr />
       <li class="nav-item text-center">
         {{ pointTotal }} Points<br />{{ user?.solvedChallenges.length ?? 0 }} Challenges Solved<br /><br /><c-t-f-timer></c-t-f-timer>
