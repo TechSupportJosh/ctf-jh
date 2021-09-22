@@ -24,15 +24,15 @@
   </p>
 
   <p v-if="challenge.url">
-    <strong>Challenge URL: </strong>
-    <a :href="challenge.url" v-if="challenge.url.startsWith('http')">{{ challenge.url }}</a>
-    <span v-else>{{ challenge.url }}</span>
+    <strong>Challenge IP: </strong>
+    <pre class="challenge-url" @click="copyURL()">{{ challenge.url }}</pre>
+    <span class="text-success" style="font-size: 0.875em;" v-if="showCopiedMessage">    Copied to clipboard</span>
   </p>
 
   <hr />
 
   <template v-if="!challengeSolve">
-    <label for="basic-url" class="form-label"
+    <label class="form-label"
       >Enter the flag from the challenge<template v-if="challenge.hint">
         (<a @click.prevent="showHint = !showHint" href="#">Need a hint?</a>)</template
       >:</label
@@ -75,8 +75,10 @@ import API from "../utils/api";
 import FlagString from "./flagInputs/String.vue";
 import FlagLocation from "./flagInputs/Location.vue";
 import store from "../plugins/store";
+import copyToClipboard from "copy-to-clipboard";
 
 const showHint = ref(false);
+const showCopiedMessage = ref(false);
 const flagSubmissionError = ref("");
 const user = computed(() => store.state.user);
 const team = computed(() => store.state.team);
@@ -127,6 +129,14 @@ const solvedAt = computed(() => {
   return props.challengeSolve ? new Date(props.challengeSolve.solveDate).toLocaleString() : "";
 });
 
+const copyURL = () => {
+  copyToClipboard(props.challenge.url!);
+  showCopiedMessage.value = true;
+  setTimeout(() => {
+    showCopiedMessage.value = false;
+  }, 3000);
+};
+
 const props = defineProps({
   challenge: {
     type: Object as () => UnlockedChallenge,
@@ -142,5 +152,14 @@ const props = defineProps({
 <style scoped>
 .challenge-description {
   white-space: pre-line;
+}
+
+.challenge-url {
+  font-size: 1em; 
+  display: inline;
+  cursor: pointer;
+  margin-left: 5px;
+  padding: 5px;
+  background-color: #20374c;
 }
 </style>
