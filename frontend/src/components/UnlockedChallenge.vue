@@ -33,7 +33,9 @@
 
   <template v-if="!challengeSolve">
     <label for="basic-url" class="form-label"
-      >Enter the flag from the challenge (<a @click.prevent="showHint = !showHint" href="#">Need a hint?</a>):</label
+      >Enter the flag from the challenge<template v-if="challenge.hint">
+        (<a @click.prevent="showHint = !showHint" href="#">Need a hint?</a>)</template
+      >:</label
     >
     <div class="mb-2" v-if="showHint" v-html="'<strong>Hint: </strong>' + marked.parseInline(challenge.hint)"></div>
 
