@@ -27,11 +27,8 @@ export class User extends BaseEntity {
   @Column()
   isAdmin!: boolean;
 
-  @Column({ select: false, nullable: true })
-  authValue!: string;
-
-  @Column({ select: false, nullable: true })
-  authExpiry!: Date;
+  @OneToMany(() => UserAuth, (authValue) => authValue.user)
+  authValues!: UserAuth[];
 
   @OneToMany(() => UserSolvedChallenge, (solvedChallenge) => solvedChallenge.user, { eager: true })
   solvedChallenges!: UserSolvedChallenge[];
@@ -47,22 +44,6 @@ export class User extends BaseEntity {
 
   hasSolvedChallenge(challenge: Challenge) {
     return this.solvedChallenges.findIndex((solvedChallenge) => solvedChallenge.challengeId === challenge.id) !== -1;
-  }
-
-  createAuth() {
-    // Create new auth string + expiry time in 3 days
-    const daysBeforeExpires = 3;
-    const authValue = randomBytes(32).toString("base64");
-    const authExpiry = new Date();
-    authExpiry.setDate(new Date().getDate() + daysBeforeExpires);
-
-    this.authValue = authValue;
-    this.authExpiry = authExpiry;
-  }
-
-  clearAuth() {
-    this.authValue = randomBytes(32).toString("base64");
-    this.authExpiry = new Date(0);
   }
 
   toPublicJSON(withStats: boolean) {
@@ -181,4 +162,31 @@ export class UserSolveAttempt extends BaseEntity {
 
   @ManyToOne(() => Challenge)
   public challenge!: Challenge;
+}
+
+@Entity()
+export class UserAuth extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  authId!: number;
+
+  @Column()
+  userId!: number;
+
+  @Column()
+  creationDate!: Date;
+
+  @Column()
+  cookieValue!: string;
+
+  @Column()
+  expiryDate!: Date;
+
+  @Column()
+  userAgent!: string;
+
+  @Column()
+  ipAddress!: string;
+
+  @ManyToOne(() => User, (user) => user.authValues)
+  public user!: User;
 }

@@ -22,9 +22,8 @@ import { authRouter } from "./routes/auth";
 import { challengeRouter } from "./routes/challenges";
 import { leaderboardRouter } from "./routes/leaderboard";
 import { teamsRouter } from "./routes/teams";
+import { selfRouter } from "./routes/self";
 import { updateStats } from "./utils/statsCron";
-import { User } from "./entity/User";
-import { UserStats } from "./entity/Stats";
 import { getConfig } from "./utils/config";
 import { addSSEClient, removeSSEClient } from "./utils/sse";
 
@@ -47,15 +46,7 @@ router.use("/challenges", isAuthenticated(), challengeRouter);
 router.use("/teams", isAuthenticated(), teamsRouter);
 router.use("/leaderboard", isAuthenticated(), leaderboardRouter);
 router.use("/admin", isAdmin(), adminRouter);
-
-router.get("/me", isAuthenticated(), (req, res) => {
-  res.json(req.user!.toSelfJSON());
-});
-
-router.get("/me/stats", isAuthenticated(), async (req, res) => {
-  const user = await User.findOne({ where: { id: req.user!.id }, relations: ["stats", "solveAttempts"] });
-  res.json(user!.stats);
-});
+router.use("/me", isAuthenticated(), selfRouter);
 
 router.get("/config", isAuthenticated(), async (req, res) => {
   const config = await getConfig();

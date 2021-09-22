@@ -1,10 +1,11 @@
 import express from "express";
-import { User } from "../entity/User";
+import { User, UserAuth } from "../entity/User";
 import { getAccessToken, getAuthorizationURI, getUserAttributes } from "../utils/warwickapi";
 import { getUserFromCookie } from "../middlewares/auth";
 import { validator } from "../middlewares/validator";
 import { LoginDTO } from "../dto/Login";
 import { verifyPassword } from "../utils/password";
+import { randomBytes } from "crypto";
 
 const router = express.Router();
 
@@ -19,6 +20,23 @@ router.get("/warwick", async (req, res) => {
 
   res.redirect(authorizationUri);
 });
+
+const createAuth = async (req: express.Request, user: User) => {
+  // Create new auth string + expiry time in 3 days
+  const daysBeforeExpires = 3;
+  const cookieValue = randomBytes(32).toString("base64");
+  const expiryDate = new Date();
+  expiryDate.setDate(new Date().getDate() + daysBeforeExpires);
+
+  return await UserAuth.create({
+    user: user,
+    creationDate: new Date(),
+    cookieValue: cookieValue,
+    expiryDate: expiryDate,
+    ipAddress: req.ip,
+    userAgent: req.headers["user-agent"] ?? "N/A",
+  }).save();
+};
 
 router.get("/callback", async (req, res) => {
   // Attempt to get profile
@@ -39,20 +57,18 @@ router.get("/callback", async (req, res) => {
   let user = await User.findOne({ warwickId: parseInt(attributes.id) });
 
   if (!user) {
-    console.log(adminIds);
-
-    user = User.create({
+    user = await User.create({
       warwickId: parseInt(attributes.id),
       firstName: attributes.firstname,
       lastName: attributes.lastname,
       isAdmin: adminIds.includes(attributes.id),
-    });
+    }).save();
   }
 
-  user.createAuth();
+  const userAuth = await createAuth(req, user);
 
-  res.cookie("auth", user.authValue, {
-    expires: user.authExpiry,
+  res.cookie("auth", userAuth.cookieValue, {
+    expires: userAuth.expiryDate,
     httpOnly: true,
     sameSite: "strict",
   });
@@ -71,10 +87,10 @@ router.post("/login", validator(LoginDTO), async (req, res) => {
   if (!user.password) return res.redirect("/login?error=invalid-creds");
   if (!verifyPassword(login.password, user.password)) return res.redirect("/login?error=invalid-creds");
 
-  user.createAuth();
+  const userAuth = await createAuth(req, user);
 
-  res.cookie("auth", user.authValue, {
-    expires: user.authExpiry,
+  res.cookie("auth", userAuth.cookieValue, {
+    expires: userAuth.expiryDate,
     httpOnly: true,
     sameSite: "strict",
   });
@@ -89,9 +105,7 @@ router.get("/logout", async (req, res) => {
 
   if (!user) return res.redirect("/login");
 
-  user.clearAuth();
-
-  await user.save();
+  await UserAuth.delete({ expiryDate: req.cookies.auth });
 
   res.redirect("/login");
 });

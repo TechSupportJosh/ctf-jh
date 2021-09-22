@@ -1,14 +1,15 @@
 import { Request, Response, NextFunction } from "express";
-import { User } from "../entity/User";
+import { User, UserAuth } from "../entity/User";
 
 export const getUserFromCookie = async (authCookie: string) => {
   if (!authCookie) return null;
 
-  const user = await User.findOne({ where: { authValue: authCookie }, relations: ["team"] });
-  if (!user) return null;
-  if (user.authExpiry < new Date()) return null;
+  const userAuth = await UserAuth.findOne({ cookieValue: authCookie });
 
-  return user;
+  if (!userAuth) return null;
+  if (userAuth.expiryDate < new Date()) return null;
+
+  return await User.findOne({ where: { id: userAuth.userId }, relations: ["team"] });
 };
 
 export const isAuthenticated = () => {
