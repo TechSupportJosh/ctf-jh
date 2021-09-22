@@ -1,4 +1,5 @@
 import express from "express";
+import { promisify } from "util";
 import { User, UserAuth } from "../entity/User";
 import { isAuthenticated } from "../middlewares/auth";
 
@@ -22,6 +23,14 @@ router.get("/sessions", isAuthenticated(), async (req, res) => {
     .where({ userId: req.user!.id })
     .getMany();
   res.json(sessions);
+});
+
+router.delete("/sessions", isAuthenticated(), async (req, res) => {
+  const sessions = await UserAuth.find({ where: { user: req.user } });
+
+  await Promise.all(sessions.map((session) => session.remove()));
+
+  return res.status(200).send({ message: "Sessions deleted." });
 });
 
 router.delete("/sessions/:authId", isAuthenticated(), async (req, res) => {
