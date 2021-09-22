@@ -10,6 +10,7 @@ import Profile from "../routes/Profile.vue";
 import RecentFeed from "../routes/RecentFeed.vue";
 import Team from "../routes/Team.vue";
 import TeamSettings from "../routes/TeamSettings.vue";
+import Settings from "../routes/Settings.vue";
 import store from "./store";
 
 import AdminHome from "../components/admin/Home.vue";
@@ -52,6 +53,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: "/leaderboard",
         component: Leaderboard,
+      },
+      {
+        path: "/settings",
+        component: Settings,
       },
       {
         path: "/admin",

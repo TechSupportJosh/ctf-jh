@@ -13,3 +13,10 @@ export interface User {
   solveAttempts: AttemptStats;
   team?: UserTeam;
 }
+
+export interface Session {
+  authId: number;
+  userAgent: string;
+  ipAddress: string;
+  creationDate: string;
+}

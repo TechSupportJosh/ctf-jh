@@ -37,6 +37,7 @@
       </li>
       <li class="nav-item"><router-link to="/leaderboard" class="nav-link" active-class="active">Leaderboard</router-link></li>
       <li class="nav-item"><router-link to="/help" class="nav-link" active-class="active">Help</router-link></li>
+      <li class="nav-item"><router-link to="/settings" class="nav-link" active-class="active">Settings</router-link></li>
       <hr />
       <div class="w-100 text-center">
         <strong>{{ user?.firstName }} {{ user?.lastName }}</strong

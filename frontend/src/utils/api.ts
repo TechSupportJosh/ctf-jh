@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
-import { User } from "../types/User";
+import { Session, User } from "../types/User";
 import config from "../config";
 import { AdminStats, SolveStats, Stats, TeamLeaderboardStats, UserLeaderboardStats } from "../types/Stats";
 import { RecentSolve } from "../types/RecentSolve";
@@ -29,6 +29,24 @@ const getStats = async () => {
   const response = await client.get<SolveStats[]>(`/me/stats`);
 
   if (response.status === 200) return response.data;
+};
+
+const getSessions = async () => {
+  const response = await client.get<Session[]>(`/me/sessions`);
+
+  if (response.status === 200) return response.data;
+};
+
+const deleteSessions = async () => {
+  const response = await client.delete(`/me/sessions`);
+
+  return response.status === 200;
+};
+
+const deleteSession = async (sessionId: number) => {
+  const response = await client.delete(`/me/sessions/${sessionId}`);
+
+  return response.status === 200;
 };
 
 const getChallenges = async () => {
@@ -192,6 +210,9 @@ export default {
   getUser,
   getChallenges,
   getStats,
+  getSessions,
+  deleteSessions,
+  deleteSession,
   submitFlag,
   getRecentSolves,
   joinTeam,

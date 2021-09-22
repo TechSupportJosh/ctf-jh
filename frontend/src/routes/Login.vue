@@ -5,6 +5,7 @@
         <h1>Intake CTF</h1>
         <h4 class="mb-4">Hosted by WMG Cyber Society</h4>
         <div class="alert alert-danger" v-if="errorMessage"><strong>An error occured: </strong>{{ errorMessage }}</div>
+        <div class="alert alert-success" v-if="successMessage">{{ successMessage }}</div>
         <div v-show="!showUsernameLogin">
           <div class="mb-2">
             <a :href="`${config.basePath}api/auth/warwick`" class="btn text-white w-100" id="login-button">Login With Warwick ID</a>
@@ -62,6 +63,8 @@ import particlesConfig from "../assets/particles.json";
 const route = useRoute();
 const errorCode = route.query.error;
 const errorMessage = ref("");
+const successCode = route.query.success;
+const successMessage = ref("");
 
 const showUsernameLogin = ref(false);
 
@@ -88,6 +91,12 @@ switch (errorCode) {
     break;
   case "invalid-creds":
     errorMessage.value = "An invalid username or password was entered.";
+    break;
+}
+
+switch (successCode) {
+  case "logged-out":
+    successMessage.value = "You have been logged out.";
     break;
 }
 

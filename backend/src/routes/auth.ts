@@ -105,9 +105,9 @@ router.get("/logout", async (req, res) => {
 
   if (!user) return res.redirect("/login");
 
-  await UserAuth.delete({ expiryDate: req.cookies.auth });
+  await UserAuth.delete({ cookieValue: req.cookies.auth });
 
-  res.redirect("/login");
+  res.redirect("/login?success=logged-out");
 });
 
 export const authRouter = router;
