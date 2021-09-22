@@ -3,7 +3,9 @@
     <ul class="navbar-nav navbar-nav-scroll nav-pills sflex-column mb-auto">
       <template v-if="user?.isAdmin">
         <hr />
-        <router-link to="/admin" class="btn btn-primary w-100">Admin Panel</router-link>
+        <li class="nav-item">
+          <router-link to="/admin" class="btn btn-primary w-100">Admin Panel</router-link>
+        </li>
       </template>
 
       <hr />

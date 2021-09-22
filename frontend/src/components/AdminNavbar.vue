@@ -2,7 +2,9 @@
   <div class="collapse navbar-collapse" id="navbar">
     <ul class="navbar-nav navbar-nav-scroll nav-pills sflex-column mb-auto">
       <hr />
-      <router-link to="/" class="btn btn-primary w-100">Home</router-link>
+      <li class="nav-item">
+        <router-link to="/" class="btn btn-primary w-100">Home</router-link>
+      </li>
       <hr />
       <li class="nav-item"><router-link to="/admin" class="nav-link" exact-active-class="active">Home</router-link></li>
       <li class="nav-item"><router-link to="/admin/users" class="nav-link" active-class="active">Users</router-link></li>
