@@ -113,6 +113,10 @@ const userTemplate: EditUser = {
   lastName: "",
   isAdmin: false,
   solvedChallenges: [],
+  solveAttempts: {
+    correct: 0,
+    incorrect: 0,
+  },
 };
 
 const editUser = ref<EditUser>(userTemplate);
