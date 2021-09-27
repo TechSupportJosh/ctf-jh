@@ -6,14 +6,14 @@ import { Challenge, FlagType } from "../entity/Challenge";
 import { Team } from "../entity/Team";
 import { UserSolveAttempt, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
-import { getConfig } from "../utils/config";
+import { Configuration } from "../utils/config";
 import { sendEvent } from "../utils/sse";
 import { sendWebhook } from "../utils/webhook";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const config = await getConfig();
+  const config = Configuration.get();
 
   if (!config.canViewChallenges()) return res.json([]);
 
@@ -55,7 +55,7 @@ const flagSubmissionLimiter = rateLimit({
 router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmissionLimiter, async (req, res) => {
   const { flag } = res.locals.dto as FlagSubmissionDTO;
 
-  const config = await getConfig();
+  const config = Configuration.get();
 
   if (!config.canSubmitFlags()) return res.status(400).json({ message: "Unable to submit flags at this time." });
 
@@ -94,7 +94,7 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
     const flagLatitude = parseFloat(flagLatituideString);
     const flagLongitude = parseFloat(flatLongitudeString);
 
-    const config = await getConfig();
+    const config = Configuration.get();
 
     if (getDistance({ latitude: flagLatitude, longitude: flagLongitude }, { latitude, longitude }) > config.locationFlagPrecision) {
       await UserSolveAttempt.create({ challenge: challenge, user: req.user, correct: false }).save();

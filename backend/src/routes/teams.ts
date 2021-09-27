@@ -4,7 +4,7 @@ import { TeamDTO, TeamJoinDTO } from "../dto/Team";
 import { Team } from "../entity/Team";
 import { User } from "../entity/User";
 import { validator } from "../middlewares/validator";
-import { getConfig } from "../utils/config";
+import { Configuration } from "../utils/config";
 
 const router = express.Router();
 
@@ -67,7 +67,7 @@ router.delete("/:teamId", async (req, res) => {
   if (!team) return res.status(404).send({ message: "This team does not exist." });
   if (team.teamLeader.id !== req.user!.id) return res.status(401).send({ message: "You are not authorised to do this." });
 
-  const config = await getConfig();
+  const config = Configuration.get();
   if (config.hasStarted()) return res.status(400).json({ message: "You cannot disband a team after the CTF has started!" });
 
   const memberUpdate = team.members.map((member) => {
@@ -89,7 +89,7 @@ router.post("/:teamId/kick/:userId", async (req, res) => {
   if (!team) return res.status(404).send({ message: "This team does not exist." });
   if (team.teamLeader.id !== req.user!.id) return res.status(401).send({ message: "You are not authorised to do this." });
 
-  const config = await getConfig();
+  const config = Configuration.get();
   if (config.hasStarted()) return res.status(400).json({ message: "You cannot kick a team member after the CTF has started!" });
 
   const user = await User.findOne({ where: { id: req.params.userId }, relations: ["team"] });
@@ -109,7 +109,7 @@ router.post("/:teamId/kick/:userId", async (req, res) => {
 router.post("/", validator(TeamDTO), async (req, res) => {
   const dto = res.locals.dto as TeamDTO;
 
-  const config = await getConfig();
+  const config = Configuration.get();
   if (config.hasStarted()) return res.status(400).json({ message: "You cannot create a team after the CTF has started!" });
 
   if (req.user!.team) return res.status(400).json({ message: "You are already in a team." });
@@ -147,7 +147,7 @@ const joinLimiter = rateLimit({
 router.post("/join", validator(TeamJoinDTO), joinLimiter, async (req, res) => {
   const { inviteCode } = res.locals.dto as TeamJoinDTO;
 
-  const config = await getConfig();
+  const config = Configuration.get();
   if (config.hasStarted()) return res.status(400).json({ message: "You cannot join a team after the CTF has started!" });
 
   if (req.user!.team) return res.status(400).json({ message: "You are already in a team." });
@@ -171,7 +171,7 @@ router.post("/join", validator(TeamJoinDTO), joinLimiter, async (req, res) => {
 router.post("/leave", async (req, res) => {
   if (!req.user!.team) return res.status(400).json({ message: "You are not in a team." });
 
-  const config = await getConfig();
+  const config = Configuration.get();
   if (config.hasStarted()) return res.status(400).json({ message: "You cannot leave a team after the CTF has started!" });
 
   if (req.user!.team.teamLeader.id == req.user!.id)

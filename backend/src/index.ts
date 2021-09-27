@@ -24,8 +24,9 @@ import { leaderboardRouter } from "./routes/leaderboard";
 import { teamsRouter } from "./routes/teams";
 import { selfRouter } from "./routes/self";
 import { updateStats } from "./utils/statsCron";
-import { getConfig } from "./utils/config";
+import { Configuration } from "./utils/config";
 import { addSSEClient, removeSSEClient } from "./utils/sse";
+import { Config } from "./entity/Config";
 
 const app = express();
 app.use(cookieParser());
@@ -49,7 +50,7 @@ router.use("/admin", isAdmin(), adminRouter);
 router.use("/me", isAuthenticated(), selfRouter);
 
 router.get("/config", isAuthenticated(), async (req, res) => {
-  const config = await getConfig();
+  const config = Configuration.get();
   res.json({ ...config, id: undefined });
 });
 
@@ -79,6 +80,19 @@ app.use("/api", router);
 
 (async () => {
   const connection: Connection = await createConnection();
+
+  // Initialise config singleton
+  await Configuration.update();
+
+  // If no config exists, create one
+  if (!Configuration.get()) {
+    const config = new Config();
+    config.startTime = new Date();
+    config.endTime = new Date();
+    await config.save();
+    await Configuration.update();
+    console.log("Initialised first-time configuration entry");
+  }
 
   // Create upload directory
   try {

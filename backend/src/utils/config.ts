@@ -1,25 +1,17 @@
 import { Config } from "../entity/Config";
 
-let _config: Config | null = null;
+export class Configuration {
+  private static _instance: Config;
 
-export const updateConfig = async () => {
-  const fetched = await Config.findOne();
-  if (fetched) _config = fetched;
-};
+  private constructor() {}
 
-export const getConfig = async () => {
-  if (_config) return _config;
+  public static get() {
+    // Do you need arguments? Make it a regular static method instead.
+    return this._instance;
+  }
 
-  // Now check the database in case one does exist
-  await updateConfig();
-
-  if (_config) return _config;
-
-  // If no config exists, create one
-  _config = new Config();
-  _config.startTime = new Date();
-  _config.endTime = new Date();
-  await _config.save();
-
-  return _config;
-};
+  public static async update() {
+    const fetched = await Config.findOne();
+    if (fetched) this._instance = fetched;
+  }
+}
