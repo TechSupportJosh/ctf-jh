@@ -92,6 +92,39 @@
       <div class="col-sm-9"><input type="number" class="form-control" v-model="config.locationFlagPrecision" /></div>
     </div>
 
+    <div class="mb-3 row">
+      <label class="col-sm-3 col-form-label"
+        >Scoring Type<label class="form-text"
+          >Dynamic scoring will reduce the amount of points a challenge is worth based on the number of solves.</label
+        ></label
+      >
+      <div class="col-sm-9">
+        <select class="form-control" v-model="config.scoringType">
+          <option value="static">Static</option>
+          <option value="dynamic">Dynamic</option>
+        </select>
+      </div>
+    </div>
+    <template v-if="config.scoringType === 'dynamic'">
+      <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label"
+          >Dynamic Scoring Point Reduction<label class="form-text">Number of points subtracted for each solve.</label></label
+        >
+        <div class="col-sm-9"><input type="number" class="form-control" v-model="config.dynamicScoreReduction" /></div>
+      </div>
+      <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label"
+          >Dynamic Scoring Max Solves<label class="form-text">Number of solves to substract points for.</label></label
+        >
+        <div class="col-sm-9"><input type="number" class="form-control" v-model="config.dynamicScoreMaxSolves" /></div>
+      </div>
+      <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label"
+          >Dynamic Scoring Min Solves<label class="form-text">Minimum number of solves before substracting points.</label></label
+        >
+        <div class="col-sm-9"><input type="number" class="form-control" v-model="config.dynamicScoreMinSolves" /></div>
+      </div>
+    </template>
     <button class="btn btn-success" @click="updateConfig">Update Settings</button>
   </div>
 </template>

@@ -21,6 +21,15 @@ router.get("/", async (req, res) => {
 
   res.json(
     challenges.map((challenge) => {
+      // Apply dynamic scoring
+      if (config.scoringType === "dynamic" && challenge.solves.length > config.dynamicScoreMinSolves) {
+        challenge.points = Math.max(
+          challenge.points -
+            Math.min(config.dynamicScoreMaxSolves, challenge.solves.length - config.dynamicScoreMinSolves) * config.dynamicScoreReduction,
+          0
+        );
+      }
+
       // Check whether the user has solved this challenge
       // If they haven't, then we returned a censored version of the challenge
       if (

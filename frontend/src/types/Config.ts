@@ -4,4 +4,8 @@ export interface Config {
   startTime: string;
   endTime: string;
   maintenance: boolean;
+  scoringType: "static" | "dynamic";
+  dynamicScoreReduction: number;
+  dynamicScoreMinSolves: number;
+  dynamicScoreMaxSolves: number;
 }
