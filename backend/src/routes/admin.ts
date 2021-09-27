@@ -13,6 +13,7 @@ import { uploadDirectory } from "../constants";
 import { ConfigDTO } from "../dto/Config";
 import { Config } from "../entity/Config";
 import { sendEvent } from "../utils/sse";
+import { updateConfig } from "../utils/config";
 
 const router = express.Router();
 
@@ -194,6 +195,7 @@ router.delete("/users/:userId/submissions", async (req, res) => {
 
 router.put("/config", validator(ConfigDTO), async (req, res) => {
   await Config.createQueryBuilder("config").update(res.locals.dto).execute();
+  await updateConfig();
   sendEvent("fetch", ["config", "challenges"]);
   return res.sendStatus(200);
 });

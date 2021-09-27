@@ -1,18 +1,25 @@
 import { Config } from "../entity/Config";
 
-export const getConfig = async () => {
-  // TODO: Add cache
-  let config = await Config.createQueryBuilder("config")
-    //.cache("config_cache", 3600 * 1000)
-    .getOne();
+let _config: Config | null = null;
 
-  if (config) return config;
+export const updateConfig = async () => {
+  const fetched = await Config.findOne();
+  if (fetched) _config = fetched;
+};
+
+export const getConfig = async () => {
+  if (_config) return _config;
+
+  // Now check the database in case one does exist
+  await updateConfig();
+
+  if (_config) return _config;
 
   // If no config exists, create one
-  config = new Config();
-  config.startTime = new Date();
-  config.endTime = new Date();
-  await config.save();
+  _config = new Config();
+  _config.startTime = new Date();
+  _config.endTime = new Date();
+  await _config.save();
 
-  return config;
+  return _config;
 };
