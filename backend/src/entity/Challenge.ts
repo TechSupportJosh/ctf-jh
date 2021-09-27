@@ -1,4 +1,5 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinTable } from "typeorm";
+import { Configuration } from "../utils/config";
 import { UserSolvedChallenge } from "./User";
 
 export enum FlagType {
@@ -69,6 +70,17 @@ export class Challenge extends BaseEntity {
   @OneToMany(() => UserSolvedChallenge, (solvedChallenge) => solvedChallenge.challenge)
   solves!: UserSolvedChallenge[];
 
+  getEffectivePoints() {
+    const config = Configuration.get();
+    return config.scoringType === "dynamic" && this.solves.length > config.dynamicScoreMinSolves
+      ? Math.max(
+          this.points -
+            Math.min(config.dynamicScoreMaxSolves, this.solves.length - config.dynamicScoreMinSolves) * config.dynamicScoreReduction,
+          0
+        )
+      : this.points;
+  }
+
   toJSON() {
     return {
       ...this,
@@ -76,6 +88,7 @@ export class Challenge extends BaseEntity {
       tags: this.tags.map((tag) => tag.tag),
       educationResources: this.educationResources.map((resource) => resource.resource),
       solveCount: this.solves.length,
+      points: this.getEffectivePoints(),
     };
   }
 

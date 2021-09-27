@@ -84,7 +84,7 @@ export class User extends BaseEntity {
     };
 
     this.solvedChallenges.forEach((solvedChallenge) => {
-      stats.points += solvedChallenge.challenge?.points ?? 0;
+      stats.points += solvedChallenge.challenge?.getEffectivePoints() ?? 0;
       stats.bloods += solvedChallenge.isBlood ? 1 : 0;
       stats.solves += 1;
     });

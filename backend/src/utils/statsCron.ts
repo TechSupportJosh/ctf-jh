@@ -14,11 +14,13 @@ export const updateStats = async (connection: Connection) => {
     .leftJoinAndSelect("team.teamLeader", "teamLeader")
     .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
     .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
+    .leftJoinAndSelect("challenge.solves", "solves")
     .getMany();
 
   const users = await User.createQueryBuilder("user")
     .leftJoinAndSelect("user.solvedChallenges", "solvedChallenges")
     .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
+    .leftJoinAndSelect("challenge.solves", "solves")
     .getMany();
 
   await Promise.all(
