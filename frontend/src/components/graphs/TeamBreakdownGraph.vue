@@ -21,7 +21,7 @@ const props = defineProps({
 
 const seriesData: Highcharts.PointOptionsObject[] = props.teamMembers.map((member) => {
   return {
-    name: member.name,
+    name: `${member.firstName} ${member.lastName}`,
     y: (member.solvedChallenges ?? [])
       .map((solvedChallenge) => {
         return challenges.value.find((challenge) => challenge.id === solvedChallenge.challengeId)?.points ?? 0;
