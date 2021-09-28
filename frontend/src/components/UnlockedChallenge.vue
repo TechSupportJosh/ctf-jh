@@ -91,7 +91,7 @@ const solvedByLabel = computed(() => {
   if (props.challengeSolve!.userId !== user.value!.id) {
     // If not solved by user, it must have been solved by a team member
     const solver = team.value?.members.find((member) => member.id === props.challengeSolve!.userId);
-    if (solver) return `Solved by ${solver.name} at: `;
+    if (solver) return `Solved by ${solver.firstName} ${solver.lastName} at: `;
   }
 
   return `Solved at: `;

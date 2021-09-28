@@ -10,11 +10,6 @@ router.get("/", (req, res) => {
   res.json(req.user!.toSelfJSON());
 });
 
-router.get("/stats", async (req, res) => {
-  const user = await User.findOne({ where: { id: req.user!.id }, relations: ["stats", "solveAttempts"] });
-  res.json(user!.stats);
-});
-
 router.get("/sessions", async (req, res) => {
   const sessions = await UserAuth.createQueryBuilder("userAuth")
     .select("userAuth.creationDate")

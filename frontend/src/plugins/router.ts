@@ -36,7 +36,7 @@ const routes: RouteRecordRaw[] = [
         component: Help,
       },
       {
-        path: "/profile",
+        path: "/profile/:profileId?",
         component: Profile,
       },
       {

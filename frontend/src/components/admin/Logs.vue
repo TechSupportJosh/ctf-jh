@@ -72,7 +72,9 @@ const dataToString = (key: string, value: any) => {
       : `${value} <span class="text-danger">(Deleted)</span>`;
   } else if (key.startsWith("team:")) {
     const team = teams.value.find((teams) => teams.id === value);
-    return team ? `${team.name} (Team Leader - ${team.teamLeader.name})` : `${value} <span class="text-danger">(Deleted)</span>`;
+    return team
+      ? `${team.name} (Team Leader - ${team.teamLeader.firstName} ${team.teamLeader.lastName})`
+      : `${value} <span class="text-danger">(Deleted)</span>`;
   }
 
   return value.toString();

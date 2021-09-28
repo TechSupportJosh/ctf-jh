@@ -20,14 +20,14 @@ const getConfig = async () => {
   if (response.status === 200) return response.data;
 };
 
-const getUser = async () => {
+const getSelf = async () => {
   const response = await client.get<User>(`/me`);
 
   if (response.status === 200) return response.data;
 };
 
-const getStats = async () => {
-  const response = await client.get<SolveStats[]>(`/me/stats`);
+const getStats = async (userId: number) => {
+  const response = await client.get<SolveStats[]>(`/users/${userId}/stats`);
 
   if (response.status === 200) return response.data;
 };
@@ -48,6 +48,12 @@ const deleteSession = async (sessionId: number) => {
   const response = await client.delete(`/me/sessions/${sessionId}`);
 
   return response.status === 200;
+};
+
+const getUser = async (userId: number) => {
+  const response = await client.get<User>(`/users/${userId}`);
+
+  if (response.status === 200) return response.data;
 };
 
 const getChallenges = async () => {
@@ -214,12 +220,13 @@ const updateConfig = async (config: Config) => {
 
 export default {
   getConfig,
-  getUser,
+  getSelf,
   getChallenges,
   getStats,
   getSessions,
   deleteSessions,
   deleteSession,
+  getUser,
   submitFlag,
   getRecentSolves,
   joinTeam,

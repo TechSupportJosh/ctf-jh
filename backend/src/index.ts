@@ -23,6 +23,7 @@ import { challengeRouter } from "./routes/challenges";
 import { leaderboardRouter } from "./routes/leaderboard";
 import { teamsRouter } from "./routes/teams";
 import { selfRouter } from "./routes/self";
+import { usersRouter } from "./routes/users";
 import { updateStats } from "./utils/statsCron";
 import { Configuration } from "./utils/config";
 import { addSSEClient, removeSSEClient } from "./utils/sse";
@@ -46,6 +47,7 @@ router.use("/auth", authRouter);
 router.use("/challenges", isAuthenticated(), challengeRouter);
 router.use("/teams", isAuthenticated(), teamsRouter);
 router.use("/leaderboard", isAuthenticated(), leaderboardRouter);
+router.use("/users", isAuthenticated(), usersRouter);
 router.use("/admin", isAdmin(), adminRouter);
 router.use("/me", isAuthenticated(), selfRouter);
 

@@ -27,7 +27,7 @@
       </thead>
       <tbody>
         <tr v-for="member in team.members">
-          <th scope="row">{{ member.name }}</th>
+          <th scope="row">{{ member.firstName }} {{ member.lastName }}</th>
           <td>{{ member.stats?.points }}</td>
           <td>{{ member.stats?.solves }}</td>
           <td>{{ member.stats?.bloods }}</td>
@@ -136,7 +136,7 @@ const deleteTeam = async () => {
 };
 
 const kickMember = async (member: TeamMember) => {
-  if (!confirm(`Are you sure you want to kick ${member.name}? This action is irreversible.`)) return;
+  if (!confirm(`Are you sure you want to kick ${member.firstName} ${member.lastName}? This action is irreversible.`)) return;
 
   const response = await API.kickTeamMember(team.value!.id, member.id);
 

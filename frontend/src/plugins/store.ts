@@ -25,6 +25,10 @@ const store = new Vuex.Store<State>({
       startTime: "",
       endTime: "",
       maintenance: false,
+      scoringType: "static",
+      dynamicScoreReduction: 5,
+      dynamicScoreMinSolves: 3,
+      dynamicScoreMaxSolves: 10,
     },
   },
   mutations: {
@@ -54,7 +58,7 @@ const store = new Vuex.Store<State>({
       });
     },
     async loadUser(context) {
-      const user = await API.getUser();
+      const user = await API.getSelf();
       context.commit("setUser", user);
     },
     async loadTeam(context) {

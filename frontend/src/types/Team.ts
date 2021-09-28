@@ -3,7 +3,8 @@ import { AttemptStats, SolveStats, Stats } from "./Stats";
 
 export interface TeamMember {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
   stats: Stats;
   solveAttempts: AttemptStats;
   solvedChallenges: UserChallengeSolve[];

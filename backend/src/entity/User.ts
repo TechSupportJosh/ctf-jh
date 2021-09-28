@@ -49,7 +49,8 @@ export class User extends BaseEntity {
   toPublicJSON(withStats: boolean) {
     let json: Record<string, any> = {
       id: this.id,
-      name: `${this.firstName} ${this.lastName[0]}`,
+      firstName: this.firstName,
+      lastName: this.lastName[0],
     };
 
     if (withStats && this.solvedChallenges)

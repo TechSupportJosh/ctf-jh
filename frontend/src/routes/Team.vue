@@ -21,7 +21,7 @@
         class="team-member"
         :class="member.id === team.teamLeader.id ? 'border-warning' : 'border-primary'"
       >
-        <strong>{{ member.name }}</strong
+        <strong>{{ member.firstName }} {{ member.lastName }}</strong
         ><br />
         <div class="text-muted">{{ member.stats?.points }} Points - {{ member.stats?.bloods }} Bloods</div>
       </div>
@@ -49,7 +49,10 @@
           <tbody>
             <tr v-for="solve in solvedChallenges">
               <th scope="row">{{ new Date(solve.solveDate).toLocaleString() }}</th>
-              <td>{{ team.members.find((user) => user.id === solve.userId)?.name }}</td>
+              <td>
+                {{ team.members.find((user) => user.id === solve.userId)?.firstName }}&nbsp;
+                {{ team.members.find((user) => user.id === solve.userId)?.lastName }}
+              </td>
               <td>{{ challenges.find((challenge) => challenge.id === solve.challengeId)?.title }}</td>
               <td>{{ challenges.find((challenge) => challenge.id === solve.challengeId)?.category }}</td>
               <td>{{ challenges.find((challenge) => challenge.id === solve.challengeId)?.points }}</td>
