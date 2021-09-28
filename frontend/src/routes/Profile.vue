@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import store from "../plugins/store";
 import API from "../utils/api";
 import StatsGraph from "../components/graphs/StatsGraph.vue";
@@ -84,6 +84,17 @@ onMounted(async () => {
 
   if (response) stats.value = response;
 });
+
+// As user is not a computedRef here, we have to watch for it
+watch(
+  () => store.state.user,
+  () => {
+    // if we're not viewing our own profile, we don't need to update the user ref
+    if (!isSelf) return;
+
+    user.value = store.state.user;
+  }
+);
 
 const pointTotal = computed(() => {
   return user.value?.solvedChallenges
