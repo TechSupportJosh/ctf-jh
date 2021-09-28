@@ -5,6 +5,7 @@ import { Team } from "../entity/Team";
 import { User } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { Configuration } from "../utils/config";
+import { EventType, logEvent } from "../utils/log";
 
 const router = express.Router();
 
@@ -56,6 +57,12 @@ router.post("/:teamId/invite-code", async (req, res) => {
   team.createInviteCode();
   await team.save();
 
+  logEvent(EventType.TeamInviteGenerated, {
+    "user:teamLeaderId": req.user!.id,
+    "team:teamId": team.id,
+    inviteCode: team.inviteCode,
+  });
+
   return res.json({
     inviteCode: team.inviteCode,
   });
@@ -77,6 +84,11 @@ router.delete("/:teamId", async (req, res) => {
 
   await Promise.all(memberUpdate);
   await team.remove();
+
+  logEvent(EventType.TeamDisbanded, {
+    "user:teamLeaderId": req.user!.id,
+    "team:teamId": team.id,
+  });
 
   return res.json({
     message: "Team was successfully disbanded.",
@@ -100,6 +112,12 @@ router.post("/:teamId/kick/:userId", async (req, res) => {
 
   user.team = null;
   await user.save();
+
+  logEvent(EventType.TeamMemberKicked, {
+    "user:teamLeaderId": req.user!.id,
+    "team:teamId": team.id,
+    "user:userId": user.id,
+  });
 
   return res.json({
     message: "User successfully kicked from the team.",
@@ -128,6 +146,11 @@ router.post("/", validator(TeamDTO), async (req, res) => {
 
   req.user!.team = team;
   await req.user!.save();
+
+  logEvent(EventType.TeamCreated, {
+    "user:teamLeaderId": req.user!.id,
+    "team:teamId": team.id,
+  });
 
   return res.status(200).json({ message: "Team created." });
 });
@@ -165,6 +188,12 @@ router.post("/join", validator(TeamJoinDTO), joinLimiter, async (req, res) => {
   req.user!.team = team;
   await req.user!.save();
 
+  logEvent(EventType.TeamMemberJoined, {
+    "user:userId": req.user!.id,
+    "team:teamId": team.id,
+    inviteCode: team.inviteCode,
+  });
+
   return res.json({ message: "You've joined the team." });
 });
 
@@ -177,8 +206,15 @@ router.post("/leave", async (req, res) => {
   if (req.user!.team.teamLeader.id == req.user!.id)
     return res.status(400).json({ message: "You cannot leave the team as the team leader." });
 
+  const teamId = req.user!.team.id;
+
   req.user!.team = null;
   await req.user!.save();
+
+  logEvent(EventType.TeamMemberLeft, {
+    "user:userId": req.user!.id,
+    "team:teamId": teamId,
+  });
 
   return res.json({ message: "You've left the team." });
 });

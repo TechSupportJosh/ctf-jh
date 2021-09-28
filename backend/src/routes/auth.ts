@@ -6,6 +6,7 @@ import { validator } from "../middlewares/validator";
 import { LoginDTO } from "../dto/Login";
 import { verifyPassword } from "../utils/password";
 import { randomBytes } from "crypto";
+import { EventType, logEvent } from "../utils/log";
 
 const router = express.Router();
 
@@ -27,6 +28,12 @@ const createAuth = async (req: express.Request, user: User) => {
   const cookieValue = randomBytes(32).toString("base64");
   const expiryDate = new Date();
   expiryDate.setDate(new Date().getDate() + daysBeforeExpires);
+
+  logEvent(EventType.AuthSuccess, {
+    "user:userId": user.id,
+    userAgent: req.headers["user-agent"] ?? "N/A",
+    ipAddress: req.ip,
+  });
 
   return await UserAuth.create({
     user: user,

@@ -7,6 +7,7 @@ import { Team } from "../entity/Team";
 import { UserSolveAttempt, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { Configuration } from "../utils/config";
+import { EventType, logEvent } from "../utils/log";
 import { sendEvent } from "../utils/sse";
 import { sendWebhook } from "../utils/webhook";
 
@@ -118,6 +119,9 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
       userTeam.members.filter((member) => member.id !== req.user!.id).map((member) => member.id)
     );
   }
+
+  logEvent(EventType.UserSolvedChallenge, { "user:userId": req.user!.id, "challenge:challengeId": challenge.id });
+
   return res.status(200).json({ isBlood: solvedChallenge.isBlood });
 });
 

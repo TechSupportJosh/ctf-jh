@@ -2,6 +2,7 @@ import express from "express";
 import { promisify } from "util";
 import { User, UserAuth } from "../entity/User";
 import { isAuthenticated } from "../middlewares/auth";
+import { EventType, logEvent } from "../utils/log";
 
 const router = express.Router();
 
@@ -30,6 +31,8 @@ router.delete("/sessions", isAuthenticated(), async (req, res) => {
 
   await Promise.all(sessions.map((session) => session.remove()));
 
+  logEvent(EventType.UserDeletedSessions, { "user:userId": req.user!.id });
+
   return res.status(200).send({ message: "Sessions deleted." });
 });
 
@@ -39,6 +42,8 @@ router.delete("/sessions/:authId", isAuthenticated(), async (req, res) => {
   if (!userAuth) return res.status(404).send({ message: "This session does not exist." });
 
   await userAuth.remove();
+
+  logEvent(EventType.UserDeletedSession, { "user:userId": req.user!.id });
 
   return res.status(200).send({ message: "Session deleted." });
 });

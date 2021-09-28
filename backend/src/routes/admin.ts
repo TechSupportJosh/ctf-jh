@@ -14,6 +14,8 @@ import { ConfigDTO } from "../dto/Config";
 import { Config } from "../entity/Config";
 import { sendEvent } from "../utils/sse";
 import { Configuration } from "../utils/config";
+import { EventType, logEvent } from "../utils/log";
+import { Log } from "../entity/Log";
 
 const router = express.Router();
 
@@ -108,6 +110,8 @@ router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), asy
 
   sendEvent("fetch", ["challenges"]);
 
+  logEvent(EventType.ChallengeUpdated, { "user:adminId": req.user!.id, "challenge:challengeId": challenge.id });
+
   res.redirect(303, "/admin?success=challenge-updated");
 });
 
@@ -119,6 +123,12 @@ router.delete("/challenges/:challengeId", async (req, res) => {
 
   await challenge.remove();
 
+  logEvent(EventType.ChallengeDeleted, {
+    "user:adminId": req.user!.id,
+    "challenge:challengeId": challenge.id,
+    challengeTitle: challenge.title,
+  });
+
   return res.sendStatus(200);
 });
 
@@ -127,6 +137,11 @@ router.delete("/challenges/:challengeId/solves", async (req, res) => {
   if (!challenge) return res.status(404);
 
   await Promise.all(challenge.solves.map((solve) => solve.remove()));
+
+  logEvent(EventType.ChallengeSolvesDeleted, {
+    "user:adminId": req.user!.id,
+    "challenge:challengeId": challenge.id,
+  });
 
   return res.sendStatus(200);
 });
@@ -170,6 +185,8 @@ router.post("/users", validator(UserDTO), async (req, res) => {
 
   await user.save();
 
+  logEvent(EventType.UserCreated, { "user:adminId": req.user!.id, "user:userId": user.id });
+
   res.redirect(303, "/admin?success=user-updated");
 });
 
@@ -181,6 +198,8 @@ router.delete("/users/:userId", async (req, res) => {
 
   await user.remove();
 
+  logEvent(EventType.UserDeleted, { "user:adminId": req.user!.id, "user:userId": user.id });
+
   return res.sendStatus(200);
 });
 
@@ -190,6 +209,8 @@ router.delete("/users/:userId/submissions", async (req, res) => {
 
   await Promise.all(user.solvedChallenges.map((solve) => solve.remove()));
 
+  logEvent(EventType.UserSolvesDeleted, { "user:adminId": req.user!.id, "user:userId": user.id });
+
   return res.sendStatus(200);
 });
 
@@ -197,7 +218,26 @@ router.put("/config", validator(ConfigDTO), async (req, res) => {
   await Config.createQueryBuilder("config").update(res.locals.dto).execute();
   await Configuration.update();
   sendEvent("fetch", ["config", "challenges"]);
+
+  logEvent(EventType.ConfigUpdated, { "user:adminId": req.user!.id });
+
   return res.sendStatus(200);
+});
+
+router.get("/logs", async (req, res) => {
+  const page = parseInt((req.query["page"] ?? "0").toString());
+  const limit = parseInt((req.query["limit"] ?? "20").toString());
+
+  if (isNaN(page) || page < 0) return res.status(400).json({ message: "Invalid page." });
+  if (isNaN(limit) || limit < 0 || limit > 100) return res.status(400).json({ message: "Invalid limit." });
+
+  const logCount = await Log.count();
+  const data = await Log.find({ skip: page * limit, take: limit });
+
+  return res.json({
+    count: logCount,
+    data: data,
+  });
 });
 
 export const adminRouter = router;
