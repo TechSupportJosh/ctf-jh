@@ -19,7 +19,8 @@ export interface UserLeaderboardStats {
   leaderboard: {
     user: {
       id: number;
-      name: string;
+      firstName: string;
+      lastName: string;
     };
     stats: Stats;
   }[];

@@ -42,7 +42,11 @@
         <tbody>
           <tr v-for="(entry, index) in leaderboardData?.leaderboard">
             <th scope="row">{{ index + 1 }}</th>
-            <td>{{ "team" in entry ? entry.team.name : entry.user.name }}</td>
+            <td>
+              <a :href="`/${'team' in entry ? 'team' : 'profile'}/${'team' in entry ? entry.team.id : entry.user.id}`">{{
+                "team" in entry ? entry.team.name : `${entry.user.firstName} ${entry.user.lastName}`
+              }}</a>
+            </td>
             <td class="text-center">{{ entry.stats.solves }}</td>
             <td :class="entry.stats.bloods ? 'text-danger fw-bold' : ''" class="text-center">{{ entry.stats.bloods }}</td>
             <td class="text-center">{{ entry.stats.points }}</td>

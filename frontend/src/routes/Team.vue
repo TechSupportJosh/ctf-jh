@@ -21,7 +21,8 @@
         class="team-member"
         :class="member.id === team.teamLeader.id ? 'border-warning' : 'border-primary'"
       >
-        <strong>{{ member.firstName }} {{ member.lastName }}</strong
+        <a :href="`/profile/${member.id}`" class="text-white"
+          ><strong>{{ member.firstName }} {{ member.lastName }}</strong></a
         ><br />
         <div class="text-muted">{{ member.stats?.points }} Points - {{ member.stats?.bloods }} Bloods</div>
       </div>

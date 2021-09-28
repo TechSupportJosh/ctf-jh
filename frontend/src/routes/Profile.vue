@@ -69,7 +69,7 @@ onMounted(async () => {
   const route = useRoute();
   if (route.params["profileId"]) {
     const profileId = parseInt(route.params["profileId"].toString());
-    if (!isNaN(profileId)) {
+    if (!isNaN(profileId) && profileId !== store.state.user?.id) {
       const response = await API.getUser(profileId);
       if (response) user.value = response;
     }
