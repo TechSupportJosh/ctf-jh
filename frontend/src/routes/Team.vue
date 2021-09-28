@@ -1,13 +1,21 @@
 <template>
   <div class="row">
     <div class="col-12">
-      <h3>Team Dashboard {{ user.team ? ` - ${user.team.name}` : "" }}</h3>
+      <h3>{{ isSelf ? "Your" : "Viewing" }} Team</h3>
     </div>
   </div>
-  <hr />
-  <div v-if="user.team">
+  <div v-if="user.team || !isSelf">
     <template v-if="!team">Loading...</template>
     <template v-else>
+      <hr />
+      <h3 class="text-center">
+        <strong>{{ team.name }}</strong>
+      </h3>
+      <h3 class="text-center">{{ pointTotal }} Points</h3>
+      <h5 class="text-center">
+        {{ solvedChallenges.length }} Solves - {{ solvedChallenges.filter((solvedChallenge) => solvedChallenge.isBlood).length }} Bloods
+      </h5>
+      <hr />
       <div class="row">
         <div class="col-9">
           <h4 class="mb-3">Members ({{ team.members.length }} / {{ store.state.config.maxTeamSize }})</h4>
@@ -64,7 +72,7 @@
       <template v-else>
         <p class="text-muted text-center">Your team's stats will appear once the CTF has started.</p>
       </template>
-      <template v-if="user.id !== team.teamLeader.id && !hasCTFStarted">
+      <template v-if="user.id !== team.teamLeader.id && !hasCTFStarted && isSelf">
         <hr />
         <h4 class="text-center">Leave Team</h4>
         <div class="alert alert-danger" v-if="leaveTeamError"><strong>An error occured: </strong>{{ leaveTeamError }}</div>
@@ -104,7 +112,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import CreateTeam from "../components/CreateTeam.vue";
 import CategoryBreakdownGraph from "../components/graphs/CategoryBreakdownGraph.vue";
 import TeamBreakdownGraph from "../components/graphs/TeamBreakdownGraph.vue";
@@ -116,10 +124,12 @@ import type { UserChallengeSolve } from "../types/Challenge";
 import type { AttemptStats } from "../types/Stats";
 import API from "../utils/api";
 import { hasCTFStarted } from "../utils/status";
+import type { Team } from "../types/Team";
+import { useRoute } from "vue-router";
 
 const user = computed(() => store.state.user!);
 const challenges = computed(() => store.state.challenges);
-const team = computed(() => store.state.team);
+const team = ref<Team>();
 
 const currentForm = ref<"joinTeam" | "createTeam">();
 const leaveTeamError = ref("");
@@ -129,6 +139,35 @@ const solveAttempts = ref<AttemptStats>({
   incorrect: 0,
 });
 const solvedChallenges = ref<UserChallengeSolve[]>([]);
+
+const isSelf = ref(false);
+
+onMounted(async () => {
+  const route = useRoute();
+  if (route.params["teamId"]) {
+    const teamId = parseInt(route.params["teamId"].toString());
+    if (!isNaN(teamId) && teamId !== store.state.team?.id) {
+      const response = await API.getTeam(teamId);
+      if (response) team.value = response;
+    }
+  }
+
+  if (!team.value) {
+    team.value = store.state.team;
+    isSelf.value = true;
+  }
+});
+
+// As team is not a computedRef here, we have to watch for it
+watch(
+  () => store.state.team,
+  () => {
+    // if we're not viewing our own team, we don't need to update the team ref
+    if (!isSelf) return;
+
+    team.value = store.state.team;
+  }
+);
 
 watch(
   team,
@@ -157,6 +196,14 @@ const leaveTeam = async () => {
     leaveTeamError.value = response.message;
   }
 };
+
+const pointTotal = computed(() => {
+  return solvedChallenges.value
+    .map((solvedChallenge) => {
+      return challenges.value.find((challenge) => challenge.id === solvedChallenge.challengeId)?.points ?? 0;
+    })
+    .reduce((value, total) => total + value, 0);
+});
 </script>
 
 <style scoped>

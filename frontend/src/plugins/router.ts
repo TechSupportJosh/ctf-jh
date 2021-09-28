@@ -44,7 +44,7 @@ const routes: RouteRecordRaw[] = [
         component: Challenges,
       },
       {
-        path: "/team",
+        path: "/team/:teamId?",
         component: Team,
       },
       {
