@@ -6,6 +6,7 @@ import { AdminStats, SolveStats, Stats, TeamLeaderboardStats, UserLeaderboardSta
 import { RecentSolve } from "../types/RecentSolve";
 import { Team } from "../types/Team";
 import { Config } from "../types/Config";
+import { Log } from "../types/Log";
 
 const client = axios.create({
   baseURL: config.basePath + "api",
@@ -112,12 +113,6 @@ const deleteTeam = async (teamId: number) => {
   };
 };
 
-const getTeams = async () => {
-  const response = await client.get<Team[]>(`/teams`);
-
-  if (response.status === 200) return response.data;
-};
-
 const getTeam = async (teamId: number) => {
   const response = await client.get<Team>(`/teams/${teamId}`);
 
@@ -187,6 +182,18 @@ const getAdminUsers = async () => {
   if (response.status === 200) return response.data;
 };
 
+const getAdminLogs = async (page: number, count: number) => {
+  const response = await client.get<{ count: number; data: Log[] }>(`/admin/logs`, { params: { page: page, limit: count } });
+
+  if (response.status === 200) return response.data;
+};
+
+const getAdminTeams = async () => {
+  const response = await client.get<Team[]>(`/admin/teams`);
+
+  if (response.status === 200) return response.data;
+};
+
 const deleteUser = async (userId: number) => {
   const response = await client.delete(`/admin/users/${userId}`);
 
@@ -219,7 +226,7 @@ export default {
   createTeam,
   leaveTeam,
   deleteTeam,
-  getTeams,
+  getAdminTeams,
   getTeam,
   getInviteCode,
   createInviteCode,
@@ -227,6 +234,7 @@ export default {
   getUserLeaderboard,
   getTeamLeaderboard,
   getAdminChallenges,
+  getAdminLogs,
   deleteChallenge,
   deleteChallengeSolves,
   getAdminStats,

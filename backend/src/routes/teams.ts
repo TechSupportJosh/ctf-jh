@@ -9,19 +9,6 @@ import { EventType, logEvent } from "../utils/log";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
-  const teams = await Team.createQueryBuilder("team")
-    .leftJoinAndSelect("team.members", "members")
-    .leftJoinAndSelect("team.teamLeader", "teamLeader")
-    .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
-    .leftJoinAndSelect("members.solveAttempts", "solveAttempts")
-    .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
-    .leftJoinAndSelect("challenge.solves", "solves")
-    .getMany();
-
-  return res.json(teams);
-});
-
 router.get("/:teamId", async (req, res) => {
   const team = await Team.createQueryBuilder("team")
     .where("team.id = :teamId", { teamId: req.params.teamId })
@@ -31,7 +18,9 @@ router.get("/:teamId", async (req, res) => {
     .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
     .leftJoinAndSelect("members.solveAttempts", "solveAttempts")
     .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
-    .leftJoinAndSelect("challenge.solves", "solves")
+    // For dynamic scoring, we only need the number of solves, therefore we only select the id
+    .leftJoin("challenge.solves", "solves")
+    .addSelect("solves.solvedChallengeId")
     .getOne();
 
   if (!team) return res.sendStatus(404);

@@ -9,6 +9,7 @@
       <li class="nav-item"><router-link to="/admin" class="nav-link" exact-active-class="active">Home</router-link></li>
       <li class="nav-item"><router-link to="/admin/users" class="nav-link" active-class="active">Users</router-link></li>
       <li class="nav-item"><router-link to="/admin/challenges" class="nav-link" active-class="active">Challenges</router-link></li>
+      <li class="nav-item"><router-link to="/admin/logs" class="nav-link" active-class="active">Logs</router-link></li>
       <hr />
       <div class="w-100 text-center">
         <strong>{{ user?.firstName }} {{ user?.lastName }}</strong

@@ -16,6 +16,7 @@ import store from "./store";
 import AdminHome from "../components/admin/Home.vue";
 import ChallengeEditor from "../components/admin/ChallengeEditor.vue";
 import UserEditor from "../components/admin/UserEditor.vue";
+import Logs from "../components/admin/Logs.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -76,6 +77,10 @@ const routes: RouteRecordRaw[] = [
           {
             path: "challenges",
             component: ChallengeEditor,
+          },
+          {
+            path: "logs",
+            component: Logs,
           },
         ],
       },

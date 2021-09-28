@@ -16,6 +16,7 @@ import { sendEvent } from "../utils/sse";
 import { Configuration } from "../utils/config";
 import { EventType, logEvent } from "../utils/log";
 import { Log } from "../entity/Log";
+import { Team } from "../entity/Team";
 
 const router = express.Router();
 
@@ -238,6 +239,19 @@ router.get("/logs", async (req, res) => {
     count: logCount,
     data: data,
   });
+});
+
+router.get("/teams", async (req, res) => {
+  const teams = await Team.createQueryBuilder("team")
+    .leftJoinAndSelect("team.members", "members")
+    .leftJoinAndSelect("team.teamLeader", "teamLeader")
+    .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
+    .leftJoinAndSelect("members.solveAttempts", "solveAttempts")
+    .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
+    .leftJoinAndSelect("challenge.solves", "solves")
+    .getMany();
+
+  return res.json(teams);
 });
 
 export const adminRouter = router;
