@@ -85,7 +85,7 @@ app.use("/api", router);
     type: "sqlite",
     database: "database.db",
     synchronize: true,
-    entities: [path.join(__dirname, "entity", "*.js"), path.join(__dirname, "src", "entity", "*.ts")],
+    entities: [path.join(__dirname, "entity", "*.js"), path.join(__dirname, "entity", "*.ts")],
   });
 
   // Initialise config singleton
