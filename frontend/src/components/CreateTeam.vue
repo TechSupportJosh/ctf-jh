@@ -43,6 +43,7 @@ const createTeam = async () => {
   if (response.statusCode === 200) {
     submissionError.value = "";
     await store.dispatch("loadUser");
+    await store.dispatch("loadTeam");
   } else {
     submissionError.value = response.message;
   }
