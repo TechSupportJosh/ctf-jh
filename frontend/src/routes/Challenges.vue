@@ -87,7 +87,7 @@ const getRequiredChallenge = ({ unlockRequirement }: Challenge) => {
 const filteredChallenges = computed(() => {
   const selectedChallenges = challenges.value
     .filter((challenge) => challenge.category === category.value && showDifficulty[challenge.difficulty])
-    .sort((a, b) => a.title.localeCompare(b.title) || a.difficulty.localeCompare(b.difficulty));
+    .sort((a, b) => (a.locked ? 1 : 0) - (b.locked ? 1 : 0) || a.title.localeCompare(b.title) || a.difficulty.localeCompare(b.difficulty));
 
   if (!store.state.hideSolvedChallenges) return selectedChallenges;
 
