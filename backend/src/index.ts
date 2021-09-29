@@ -42,6 +42,11 @@ app.use(
 );
 app.use(morgan(process.env.NODE_ENV === "production" ? "common" : "dev"));
 
+if (process.env.EXPRESS_TRUST_PROXIES === "true") {
+  app.enable("trust proxy");
+  console.log("Express proxy trust has been enabled. Ensure that your proxies correctly validate and sanitise X-Forwarded-For headers.");
+}
+
 const router = express.Router();
 router.use("/auth", authRouter);
 router.use("/challenges", isAuthenticated(), challengeRouter);
