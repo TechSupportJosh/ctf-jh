@@ -38,23 +38,34 @@ const store = new Vuex.Store<State>({
     setTeam(state, team) {
       state.team = team;
     },
+    setChallenges(state, { challenges, categories }) {
+      state.challenges = challenges;
+      state.categories = categories;
+    },
+    setConfig(state, config) {
+      state.config = config;
+    },
   },
   actions: {
     async loadChallenges(context) {
       if (!context.state.user) return;
 
-      const response = await API.getChallenges();
+      const challenges = await API.getChallenges();
 
-      if (!response) return;
+      if (!challenges) return;
 
-      context.state.challenges = response;
-      context.state.categories = {};
+      const categories: Record<string, number> = {};
 
       // Store the count for each category
-      context.state.challenges.forEach((challenge) => {
-        if (!(challenge.category in context.state.categories)) context.state.categories[challenge.category] = 0;
+      challenges.forEach((challenge) => {
+        if (!(challenge.category in categories)) categories[challenge.category] = 0;
 
-        context.state.categories[challenge.category]++;
+        categories[challenge.category]++;
+      });
+
+      context.commit("setChallenges", {
+        challenges,
+        categories,
       });
     },
     async loadUser(context) {
@@ -71,7 +82,7 @@ const store = new Vuex.Store<State>({
     },
     async loadConfig(context) {
       const config = await API.getConfig();
-      if (config) context.state.config = config;
+      if (config) context.commit("setConfig", config);
     },
   },
 });
