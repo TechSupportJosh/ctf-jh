@@ -6,7 +6,8 @@ import { validator } from "../middlewares/validator";
 import { LoginDTO } from "../dto/Login";
 import { verifyPassword } from "../utils/password";
 import { randomBytes } from "crypto";
-import { EventType, logEvent } from "../utils/log";
+import { logEvent } from "../utils/log";
+import { EventType } from "../entity/Log";
 
 const router = express.Router();
 

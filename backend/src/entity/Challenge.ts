@@ -3,8 +3,8 @@ import { Configuration } from "../utils/config";
 import { UserSolvedChallenge } from "./User";
 
 export enum FlagType {
-  STRING = "string",
-  LOCATION = "location",
+  String = "string",
+  Location = "location",
 }
 
 @Entity()
@@ -32,8 +32,9 @@ export class Challenge extends BaseEntity {
 
   @Column({
     type: "simple-enum",
+    enum: FlagType,
   })
-  flagType!: string;
+  flagType!: FlagType;
 
   @Column()
   flag!: string;

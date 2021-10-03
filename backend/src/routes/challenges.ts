@@ -3,11 +3,12 @@ import rateLimit from "express-rate-limit";
 import { getDistance } from "geolib";
 import { FlagSubmissionDTO } from "../dto/FlagSubmission";
 import { Challenge, FlagType } from "../entity/Challenge";
+import { EventType } from "../entity/Log";
 import { Team } from "../entity/Team";
 import { UserSolveAttempt, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { Configuration } from "../utils/config";
-import { EventType, logEvent } from "../utils/log";
+import { logEvent } from "../utils/log";
 import { sendEvent } from "../utils/sse";
 import { sendWebhook } from "../utils/webhook";
 
@@ -66,12 +67,12 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
   if (challenge.unlockRequirement && !req.user?.hasSolvedChallenge(challenge.unlockRequirement))
     return res.status(400).json({ message: "Challenge is locked." });
 
-  if (challenge.flagType === FlagType.STRING && challenge.flag !== flag) {
+  if (challenge.flagType === FlagType.String && challenge.flag !== flag) {
     await UserSolveAttempt.create({ challenge: challenge, user: req.user, correct: false }).save();
     return res.status(400).json({ message: "Incorrect flag." });
   }
 
-  if (challenge.flagType === FlagType.LOCATION) {
+  if (challenge.flagType === FlagType.Location) {
     // Firstly attempt to split up their flag
     const [latitudeString, longitudeString] = flag.split(",");
     const latitude = parseFloat(latitudeString);

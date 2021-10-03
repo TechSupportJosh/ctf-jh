@@ -1,11 +1,12 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import { TeamDTO, TeamJoinDTO } from "../dto/Team";
+import { EventType } from "../entity/Log";
 import { Team } from "../entity/Team";
 import { User } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { Configuration } from "../utils/config";
-import { EventType, logEvent } from "../utils/log";
+import { logEvent } from "../utils/log";
 
 const router = express.Router();
 

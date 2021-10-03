@@ -1,8 +1,7 @@
 import express from "express";
-import { promisify } from "util";
-import { User, UserAuth } from "../entity/User";
-import { isAuthenticated } from "../middlewares/auth";
-import { EventType, logEvent } from "../utils/log";
+import { EventType } from "../entity/Log";
+import { UserAuth } from "../entity/User";
+import { logEvent } from "../utils/log";
 
 const router = express.Router();
 

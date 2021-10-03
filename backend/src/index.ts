@@ -86,9 +86,13 @@ router.use("/static", express.static("uploads"));
 app.use("/api", router);
 
 (async () => {
+  console.log(process.env);
   const connection: Connection = await createConnection({
-    type: "sqlite",
-    database: "database.db",
+    type: (process.env.DATABASE_TYPE as any) ?? "sqlite",
+    database: process.env.DATABASE_DB ?? "database.db",
+    host: process.env.DATABASE_HOST ?? "",
+    username: process.env.DATABASE_USER ?? "",
+    password: process.env.DATABASE_PASS ?? "",
     synchronize: true,
     entities: [path.join(__dirname, "entity", "*.js"), path.join(__dirname, "entity", "*.ts")],
   });

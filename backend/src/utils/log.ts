@@ -1,24 +1,4 @@
-import { Log } from "../entity/Log";
-
-export enum EventType {
-  AuthSuccess = "auth-success",
-  ChallengeUpdated = "challenge-updated",
-  ChallengeDeleted = "challenge-deleted",
-  ChallengeSolvesDeleted = "challenge-solves-deleted",
-  UserCreated = "user-created",
-  UserDeleted = "user-deleted",
-  UserSolvesDeleted = "user-solves-deleted",
-  UserSolvedChallenge = "user-solved-challenge",
-  UserDeletedSessions = "user-deleted-sessions",
-  UserDeletedSession = "user-deleted-session",
-  ConfigUpdated = "config-updated",
-  TeamInviteGenerated = "team-invite-generated",
-  TeamCreated = "team-created",
-  TeamDisbanded = "team-disbanded",
-  TeamMemberJoined = "team-member-join",
-  TeamMemberKicked = "team-member-kicked",
-  TeamMemberLeft = "team-member-left",
-}
+import { EventType, Log } from "../entity/Log";
 
 interface Events {
   [EventType.AuthSuccess]: AuthSuccess;

@@ -2,7 +2,7 @@ import express from "express";
 import md5File from "md5-file";
 import multer from "multer";
 import { ChallengeDTO } from "../dto/Challenge";
-import { Challenge, ChallengeTag, EducationResource } from "../entity/Challenge";
+import { Challenge, ChallengeTag, EducationResource, FlagType } from "../entity/Challenge";
 import { User, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import path from "path";
@@ -14,8 +14,8 @@ import { ConfigDTO } from "../dto/Config";
 import { Config } from "../entity/Config";
 import { sendEvent } from "../utils/sse";
 import { Configuration } from "../utils/config";
-import { EventType, logEvent } from "../utils/log";
-import { Log } from "../entity/Log";
+import { logEvent } from "../utils/log";
+import { EventType, Log } from "../entity/Log";
 import { Team } from "../entity/Team";
 
 const router = express.Router();
@@ -61,7 +61,7 @@ router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), asy
   challenge.author = dto.author;
   challenge.category = dto.category;
   challenge.points = dto.points;
-  challenge.flagType = dto.flagType;
+  challenge.flagType = dto.flagType as FlagType;
   challenge.flag = dto.flag;
   challenge.difficulty = dto.difficulty;
   challenge.hint = dto.hint;
