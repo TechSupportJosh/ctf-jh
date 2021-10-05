@@ -20,11 +20,8 @@ export class ConfigDTO {
   scoringType!: "static" | "dynamic";
 
   @(jf.number().integer().min(0))
-  dynamicScoreReduction!: number;
+  dynamicScoreMinPoints!: number;
 
   @(jf.number().integer().min(0))
-  dynamicScoreMaxSolves!: number;
-
-  @(jf.number().integer().min(0))
-  dynamicScoreMinSolves!: number;
+  dynamicScoreDecay!: number;
 }

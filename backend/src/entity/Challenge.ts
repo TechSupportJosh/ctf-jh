@@ -73,13 +73,13 @@ export class Challenge extends BaseEntity {
 
   getEffectivePoints() {
     const config = Configuration.get();
-    return config.scoringType === "dynamic" && this.solves.length > config.dynamicScoreMinSolves
-      ? Math.max(
-          this.points -
-            Math.min(config.dynamicScoreMaxSolves, this.solves.length - config.dynamicScoreMinSolves) * config.dynamicScoreReduction,
-          0
-        )
-      : this.points;
+    if (config.scoringType === "static") return this.points;
+
+    // Ensure that we can never go below minimium points
+    return Math.max(
+      ((config.dynamicScoreMinPoints - this.points) / config.dynamicScoreDecay ** 2) * this.solves.length ** 2 + this.points,
+      config.dynamicScoreMinPoints
+    );
   }
 
   toJSON() {

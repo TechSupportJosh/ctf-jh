@@ -108,21 +108,15 @@
     <template v-if="config.scoringType === 'dynamic'">
       <div class="mb-3 row">
         <label class="col-sm-3 col-form-label"
-          >Dynamic Scoring Point Reduction<label class="form-text">Number of points subtracted for each solve.</label></label
+          >Dynamic Scoring Decay<label class="form-text">The amount of solves before points will be at a minimum.</label></label
         >
-        <div class="col-sm-9"><input type="number" class="form-control" v-model="config.dynamicScoreReduction" /></div>
+        <div class="col-sm-9"><input type="number" class="form-control" v-model="config.dynamicScoreDecay" /></div>
       </div>
       <div class="mb-3 row">
         <label class="col-sm-3 col-form-label"
-          >Dynamic Scoring Max Solves<label class="form-text">Number of solves to substract points for.</label></label
+          >Dynamic Scoring Minimum Points<label class="form-text">The minimum amount of points a challenge can be worth.</label></label
         >
-        <div class="col-sm-9"><input type="number" class="form-control" v-model="config.dynamicScoreMaxSolves" /></div>
-      </div>
-      <div class="mb-3 row">
-        <label class="col-sm-3 col-form-label"
-          >Dynamic Scoring Min Solves<label class="form-text">Minimum number of solves before substracting points.</label></label
-        >
-        <div class="col-sm-9"><input type="number" class="form-control" v-model="config.dynamicScoreMinSolves" /></div>
+        <div class="col-sm-9"><input type="number" class="form-control" v-model="config.dynamicScoreMinPoints" /></div>
       </div>
     </template>
     <button class="btn btn-success" @click="updateConfig">Update Settings</button>
