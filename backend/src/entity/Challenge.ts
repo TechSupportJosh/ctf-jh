@@ -77,7 +77,7 @@ export class Challenge extends BaseEntity {
 
     // Ensure that we can never go below minimium points
     return Math.max(
-      ((config.dynamicScoreMinPoints - this.points) / config.dynamicScoreDecay ** 2) * this.solves.length ** 2 + this.points,
+      Math.ceil(((config.dynamicScoreMinPoints - this.points) / config.dynamicScoreDecay ** 2) * this.solves.length ** 2 + this.points),
       config.dynamicScoreMinPoints
     );
   }
