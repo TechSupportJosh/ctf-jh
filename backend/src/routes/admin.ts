@@ -233,7 +233,7 @@ router.get("/logs", async (req, res) => {
   if (isNaN(limit) || limit < 0 || limit > 100) return res.status(400).json({ message: "Invalid limit." });
 
   const logCount = await Log.count();
-  const data = await Log.find({ skip: page * limit, take: limit });
+  const data = await Log.find({ skip: page * limit, take: limit, order: { createdAt: "DESC" } });
 
   return res.json({
     count: logCount,

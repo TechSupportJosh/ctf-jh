@@ -6,7 +6,7 @@
         <th>ID</th>
         <th>Created At</th>
         <th>Event</th>
-        <th></th>
+        <th class="text-end">Showing page {{ currentPage }} of {{ maxPage }} ({{ logCount }} entries)</th>
       </tr>
     </thead>
     <tbody>
@@ -23,10 +23,38 @@
       </tr>
     </tbody>
   </table>
+
+  <nav>
+    <ul class="pagination justify-content-center">
+      <li class="page-item" :class="{ disabled: currentPage <= 1 }">
+        <a class="page-link" href="#" @click.prevent="currentPage -= 1">Previous</a>
+      </li>
+      <li class="page-item" :class="{ disabled: currentPage <= 2 }">
+        <a class="page-link" href="#" @click.prevent="currentPage -= 2">{{ currentPage - 2 }}</a>
+      </li>
+      <li class="page-item" :class="{ disabled: currentPage <= 1 }">
+        <a class="page-link" href="#" @click.prevent="currentPage -= 1">{{ currentPage - 1 }}</a>
+      </li>
+      <li class="page-item active">
+        <span class="page-link">
+          {{ currentPage }}
+        </span>
+      </li>
+      <li class="page-item" :class="{ disabled: currentPage + 1 > maxPage }">
+        <a class="page-link" href="#" @click.prevent="currentPage += 1">{{ currentPage + 1 }}</a>
+      </li>
+      <li class="page-item" :class="{ disabled: currentPage + 2 > maxPage }">
+        <a class="page-link" href="#" @click.prevent="currentPage += 2">{{ currentPage + 2 }}</a>
+      </li>
+      <li class="page-item" :class="{ disabled: currentPage + 1 > maxPage }">
+        <a class="page-link" href="#" @click.prevent="currentPage += 1">Next</a>
+      </li>
+    </ul>
+  </nav>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import type { Challenge } from "../../types/Challenge";
 import type { Log } from "../../types/Log";
 import type { Team } from "../../types/Team";
@@ -38,13 +66,12 @@ const users = ref<User[]>([]);
 const challenges = ref<Challenge[]>([]);
 const teams = ref<Team[]>([]);
 
-const currentPage = ref(0);
-const resultLimit = ref(20);
+const currentPage = ref(1);
+const logCount = ref(0);
+
+const resultsPerPage = ref(20);
 
 onMounted(async () => {
-  const logsResponse = await API.getAdminLogs(currentPage.value, resultLimit.value);
-  if (logsResponse) logs.value = logsResponse.data;
-
   const userResponse = await API.getAdminUsers();
   if (userResponse) users.value = userResponse;
 
@@ -53,7 +80,25 @@ onMounted(async () => {
 
   const teamsResponse = await API.getAdminTeams();
   if (teamsResponse) teams.value = teamsResponse;
+
+  fetchLogs();
 });
+
+const maxPage = computed(() => {
+  return Math.ceil(logCount.value / resultsPerPage.value);
+});
+
+watch(currentPage, () => {
+  fetchLogs();
+});
+
+const fetchLogs = async () => {
+  const logsResponse = await API.getAdminLogs(currentPage.value - 1, resultsPerPage.value);
+  if (logsResponse) {
+    logs.value = logsResponse.data;
+    logCount.value = logsResponse.count;
+  }
+};
 
 const removePrefix = (key: string) => {
   if (key.indexOf(":") === -1) return key;
