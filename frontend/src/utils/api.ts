@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
 import { Session, User } from "../types/User";
 import config from "../config";
@@ -63,7 +63,7 @@ const getChallenges = async () => {
 };
 
 const submitFlag = async (challengeId: number, flag: string) => {
-  const response = await client.post<{ isBlood: Boolean }>(`/challenges/${challengeId}/submit`, {
+  const response = await client.post<any, AxiosResponse<{ isBlood: Boolean }>>(`/challenges/${challengeId}/submit`, {
     flag: flag,
   });
 
@@ -80,7 +80,7 @@ const getRecentSolves = async () => {
 };
 
 const joinTeam = async (inviteCode: string) => {
-  const response = await client.post<{ message: string }>(`/teams/join`, {
+  const response = await client.post<any, AxiosResponse<{ message: string }>>(`/teams/join`, {
     inviteCode: inviteCode,
   });
 
@@ -91,7 +91,7 @@ const joinTeam = async (inviteCode: string) => {
 };
 
 const createTeam = async (name: string) => {
-  const response = await client.post<{ message: string }>(`/teams`, {
+  const response = await client.post<any, AxiosResponse<{ message: string }>>(`/teams`, {
     name: name,
   });
 
