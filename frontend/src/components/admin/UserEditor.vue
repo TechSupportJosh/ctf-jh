@@ -128,12 +128,11 @@ onMounted(async () => {
 });
 
 const generatePassword = () => {
-  let password = "";
-  for (let i = 0; i < 20; i++) {
-    password += (window.crypto.getRandomValues(new Uint8Array(1))[0] & 15).toString(16);
-  }
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+  const array = new Uint8Array(16);
+  window.crypto.getRandomValues(array);
 
-  editUser.value.password = password;
+  editUser.value.password = [...array].map((byte) => chars.charAt(byte % 64)).join("");
 };
 
 const deleteUserSubmissions = async ({ id, firstName, lastName }: User) => {
