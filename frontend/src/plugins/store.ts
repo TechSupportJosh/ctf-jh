@@ -26,9 +26,8 @@ const store = new Vuex.Store<State>({
       endTime: "",
       maintenance: false,
       scoringType: "static",
-      dynamicScoreReduction: 5,
-      dynamicScoreMinSolves: 3,
-      dynamicScoreMaxSolves: 10,
+      dynamicScoreDecay: 30,
+      dynamicScoreMinPoints: 100,
     },
   },
   mutations: {
