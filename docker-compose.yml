@@ -36,8 +36,6 @@ services:
       - "DATABASE_HOST=database"
       - "DATABASE_USER=ctf_jh"
       - "DATABASE_PASS=test"
-    ports:
-      - "8080:8080"
     links:
       - "ctf_database:database"
     depends_on:
