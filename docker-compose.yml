@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+  ctf_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ctf_frontend
+    restart: "unless-stopped"
+    volumes:
+      - "./tls:/app/tls"
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - "ctf_backend:backend"
+    depends_on:
+      - "ctf_backend"
+
+  ctf_backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ctf_backend
+    restart: "unless-stopped"
+    environment:
+      - "WARWICK_OAUTH_CONSUMER_KEY="
+      - "WARWICK_OAUTH_CONSUMER_SECRET="
+      - "OAUTH_CALLBACK_URL="
+      - "DISCORD_WEBHOOK_URL="
+      - "WARWICK_ADMIN_IDS="
+      - "WARWICK_WHITELIST_IDS="
+      - "EXPRESS_TRUST_PROXIES=true"
+      - "DATABASE_TYPE=postgres"
+      - "DATABASE_DB=ctf_jh"
+      - "DATABASE_HOST=database"
+      - "DATABASE_USER=ctf_jh"
+      - "DATABASE_PASS=test"
+    ports:
+      - "8080:8080"
+    links:
+      - "ctf_database:database"
+    depends_on:
+      - "ctf_database"
+
+  ctf_database:
+    image: "postgres:14.0"
+    container_name: "ctf_database"
+    restart: "unless-stopped"
+    volumes:
+      - "./database:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_USER=ctf_jh"
+      - "POSTGRES_PASSWORD=test"
+      - "POSTGRES_DB=ctf_jh"
