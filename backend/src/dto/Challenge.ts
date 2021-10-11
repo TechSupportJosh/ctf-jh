@@ -40,7 +40,7 @@ export class ChallengeDTO {
   @(jf.number().integer().empty("").optional().default(-1))
   unlockRequirement?: number;
 
-  @(jf.string().required())
+  @(jf.string().allow("").required())
   hint!: string;
 
   @(jf.string().allow("").optional())
