@@ -43,7 +43,7 @@
       </table>
     </template>
     <template v-else>
-      <p class="text-muted text-center">Your stats will appear once the CTF has started.</p>
+      <p class="text-muted text-center">Stats will appear once the CTF has started.</p>
     </template>
   </template>
 </template>
