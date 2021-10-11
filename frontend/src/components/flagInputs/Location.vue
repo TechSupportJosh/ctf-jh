@@ -85,6 +85,8 @@ const getLocationFromGMapsURL = () => {
   if (isNaN(latitude) || isNaN(longitude)) return (gmapsURLError.value = "Failed to load location from URL");
   flag.value = new L.LatLng(latitude, longitude);
 
+  gmapsURLError.value = "";
+
   if (map && mapCircle) {
     map.setView(flag.value, 18);
     mapCircle.setLatLng(flag.value);
