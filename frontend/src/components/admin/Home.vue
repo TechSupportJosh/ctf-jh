@@ -133,7 +133,7 @@ import API from "../../utils/api";
 const stats = ref<AdminStats>();
 const config = ref<Config>();
 
-const ctfTimeRange = {
+let ctfTimeRange = {
   start: new Date(),
   end: new Date(),
 };
