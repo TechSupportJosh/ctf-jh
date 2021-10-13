@@ -76,7 +76,7 @@
         <hr />
         <h4 class="text-center">Leave Team</h4>
         <div class="alert alert-danger" v-if="leaveTeamError"><strong>An error occured: </strong>{{ leaveTeamError }}</div>
-        <p class="text-center">If you leave this team, you must request a new invite code from the team leader to rejoin.</p>
+        <p class="text-center">If you leave this team, the team leader must send you a new invite code if you wish to rejoin the team.</p>
         <div class="row">
           <div class="col-4 offset-4">
             <button class="btn btn-danger w-100" @click="leaveTeam">Leave Team</button>
