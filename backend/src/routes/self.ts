@@ -1,4 +1,5 @@
 import express from "express";
+import { MoreThan } from "typeorm";
 import { EventType } from "../entity/Log";
 import { UserAuth } from "../entity/User";
 import { logEvent } from "../utils/log";
@@ -15,7 +16,7 @@ router.get("/sessions", async (req, res) => {
     .addSelect("userAuth.ipAddress")
     .addSelect("userAuth.userAgent")
     .addSelect("userAuth.authId")
-    .where({ userId: req.user!.id })
+    .where({ userId: req.user!.id, expiryDate: MoreThan(new Date().toISOString()) })
     .getMany();
   res.json(sessions);
 });
