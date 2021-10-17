@@ -7,6 +7,7 @@
         <th>Name</th>
         <th>Username</th>
         <th>Warwick ID</th>
+        <th>Team</th>
         <th>Is Admin</th>
         <th>Solves</th>
         <th>
@@ -22,6 +23,7 @@
         <td>{{ user.firstName }} {{ user.lastName }}</td>
         <td>{{ user.username ?? "N/A" }}</td>
         <td>{{ user.warwickId ?? "N/A" }}</td>
+        <td>{{ getTeamName(user.team?.id) }}</td>
         <td>{{ user.isAdmin ? "Yes" : "No" }}</td>
         <td>{{ user.solvedChallenges.length }}</td>
         <td>
@@ -98,7 +100,9 @@ import config from "../../config";
 import API from "../../utils/api";
 import { onMounted, ref } from "vue";
 import type { User } from "../../types/User";
+import type { Team } from "../../types/Team";
 
+const teams = ref<Team[]>([]);
 const users = ref<User[]>([]);
 
 interface EditUser extends User {
@@ -122,8 +126,10 @@ const userTemplate: EditUser = {
 const editUser = ref<EditUser>(userTemplate);
 
 onMounted(async () => {
-  const response = await API.getAdminUsers();
+  const teamsResponse = await API.getAdminTeams();
+  if (teamsResponse) teams.value = teamsResponse;
 
+  const response = await API.getAdminUsers();
   if (response) users.value = response;
 });
 
@@ -147,6 +153,10 @@ const deleteUser = async ({ id, firstName, lastName }: User) => {
 
     if (response) users.value = users.value.filter((user) => user.id !== id);
   }
+};
+
+const getTeamName = (teamId?: number) => {
+  return teams.value.find((team) => team.id === teamId)?.name ?? "N/A";
 };
 </script>
 
