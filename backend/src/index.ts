@@ -80,8 +80,6 @@ router.get("/events", isAuthenticated(), (req, res) => {
   });
 });
 
-router.use("/static", express.static("uploads"));
-
 // Mount all routes under /api
 app.use("/api", router);
 

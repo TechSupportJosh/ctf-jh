@@ -19,7 +19,7 @@
 
   <p v-if="challenge.fileName">
     <strong>Challenge File:</strong><br />File Name:
-    <a :href="`${config.basePath}api/static/${challenge.fileName}`" download>{{ challenge.fileName }}</a
+    <a :href="`${config.basePath}api/challenges/${challenge.id}/file`" download>{{ challenge.fileName }}</a
     ><br />MD5 Hash: {{ challenge.fileHash }}
   </p>
 

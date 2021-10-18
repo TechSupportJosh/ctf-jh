@@ -1,6 +1,8 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import { getDistance } from "geolib";
+import path from "path";
+import { uploadDirectory } from "../constants";
 import { FlagSubmissionDTO } from "../dto/FlagSubmission";
 import { Challenge, FlagType } from "../entity/Challenge";
 import { EventType } from "../entity/Log";
@@ -124,6 +126,26 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
   logEvent(EventType.UserSolvedChallenge, { "user:userId": req.user!.id, "challenge:challengeId": challenge.id });
 
   return res.status(200).json({ isBlood: solvedChallenge.isBlood });
+});
+
+router.use("/:challengeId/file", async (req, res) => {
+  const config = Configuration.get();
+
+  if (!config.canViewChallenges()) return res.sendStatus(404);
+
+  const challenge = await Challenge.findOne({ relations: ["unlockRequirement"], where: { id: req.params.challengeId } });
+
+  if (!challenge || !challenge?.fileName) return res.sendStatus(404);
+
+  // Check whether the user can access this challenge
+  if (
+    challenge.unlockRequirement &&
+    !(req.user?.hasSolvedChallenge(challenge.unlockRequirement) || req.user?.team?.hasSolvedChallenge(challenge.unlockRequirement))
+  ) {
+    return res.sendStatus(404);
+  }
+
+  return res.download(path.join(uploadDirectory, challenge.fileName), challenge.fileName);
 });
 
 router.get("/recent", async (req, res) => {
