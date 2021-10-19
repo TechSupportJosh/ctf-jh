@@ -114,7 +114,7 @@ app.use("/api", router);
     await mkdirAsync(uploadDirectory);
   }
 
-  const job = new CronJob("0 0 * * * *", () => updateStats(connection));
+  const job = new CronJob("0 */15 * * * *", () => updateStats(connection));
   job.start();
 
   app.listen(8080, () => {

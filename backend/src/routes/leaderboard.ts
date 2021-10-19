@@ -4,7 +4,7 @@ import { leaderboardLastUpdated } from "../utils/statsCron";
 
 const router = express.Router();
 
-const cacheMs = 60 * 60 * 1000;
+const cacheMs = 15 * 60 * 1000;
 
 router.get("/users", async (req, res) => {
   const ids = await UserStats.createQueryBuilder("stats")
