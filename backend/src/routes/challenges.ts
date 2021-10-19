@@ -7,7 +7,7 @@ import { FlagSubmissionDTO } from "../dto/FlagSubmission";
 import { Challenge, FlagType } from "../entity/Challenge";
 import { EventType } from "../entity/Log";
 import { Team } from "../entity/Team";
-import { UserSolveAttempt, UserSolvedChallenge } from "../entity/User";
+import { User, UserSolveAttempt, UserSolvedChallenge } from "../entity/User";
 import { validator } from "../middlewares/validator";
 import { Configuration } from "../utils/config";
 import { logEvent } from "../utils/log";
@@ -61,9 +61,12 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
     .leftJoinAndSelect("team.members", "members")
     .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
     .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
+    .where("team.id = :id", { id: req.user?.team?.id })
     .getOne();
 
-  if (req.user?.hasSolvedChallenge(challenge) || userTeam?.hasSolvedChallenge(challenge))
+  const fetchUser = await User.findOne({ relations: ["solvedChallenges"], where: { id: req.user!.id } });
+
+  if (fetchUser!.hasSolvedChallenge(challenge) || userTeam?.hasSolvedChallenge(challenge))
     return res.status(400).json({ message: "Challenge has already been submitted." });
 
   if (challenge.unlockRequirement && !req.user?.hasSolvedChallenge(challenge.unlockRequirement))
