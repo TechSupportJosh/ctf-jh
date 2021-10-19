@@ -9,7 +9,15 @@ export const getUserFromCookie = async (authCookie: string) => {
   if (!userAuth) return null;
   if (userAuth.expiryDate < new Date()) return null;
 
-  return await User.findOne({ where: { id: userAuth.userId }, relations: ["team"] });
+  return (
+    (await User.createQueryBuilder("user")
+      .leftJoinAndSelect("user.team", "team")
+      // .leftJoin("user.team", "team")
+      // .addSelect("team.id", "id")
+      // .addSelect("team.name", "name")
+      .where({ id: userAuth.userId })
+      .getOne()) ?? null
+  );
 };
 
 export const isAuthenticated = () => {

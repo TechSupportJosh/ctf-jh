@@ -53,8 +53,4 @@ export class Team extends BaseEntity {
 
     return stats;
   }
-
-  hasSolvedChallenge(challenge: Challenge) {
-    return this.members.some((member) => member.hasSolvedChallenge(challenge));
-  }
 }

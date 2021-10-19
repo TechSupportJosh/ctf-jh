@@ -24,18 +24,17 @@ router.get("/", async (req, res) => {
   const challenges = await Challenge.find({ relations: ["unlockRequirement", "solves"], where: { disabled: false } });
 
   res.json(
-    challenges.map((challenge) => {
-      // Check whether the user has solved this challenge
-      // If they haven't, then we returned a censored version of the challenge
-      if (
-        challenge.unlockRequirement &&
-        !(req.user?.hasSolvedChallenge(challenge.unlockRequirement) || req.user?.team?.hasSolvedChallenge(challenge.unlockRequirement))
-      ) {
-        return challenge.toLockedJSON();
-      }
+    await Promise.all(
+      challenges.map(async (challenge) => {
+        // Check whether the user has solved this challenge
+        // If they haven't, then we returned a censored version of the challenge
+        if (challenge.unlockRequirement && !(await req.user!.hasSolvedChallenge(challenge.unlockRequirement))) {
+          return challenge.toLockedJSON();
+        }
 
-      return challenge.toUnlockedJSON();
-    })
+        return challenge.toUnlockedJSON();
+      })
+    )
   );
 });
 
@@ -57,19 +56,9 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
   const challenge = await Challenge.createQueryBuilder("challenge").addSelect("flag").where({ id: req.params.challengeId }).getOne();
   if (!challenge) return res.status(404);
 
-  const userTeam = await Team.createQueryBuilder("team")
-    .leftJoinAndSelect("team.members", "members")
-    .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
-    .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
-    .where("team.id = :id", { id: req.user?.team?.id })
-    .getOne();
+  if (await req.user!.hasSolvedChallenge(challenge)) return res.status(400).json({ message: "Challenge has already been submitted." });
 
-  const fetchUser = await User.findOne({ relations: ["solvedChallenges"], where: { id: req.user!.id } });
-
-  if (fetchUser!.hasSolvedChallenge(challenge) || userTeam?.hasSolvedChallenge(challenge))
-    return res.status(400).json({ message: "Challenge has already been submitted." });
-
-  if (challenge.unlockRequirement && !req.user?.hasSolvedChallenge(challenge.unlockRequirement))
+  if (challenge.unlockRequirement && !(await req.user?.hasSolvedChallenge(challenge.unlockRequirement)))
     return res.status(400).json({ message: "Challenge is locked." });
 
   if (challenge.flagType === FlagType.String && challenge.flag !== flag) {
@@ -114,16 +103,21 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
 
   await sendWebhook(req.user!, parseInt(req.params.challengeId));
 
-  if (userTeam) {
+  if (req.user!.team) {
     // If the user is apart of a team, we need to send SSE event which ensures that
     // they have the up to date versions of challenges / team info
     // We explicitly ignore the request user, as the frontend will handle retrieivng
     // the new challenges
-    sendEvent(
-      "fetch",
-      ["team", "challenges"],
-      userTeam.members.filter((member) => member.id !== req.user!.id).map((member) => member.id)
-    );
+
+    const team = await Team.findOne({ where: { id: req.user!.team.id } });
+
+    if (team) {
+      sendEvent(
+        "fetch",
+        ["team", "challenges"],
+        team.members.filter((member) => member.id !== req.user!.id).map((member) => member.id)
+      );
+    }
   }
 
   logEvent(EventType.UserSolvedChallenge, { "user:userId": req.user!.id, "challenge:challengeId": challenge.id });
@@ -141,10 +135,7 @@ router.use("/:challengeId/file", async (req, res) => {
   if (!challenge || !challenge?.fileName) return res.sendStatus(404);
 
   // Check whether the user can access this challenge
-  if (
-    challenge.unlockRequirement &&
-    !(req.user?.hasSolvedChallenge(challenge.unlockRequirement) || req.user?.team?.hasSolvedChallenge(challenge.unlockRequirement))
-  ) {
+  if (challenge.unlockRequirement && !(await req.user!.hasSolvedChallenge(challenge.unlockRequirement))) {
     return res.sendStatus(404);
   }
 

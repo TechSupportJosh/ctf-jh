@@ -30,7 +30,7 @@ export class User extends BaseEntity {
   @OneToMany(() => UserAuth, (authValue) => authValue.user)
   authValues!: UserAuth[];
 
-  @OneToMany(() => UserSolvedChallenge, (solvedChallenge) => solvedChallenge.user, { eager: true })
+  @OneToMany(() => UserSolvedChallenge, (solvedChallenge) => solvedChallenge.user)
   solvedChallenges!: UserSolvedChallenge[];
 
   @ManyToOne(() => Team, (team) => team.members, { nullable: true })
@@ -39,11 +39,28 @@ export class User extends BaseEntity {
   @OneToMany(() => UserStats, (userStats) => userStats.user)
   stats!: UserStats[];
 
-  @OneToMany(() => UserSolveAttempt, (solveAttempt) => solveAttempt.user, { eager: true })
+  @OneToMany(() => UserSolveAttempt, (solveAttempt) => solveAttempt.user)
   solveAttempts!: UserSolveAttempt[];
 
-  hasSolvedChallenge(challenge: Challenge) {
-    return this.solvedChallenges.findIndex((solvedChallenge) => solvedChallenge.challengeId === challenge.id) !== -1;
+  async hasSolvedChallenge(challenge: Challenge) {
+    const ids = [this.id];
+
+    if (this.team) {
+      // Gather user IDs of all team members
+      ids.push(
+        ...(await User.createQueryBuilder("user").where("user.teamId = :teamId", { teamId: this.team.id }).getMany()).map((user) => user.id)
+      );
+    }
+
+    return (
+      (await UserSolvedChallenge.createQueryBuilder("userSolvedChallenge")
+        .where("userSolvedChallenge.challengeId = :challengeId AND userSolvedChallenge.userId IN (:...userIds)", {
+          challengeId: challenge.id,
+          userIds: ids,
+        })
+        //.andWhere("", { userId: ids })
+        .getOne()) !== undefined
+    );
   }
 
   toPublicJSON(withStats: boolean) {
@@ -64,19 +81,6 @@ export class User extends BaseEntity {
     return json;
   }
 
-  toSelfJSON() {
-    // Reduces team information
-    const user: Record<string, any> = { ...this };
-    if (this.team) {
-      user.team = {
-        id: user.team.id,
-        name: user.team.name,
-      };
-    }
-    user.solveAttempts = this.getAttemptStats();
-    return user;
-  }
-
   getSolveStats() {
     const stats = {
       points: 0,
@@ -93,18 +97,11 @@ export class User extends BaseEntity {
     return stats;
   }
 
-  getAttemptStats() {
-    const stats = {
-      correct: 0,
-      incorrect: 0,
+  async getAttemptStats() {
+    return {
+      correct: await UserSolveAttempt.count({ where: { userId: this.id, correct: true } }),
+      incorrect: await UserSolveAttempt.count({ where: { userId: this.id, correct: false } }),
     };
-
-    this.solveAttempts.forEach((solveAttempt) => {
-      stats.correct += solveAttempt.correct ? 1 : 0;
-      stats.incorrect += !solveAttempt.correct ? 1 : 0;
-    });
-
-    return stats;
   }
 }
 

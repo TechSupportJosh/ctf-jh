@@ -1,13 +1,23 @@
 import express from "express";
 import { MoreThan } from "typeorm";
 import { EventType } from "../entity/Log";
-import { UserAuth } from "../entity/User";
+import { UserAuth, UserSolvedChallenge } from "../entity/User";
 import { logEvent } from "../utils/log";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json(req.user!.toSelfJSON());
+router.get("/", async (req, res) => {
+  res.json({
+    ...req.user,
+    team: req.user!.team
+      ? {
+          id: req.user!.team.id,
+          name: req.user!.team.name,
+        }
+      : null,
+    solvedChallenges: await UserSolvedChallenge.find({ where: { user: req.user } }),
+    solveAttempts: await req.user?.getAttemptStats(),
+  });
 });
 
 router.get("/sessions", async (req, res) => {
