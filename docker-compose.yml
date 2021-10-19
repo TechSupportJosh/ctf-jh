@@ -23,6 +23,8 @@ services:
       dockerfile: Dockerfile
     container_name: ctf_backend
     restart: "unless-stopped"
+    volumes:
+      - "./uploads:/usr/src/app/uploads"
     environment:
       - "WARWICK_OAUTH_CONSUMER_KEY="
       - "WARWICK_OAUTH_CONSUMER_SECRET="
