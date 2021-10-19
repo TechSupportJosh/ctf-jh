@@ -148,7 +148,7 @@ router.delete("/challenges/:challengeId/solves", async (req, res) => {
 });
 
 router.get("/users", async (req, res) => {
-  const users = await User.find({ relations: ["team"], order: { id: "DESC" } });
+  const users = await User.find({ relations: ["team", "solvedChallenges"], order: { id: "DESC" } });
 
   res.json(users);
 });

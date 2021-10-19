@@ -17,7 +17,7 @@
         </th>
       </tr>
     </thead>
-    <tbody>
+    <tbody v-if="users">
       <tr v-for="user in users" :key="user.id">
         <td>{{ user.id }}</td>
         <td>{{ user.firstName }} {{ user.lastName }}</td>
@@ -25,7 +25,7 @@
         <td>{{ user.warwickId ?? "N/A" }}</td>
         <td>{{ getTeamName(user.team?.id) }}</td>
         <td>{{ user.isAdmin ? "Yes" : "No" }}</td>
-        <td>{{ user.solvedChallenges.length }}</td>
+        <td>{{ user.solvedChallenges?.length }}</td>
         <td>
           <div class="d-flex">
             <button
