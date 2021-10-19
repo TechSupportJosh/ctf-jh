@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Challenge } from "./Challenge";
 import { UserStats } from "./Stats";
 import { Team } from "./Team";
@@ -106,6 +106,7 @@ export class User extends BaseEntity {
 }
 
 @Entity()
+@Unique("single_solve_per_challenge", ["userId", "challengeId"])
 export class UserSolvedChallenge extends BaseEntity {
   @PrimaryGeneratedColumn()
   solvedChallengeId!: number;
