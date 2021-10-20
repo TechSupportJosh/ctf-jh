@@ -18,15 +18,16 @@ router.get("/:teamId", async (req, res) => {
     .leftJoinAndSelect("team.stats", "stats")
     .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
     .leftJoinAndSelect("members.solveAttempts", "solveAttempts")
-    .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
-    // For dynamic scoring, we only need the number of solves, therefore we only select the id
-    .leftJoin("challenge.solves", "solves")
-    .addSelect("solves.solvedChallengeId")
+    .leftJoin("solvedChallenges.challenge", "challenge")
+    // .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
+    // // For dynamic scoring, we only need the number of solves, therefore we only select the id
+    // .leftJoin("challenge.solves", "solves")
+    // .addSelect("solves.solvedChallengeId")
     .getOne();
 
   if (!team) return res.sendStatus(404);
 
-  return res.json(team);
+  return res.json(await team.toJSON());
 });
 
 router.get("/:teamId/invite-code", async (req, res) => {

@@ -71,32 +71,36 @@ export class Challenge extends BaseEntity {
   @OneToMany(() => UserSolvedChallenge, (solvedChallenge) => solvedChallenge.challenge)
   solves!: UserSolvedChallenge[];
 
-  getEffectivePoints() {
+  async getEffectivePoints(solveCount?: number) {
     const config = Configuration.get();
     if (config.scoringType === "static") return this.points;
 
+    if (solveCount === undefined) solveCount = await UserSolvedChallenge.count({ where: { challengeId: this.id } });
+
     // Ensure that we can never go below minimium points
     return Math.max(
-      Math.ceil(((config.dynamicScoreMinPoints - this.points) / config.dynamicScoreDecay ** 2) * this.solves.length ** 2 + this.points),
+      Math.ceil(((config.dynamicScoreMinPoints - this.points) / config.dynamicScoreDecay ** 2) * solveCount ** 2 + this.points),
       config.dynamicScoreMinPoints
     );
   }
 
-  toJSON() {
+  async toJSON() {
+    const solveCount = await UserSolvedChallenge.count({ where: { challengeId: this.id } });
+
     return {
       ...this,
       unlockRequirement: this.unlockRequirement?.id,
       tags: this.tags.map((tag) => tag.tag),
       educationResources: this.educationResources.map((resource) => resource.resource),
-      solveCount: this.solves.length,
-      points: this.getEffectivePoints(),
+      solveCount: solveCount,
+      points: await this.getEffectivePoints(solveCount),
     };
   }
 
   // Used when we want to null out multiple columns for locked challenges
-  toLockedJSON() {
+  async toLockedJSON() {
     return {
-      ...this.toJSON(),
+      ...(await this.toJSON()),
       flag: null,
       locked: true,
       description: null,
@@ -109,9 +113,9 @@ export class Challenge extends BaseEntity {
     };
   }
 
-  toUnlockedJSON() {
+  async toUnlockedJSON() {
     return {
-      ...this.toJSON(),
+      ...(await this.toJSON()),
       flag: null,
       locked: false,
     };

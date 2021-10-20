@@ -29,27 +29,27 @@ export class Team extends BaseEntity {
     this.inviteCode = getRandomWords(3, " ");
   }
 
-  toJSON() {
+  async toJSON() {
     return {
       ...this,
-      teamLeader: this.teamLeader.toPublicJSON(false),
-      members: this.members.map((member) => member.toPublicJSON(true)),
+      teamLeader: await this.teamLeader.toPublicJSON(false),
+      members: await Promise.all(this.members.map((member) => member.toPublicJSON(true))),
     };
   }
 
-  getSolveStats() {
+  async getSolveStats() {
     const stats = {
       points: 0,
       solves: 0,
       bloods: 0,
     };
 
-    this.members.forEach((member) => {
-      const userStats = member.getSolveStats();
+    for (const member of this.members) {
+      const userStats = await member.getSolveStats();
       stats.points += userStats.points;
       stats.bloods += userStats.bloods;
       stats.solves += userStats.solves;
-    });
+    }
 
     return stats;
   }

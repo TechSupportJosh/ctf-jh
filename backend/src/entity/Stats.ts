@@ -22,9 +22,9 @@ export class UserStats extends BaseEntity {
   @Column()
   bloods!: number;
 
-  toLeaderboardJSON() {
+  async toLeaderboardJSON() {
     return {
-      user: this.user.toPublicJSON(false),
+      user: await this.user.toPublicJSON(false),
       stats: {
         points: this.points,
         solves: this.solves,

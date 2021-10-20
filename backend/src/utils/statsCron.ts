@@ -23,33 +23,29 @@ export const updateStats = async (connection: Connection) => {
     .leftJoinAndSelect("challenge.solves", "solves")
     .getMany();
 
-  await Promise.all(
-    users.map((user) => {
-      const entry = new UserStats();
-      const stats = user.getSolveStats();
-      entry.user = user;
-      entry.date = currentDate;
-      entry.points = stats.points;
-      entry.bloods = stats.bloods;
-      entry.solves = stats.solves;
+  for (const user of users) {
+    const entry = new UserStats();
+    const stats = await user.getSolveStats();
+    entry.user = user;
+    entry.date = currentDate;
+    entry.points = stats.points;
+    entry.bloods = stats.bloods;
+    entry.solves = stats.solves;
 
-      return entry.save();
-    })
-  );
+    await entry.save();
+  }
 
-  await Promise.all(
-    teams.map((team) => {
-      const entry = new TeamStats();
-      const stats = team.getSolveStats();
-      entry.team = team;
-      entry.date = currentDate;
-      entry.points = stats.points;
-      entry.bloods = stats.bloods;
-      entry.solves = stats.solves;
+  for (const team of teams) {
+    const entry = new TeamStats();
+    const stats = await team.getSolveStats();
+    entry.team = team;
+    entry.date = currentDate;
+    entry.points = stats.points;
+    entry.bloods = stats.bloods;
+    entry.solves = stats.solves;
 
-      return entry.save();
-    })
-  );
+    await entry.save();
+  }
 
   // Clear the database cache
   await connection.queryResultCache?.remove([

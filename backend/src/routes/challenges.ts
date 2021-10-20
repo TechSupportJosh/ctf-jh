@@ -21,21 +21,33 @@ router.get("/", async (req, res) => {
 
   if (!config.canViewChallenges()) return res.json([]);
 
-  const challenges = await Challenge.find({ relations: ["unlockRequirement", "solves"], where: { disabled: false } });
+  const challenges = await Challenge.find({ relations: ["unlockRequirement"], where: { disabled: false } });
 
-  res.json(
-    await Promise.all(
-      challenges.map(async (challenge) => {
-        // Check whether the user has solved this challenge
-        // If they haven't, then we returned a censored version of the challenge
-        if (challenge.unlockRequirement && !(await req.user!.hasSolvedChallenge(challenge.unlockRequirement))) {
-          return challenge.toLockedJSON();
-        }
+  const response: any[] = [];
 
-        return challenge.toUnlockedJSON();
-      })
-    )
-  );
+  for (const challenge of challenges) {
+    if (challenge.unlockRequirement && !(await req.user!.hasSolvedChallenge(challenge.unlockRequirement))) {
+      response.push(await challenge.toLockedJSON());
+    } else {
+      response.push(await challenge.toUnlockedJSON());
+    }
+  }
+
+  res.json(response);
+  // }
+  // res.json(
+  //   await Promise.all(
+  //     challenges.map(async (challenge) => {
+  //       // Check whether the user has solved this challenge
+  //       // If they haven't, then we returned a censored version of the challenge
+  //       if (challenge.unlockRequirement && !(await req.user!.hasSolvedChallenge(challenge.unlockRequirement))) {
+  //         return challenge.toLockedJSON();
+  //       }
+
+  //       return challenge.toUnlockedJSON();
+  //     })
+  //   )
+  // );
 });
 
 const flagSubmissionLimiter = rateLimit({

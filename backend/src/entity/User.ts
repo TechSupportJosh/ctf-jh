@@ -63,36 +63,36 @@ export class User extends BaseEntity {
     );
   }
 
-  toPublicJSON(withStats: boolean) {
+  async toPublicJSON(withStats: boolean) {
     let json: Record<string, any> = {
       id: this.id,
       firstName: this.firstName,
       lastName: this.lastName[0],
     };
 
-    if (withStats && this.solvedChallenges)
+    if (withStats && this.solvedChallenges) {
       json = {
         ...json,
-        solvedChallenges: this.solvedChallenges.map((challenge) => ({ ...challenge, challenge: undefined })),
-        stats: this.getSolveStats(),
-        solveAttempts: this.getAttemptStats(),
+        solvedChallenges: this.solvedChallenges,
+        stats: await this.getSolveStats(),
+        solveAttempts: await this.getAttemptStats(),
       };
-
+    }
     return json;
   }
 
-  getSolveStats() {
+  async getSolveStats() {
     const stats = {
       points: 0,
       solves: 0,
       bloods: 0,
     };
 
-    this.solvedChallenges.forEach((solvedChallenge) => {
-      stats.points += solvedChallenge.challenge?.getEffectivePoints() ?? 0;
-      stats.bloods += solvedChallenge.isBlood ? 1 : 0;
+    for (const solve of this.solvedChallenges) {
+      stats.points += (await (await Challenge.findOne(solve.challengeId))?.getEffectivePoints()) ?? 0;
+      stats.bloods += solve.isBlood ? 1 : 0;
       stats.solves += 1;
-    });
+    }
 
     return stats;
   }

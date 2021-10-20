@@ -22,7 +22,7 @@ router.get("/users", async (req, res) => {
 
   res.json({
     lastUpdated: leaderboardLastUpdated,
-    leaderboard: userStats.map((stat) => stat.toLeaderboardJSON()),
+    leaderboard: await Promise.all(userStats.map((stat) => stat.toLeaderboardJSON())),
   });
 });
 
