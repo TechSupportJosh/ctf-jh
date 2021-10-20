@@ -11,7 +11,7 @@
     class="recent-solve"
     v-if="recentSolves.length"
   >
-    <strong>{{ solve.user }}</strong
+    <strong>{{ solve.user }}{{ solve.team ? ` (${solve.team})` : "" }}</strong
     >&nbsp;<strong class="text-danger" v-if="solve.isBlood">BLOODED</strong><span v-else>solved</span>&nbsp;<strong>
       {{ solve.challenge.title }}</strong
     >

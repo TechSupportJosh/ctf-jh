@@ -158,7 +158,7 @@ router.use("/:challengeId/file", async (req, res) => {
 
 router.get("/recent", async (req, res) => {
   const recentSolves = await UserSolvedChallenge.find({
-    relations: ["user", "challenge"],
+    relations: ["user", "challenge", "user.team"],
     take: 15,
     order: {
       solveDate: "DESC",

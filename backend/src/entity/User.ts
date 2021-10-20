@@ -132,6 +132,7 @@ export class UserSolvedChallenge extends BaseEntity {
   toSimpleJSON = () => {
     return {
       user: `${this.user.firstName} ${this.user.lastName[0]}`,
+      team: this.user.team?.name ?? "",
       challenge: {
         title: this.challenge.title,
         difficulty: this.challenge.difficulty,

@@ -1,5 +1,6 @@
 export interface RecentSolve {
   user: string;
+  team: string;
   challenge: {
     title: string;
     difficulty: string;
