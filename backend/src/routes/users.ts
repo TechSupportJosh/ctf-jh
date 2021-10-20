@@ -5,7 +5,7 @@ import { User } from "../entity/User";
 const router = express.Router();
 
 router.get("/:userId", async (req, res) => {
-  const user = await User.findOne({ where: { id: req.params.userId }, relations: ["solvedChallenges"] });
+  const user = await User.findOne({ where: { id: req.params.userId }, relations: ["solvedChallenges", "team"] });
 
   if (!user) return res.status(400).json({ message: "User does not exist." });
 

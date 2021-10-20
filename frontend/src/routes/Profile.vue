@@ -7,7 +7,13 @@
     </div>
     <hr />
     <h3 class="text-center">
-      <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+      <strong
+        >{{ user.firstName }} {{ user.lastName }}
+        <template v-if="user.team"
+          >(<a class="text-white" :href="`/team/${user.team.id}`">{{ user.team.name }}</a
+          >)</template
+        ></strong
+      >
     </h3>
     <h3 class="text-center">{{ pointTotal }} Points</h3>
     <h5 class="text-center">

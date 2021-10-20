@@ -68,6 +68,12 @@ export class User extends BaseEntity {
       id: this.id,
       firstName: this.firstName,
       lastName: this.lastName[0],
+      team: this.team
+        ? {
+            id: this.team.id,
+            name: this.team.name,
+          }
+        : null,
     };
 
     if (withStats && this.solvedChallenges) {
