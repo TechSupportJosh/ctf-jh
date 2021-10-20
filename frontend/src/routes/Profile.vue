@@ -80,6 +80,8 @@ onMounted(async () => {
     isSelf.value = true;
   }
 
+  user.value.solvedChallenges.sort((a, b) => new Date(b.solveDate).getTime() - new Date(a.solveDate).getTime());
+
   const response = await API.getStats(user.value.id);
 
   if (response) stats.value = response;
