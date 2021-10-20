@@ -105,7 +105,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Hint (supports Markdown)</label>
-              <input type="text" class="form-control" name="hint" v-model="editChallenge.hint" required />
+              <input type="text" class="form-control" name="hint" v-model="editChallenge.hint" />
             </div>
             <div class="mb-3">
               <label class="form-label">Challenge Description Preview:</label>
