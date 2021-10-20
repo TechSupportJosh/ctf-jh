@@ -46,7 +46,7 @@ router.get("/stats", async (req, res) => {
 router.get("/challenges", async (req, res) => {
   const challenges = await Challenge.find({ relations: ["unlockRequirement", "solves"] });
 
-  res.json(challenges.map((challenge) => challenge.toJSON()));
+  res.json(await Promise.all(challenges.map((challenge) => challenge.toJSON())));
 });
 
 router.post("/challenges", upload.array("file", 1), validator(ChallengeDTO), async (req, res) => {
