@@ -9,7 +9,7 @@ router.get("/:userId", async (req, res) => {
 
   if (!user) return res.status(400).json({ message: "User does not exist." });
 
-  res.json(user.toPublicJSON(true));
+  res.json(await user.toPublicJSON(true));
 });
 
 router.get("/:userId/stats", async (req, res) => {
