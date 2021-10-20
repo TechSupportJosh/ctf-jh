@@ -65,7 +65,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import store from "../../plugins/store";
 
-const flag = ref<L.LatLng>(new L.LatLng(52.3828467, -1.5610438));
+const flag = ref<L.LatLng>(new L.LatLng(-15.764367, -69.6841941));
 const flagString = computed(() => `${flag.value.lat.toFixed(7)}, ${flag.value.lng.toFixed(7)}`);
 
 const gmapsURL = ref("");

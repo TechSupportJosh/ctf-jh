@@ -34,20 +34,28 @@ router.get("/", async (req, res) => {
   }
 
   res.json(response);
-  // }
-  // res.json(
-  //   await Promise.all(
-  //     challenges.map(async (challenge) => {
-  //       // Check whether the user has solved this challenge
-  //       // If they haven't, then we returned a censored version of the challenge
-  //       if (challenge.unlockRequirement && !(await req.user!.hasSolvedChallenge(challenge.unlockRequirement))) {
-  //         return challenge.toLockedJSON();
-  //       }
+});
 
-  //       return challenge.toUnlockedJSON();
-  //     })
-  //   )
-  // );
+router.get("/:challengeId/solves", async (req, res) => {
+  const solves = await UserSolvedChallenge.createQueryBuilder("solvedChallenge")
+    .leftJoinAndSelect("solvedChallenge.user", "user")
+    .leftJoinAndSelect("user.team", "team")
+    .where("solvedChallenge.challengeId = :challengeId", { challengeId: req.params.challengeId })
+    .orderBy("solvedChallenge.solveDate", "ASC")
+    .getMany();
+
+  const response: any[] = [];
+
+  for (const solve of solves) {
+    response.push({
+      ...solve,
+      user: {
+        ...(await solve.user.toPublicJSON(false)),
+      },
+    });
+  }
+
+  res.json(response);
 });
 
 const flagSubmissionLimiter = rateLimit({

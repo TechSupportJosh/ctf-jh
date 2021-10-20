@@ -30,6 +30,13 @@ export interface UserChallengeSolve {
   challengeId: number;
   solveDate: number;
   isBlood: boolean;
+  user?: {
+    firstName: string;
+    lastName: string;
+    team?: {
+      name: string;
+    };
+  };
 }
 
 export interface AdminChallengeSolve extends UserChallengeSolve {

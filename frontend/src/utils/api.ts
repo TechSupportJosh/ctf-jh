@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Challenge, AdminChallenge, LockedChallenge } from "../types/Challenge";
+import { Challenge, AdminChallenge, LockedChallenge, UserChallengeSolve } from "../types/Challenge";
 import { Session, User } from "../types/User";
 import config from "../config";
 import { AdminStats, SolveStats, Stats, TeamLeaderboardStats, UserLeaderboardStats } from "../types/Stats";
@@ -71,6 +71,12 @@ const submitFlag = async (challengeId: number, flag: string) => {
     statusCode: response.status,
     isBlood: response.status === 200 && response.data.isBlood,
   };
+};
+
+const getChallengeSolves = async (challengeId: number) => {
+  const response = await client.get<UserChallengeSolve[]>(`/challenges/${challengeId}/solves`);
+
+  if (response.status === 200) return response.data;
 };
 
 const getRecentSolves = async () => {
@@ -228,6 +234,7 @@ export default {
   deleteSession,
   getUser,
   submitFlag,
+  getChallengeSolves,
   getRecentSolves,
   joinTeam,
   createTeam,

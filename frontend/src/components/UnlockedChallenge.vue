@@ -55,7 +55,10 @@
 
   <div class="d-flex d-flex justify-content-between">
     <div><strong class="text-muted">Challenge Author: </strong>{{ challenge.author }}</div>
-    <div><strong class="text-muted">Solves: </strong>{{ challenge.solveCount }}</div>
+    <div>
+      <router-link :to="`/challenges/${challenge.id}/solves`" class="text-white"><strong class="text-muted">Solves: </strong>{{ challenge.solveCount }}
+    </router-link>
+    </div>
   </div>
 
   <template v-if="challengeSolve"
@@ -76,6 +79,7 @@ import FlagString from "./flagInputs/String.vue";
 import FlagLocation from "./flagInputs/Location.vue";
 import store from "../plugins/store";
 import copyToClipboard from "copy-to-clipboard";
+import { RouterLink } from "vue-router";
 
 const showHint = ref(false);
 const showCopiedMessage = ref(false);

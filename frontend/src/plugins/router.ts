@@ -3,6 +3,7 @@ import SidebarView from "../components/SidebarView.vue";
 import config from "../config";
 import Admin from "../routes/Admin.vue";
 import Challenges from "../routes/Challenges.vue";
+import ChallengeSolves from "../routes/ChallengeSolves.vue";
 import Help from "../routes/Help.vue";
 import Leaderboard from "../routes/Leaderboard.vue";
 import Login from "../routes/Login.vue";
@@ -42,6 +43,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: "/challenges/:category",
         component: Challenges,
+      },
+      {
+        path: "/challenges/:challengeId/solves",
+        component: ChallengeSolves,
       },
       {
         path: "/team/:teamId?",
