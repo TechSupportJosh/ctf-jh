@@ -150,7 +150,15 @@ router.delete("/challenges/:challengeId/solves", async (req, res) => {
 router.get("/users", async (req, res) => {
   const users = await User.find({ relations: ["team", "solvedChallenges"], order: { id: "DESC" } });
 
-  res.json(users);
+  const response = [];
+
+  for (const user of users) {
+    response.push({
+      ...user,
+      team: await user.team?.toJSON(),
+    });
+  }
+  res.json(response);
 });
 
 router.post("/users", validator(UserDTO), async (req, res) => {
@@ -245,13 +253,13 @@ router.get("/teams", async (req, res) => {
   const teams = await Team.createQueryBuilder("team")
     .leftJoinAndSelect("team.members", "members")
     .leftJoinAndSelect("team.teamLeader", "teamLeader")
+    .leftJoinAndSelect("team.stats", "stats")
     .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
-    .leftJoinAndSelect("members.solveAttempts", "solveAttempts")
-    .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
-    .leftJoinAndSelect("challenge.solves", "solves")
+    //.leftJoinAndSelect("members.solveAttempts", "solveAttempts")
+    .leftJoin("solvedChallenges.challenge", "challenge")
     .getMany();
 
-  return res.json(teams);
+  return res.json(await Promise.all(teams.map((team) => team.toJSON())));
 });
 
 export const adminRouter = router;
