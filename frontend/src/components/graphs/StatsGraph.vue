@@ -17,7 +17,7 @@ const props = defineProps({
   },
 });
 
-const daysToShow = 3;
+const daysToShow = 1;
 const dataPoints = daysToShow * 24;
 const millisecondsInHour = 1000 * 60 * 60;
 
@@ -64,9 +64,9 @@ const series = ref<Highcharts.SeriesOptionsType[]>([
     marker: {
       enabled: true,
     },
-    events: {
-      legendItemClick: () => false,
-    },
+    // events: {
+    //   legendItemClick: () => false,
+    // },
     color: "var(--bs-primary)",
     data: seriesData.points,
   },
@@ -76,9 +76,9 @@ const series = ref<Highcharts.SeriesOptionsType[]>([
     marker: {
       enabled: true,
     },
-    events: {
-      legendItemClick: () => false,
-    },
+    // events: {
+    //   legendItemClick: () => false,
+    // },
     color: "var(--bs-warning)",
     data: seriesData.solves,
   },
@@ -88,9 +88,9 @@ const series = ref<Highcharts.SeriesOptionsType[]>([
     marker: {
       enabled: true,
     },
-    events: {
-      legendItemClick: () => false,
-    },
+    // events: {
+    //   legendItemClick: () => false,
+    // },
     color: "var(--bs-danger)",
     data: seriesData.bloods,
   },
@@ -116,7 +116,8 @@ onMounted(() => {
     },
     xAxis: {
       type: "datetime",
-      units: [["minute", [0, 15, 30, 45]]],
+      tickInterval: 3600 * 1000,
+      min: new Date().getTime() - 1000 * 60 * 60 * 24 * 2,
     },
     yAxis: {
       tickAmount: 10,
