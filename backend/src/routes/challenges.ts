@@ -113,7 +113,9 @@ router.post("/:challengeId/submit", validator(FlagSubmissionDTO), flagSubmission
 
   await UserSolveAttempt.create({ challenge: challenge, user: req.user, correct: true }).save();
 
-  await sendWebhook(req.user!, parseInt(req.params.challengeId));
+  if (solvedChallenge.isBlood) {
+    await sendWebhook(solvedChallenge);
+  }
 
   if (req.user!.team) {
     // If the user is apart of a team, we need to send SSE event which ensures that
