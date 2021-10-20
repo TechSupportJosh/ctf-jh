@@ -51,6 +51,10 @@ seriesData.points = padData(seriesData.points);
 seriesData.bloods = padData(seriesData.bloods);
 seriesData.solves = padData(seriesData.solves);
 
+seriesData.points.sort((a, b) => a[0] - b[0]);
+seriesData.bloods.sort((a, b) => a[0] - b[0]);
+seriesData.solves.sort((a, b) => a[0] - b[0]);
+
 const lastUpdated = props.stats.length ? props.stats[props.stats.length - 1].date : undefined;
 
 const series = ref<Highcharts.SeriesOptionsType[]>([
