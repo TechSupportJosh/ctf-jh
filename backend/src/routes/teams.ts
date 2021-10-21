@@ -2,6 +2,7 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import { TeamDTO, TeamJoinDTO } from "../dto/Team";
 import { EventType } from "../entity/Log";
+import { TeamStats } from "../entity/Stats";
 import { Team } from "../entity/Team";
 import { User } from "../entity/User";
 import { validator } from "../middlewares/validator";
@@ -15,19 +16,19 @@ router.get("/:teamId", async (req, res) => {
     .where("team.id = :teamId", { teamId: req.params.teamId })
     .leftJoinAndSelect("team.members", "members")
     .leftJoinAndSelect("team.teamLeader", "teamLeader")
-    .leftJoinAndSelect("team.stats", "stats")
     .leftJoinAndSelect("members.solvedChallenges", "solvedChallenges")
     .leftJoinAndSelect("members.solveAttempts", "solveAttempts")
     .leftJoin("solvedChallenges.challenge", "challenge")
-    // .leftJoinAndSelect("solvedChallenges.challenge", "challenge")
-    // // For dynamic scoring, we only need the number of solves, therefore we only select the id
-    // .leftJoin("challenge.solves", "solves")
-    // .addSelect("solves.solvedChallengeId")
     .getOne();
 
   if (!team) return res.sendStatus(404);
 
-  return res.json(await team.toJSON());
+  const stats = await TeamStats.createQueryBuilder("stats").where("stats.teamId = :teamId", { teamId: req.params.teamId }).getMany();
+
+  return res.json({
+    ...(await team.toJSON()),
+    stats,
+  });
 });
 
 router.get("/:teamId/invite-code", async (req, res) => {
